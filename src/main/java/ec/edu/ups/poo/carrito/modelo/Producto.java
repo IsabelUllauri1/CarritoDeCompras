@@ -11,6 +11,18 @@ public class Producto {
         this.precio = precio;
     }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -29,8 +41,7 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Producto: " +
-                "nombre: " + nombre + '\'' +
+        return "Producto: "  + nombre + '\'' +
                 ", precio: " + precio +
                 ", codigo: '" + codigo ;
     }
