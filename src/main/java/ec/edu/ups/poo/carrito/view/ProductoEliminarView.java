@@ -19,9 +19,7 @@ public class ProductoEliminarView extends JInternalFrame {
     private DefaultTableModel modelo;
 
     public ProductoEliminarView() {
-        super("Eliminar Producto", true, true,
-                true,
-                true);
+        super("Eliminar Producto", true, true, true, true);
         modelo = new DefaultTableModel(
                 new Object[]{"Código","Nombre","Precio"}, 0
         ) {
@@ -30,9 +28,9 @@ public class ProductoEliminarView extends JInternalFrame {
             }
         };
         tblProductos.setModel(modelo);
-        setContentPane(panelPrincipal);  // panelPrincipal es tu formulario
+        setContentPane(panelPrincipal);
         pack();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
 
     }
 

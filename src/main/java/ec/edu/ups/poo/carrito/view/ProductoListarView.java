@@ -24,7 +24,6 @@ public class ProductoListarView extends JInternalFrame {
 
         setTitle("Ventana Listar Productos");
         setContentPane(panelPrincipal);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setClosable(true);
         setIconifiable(true);
@@ -37,7 +36,7 @@ public class ProductoListarView extends JInternalFrame {
             }
         };
         tblProductos.setModel(modelo);
-
+        setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
 
     }
     public void cargarDatos(List<Producto> listaProductos) {

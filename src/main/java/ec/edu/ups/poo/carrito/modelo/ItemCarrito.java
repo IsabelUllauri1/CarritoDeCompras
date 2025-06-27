@@ -13,11 +13,13 @@ public class ItemCarrito {
         return cantidad;
     }
 
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
     public Producto getProducto() {
         return producto;
     }
-
-
 
     public double getSubtotal() {
      return producto.getPrecio()*cantidad;

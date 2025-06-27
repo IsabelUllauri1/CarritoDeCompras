@@ -8,7 +8,7 @@
     <properties>
       <background color="-1051909"/>
     </properties>
-    <border type="none" title="Carrito de compras" title-justification="2" title-position="1">
+    <border type="none" title="" title-justification="2" title-position="1">
       <font name="Inter Semi Bold" size="13" style="0"/>
       <title-color color="-9137921"/>
     </border>
@@ -97,7 +97,7 @@
         <properties>
           <font name="Inter Semi Bold" size="18" style="1"/>
           <foreground color="-9137921"/>
-          <text value="Añadir Producto"/>
+          <text value="Crear Producto"/>
         </properties>
       </component>
       <component id="a6750" class="javax.swing.JLabel">

@@ -62,26 +62,48 @@ public class ProductoActualizarView extends JInternalFrame {
 
         setContentPane(panelPrincipal);
         pack();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
     }
 
 
-    public JPanel getPanelPrincipal()  { return panelPrincipal;   }
+    public JPanel getPanelPrincipal(){
+        return panelPrincipal;
+    }
 
-    public JTextField getTxtCodigoBuscar() { return txtCodigoBuscar; }
+    public JTextField getTxtCodigoBuscar(){
+        return txtCodigoBuscar;
+    }
 
-    public JButton    getBtnBuscar()        { return btnBuscar;       }
+    public JButton    getBtnBuscar(){
+        return btnBuscar;
+    }
 
-    public JTextField getTxtNombre()       { return txtNombre;       }
+    public JTextField getTxtNombre(){
+        return txtNombre;
+    }
 
-    public JTextField getTxtPrecio()       { return txtPrecio;       }
+    public JTextField getTxtPrecio(){
+        return txtPrecio;
+    }
 
-    public JButton    getBtnActualizar()   { return btnActualizar;   }
+    public JButton    getBtnActualizar(){
+        return btnActualizar;
+    }
 
-    public JButton    getBtnLimpiar()      { return btnLimpiar;      }
+    public JButton    getBtnLimpiar(){
+        return btnLimpiar;
+    }
 
-    public JButton    getBtnSalir()        { return btnSalir;        }
+    public JButton    getBtnSalir(){
+        return btnSalir;
+    }
 
+    public void limpiarCampos() {
+        txtCodigoBuscar.setText("");
+        txtNombre.setText("");
+        txtPrecio.setText("");
+        lblMensaje.setText(" ");
+    }
 
     public void mostrarMensaje(String msg, boolean exito) {
         lblMensaje.setText(msg);

@@ -79,7 +79,7 @@ public class AnadirProductosView extends JInternalFrame {
         setTitle("Carrito");
         setContentPane(PanelPrincipal);
         //setLocationRelativeTo(null);
-        setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
         setSize(500, 500);
         setResizable(true);
         setIconifiable(true);
@@ -88,6 +88,7 @@ public class AnadirProductosView extends JInternalFrame {
 
 
     }
+
 
 }
 
