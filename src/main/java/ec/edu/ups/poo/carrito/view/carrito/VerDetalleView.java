@@ -1,10 +1,7 @@
-package ec.edu.ups.poo.carrito.view;
-
-import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+package ec.edu.ups.poo.carrito.view.carrito;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
 public class VerDetalleView extends  JInternalFrame{
 

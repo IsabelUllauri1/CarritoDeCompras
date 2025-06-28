@@ -1,4 +1,4 @@
-package ec.edu.ups.poo.carrito.view;
+package ec.edu.ups.poo.carrito.view.carrito;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

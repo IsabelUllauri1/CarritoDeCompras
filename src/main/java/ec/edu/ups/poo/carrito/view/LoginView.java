@@ -3,6 +3,7 @@ package ec.edu.ups.poo.carrito.view;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
+import java.net.URL;
 
 public class LoginView extends JFrame {
     private JPanel panelPrincipal;
@@ -21,6 +22,13 @@ public class LoginView extends JFrame {
         setLocationRelativeTo(null);
         setContentPane(panelPrincipal);
 
+        URL loginURL = LoginView.class.getClassLoader().getResource("login.html");
+        if (loginURL != null) {
+            ImageIcon iconIS = new ImageIcon(loginURL);
+            btnIniciarSesion.setIcon(iconIS);
+        }else {
+            System.err.println("Error: Login URL not found");
+        }
     }
 
     public JTextField getTxtUsername() {

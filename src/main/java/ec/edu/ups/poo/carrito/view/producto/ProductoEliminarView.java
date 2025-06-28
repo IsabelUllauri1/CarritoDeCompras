@@ -1,4 +1,4 @@
-package ec.edu.ups.poo.carrito.view;
+package ec.edu.ups.poo.carrito.view.producto;
 
 import ec.edu.ups.poo.carrito.modelo.Producto;
 
@@ -6,8 +6,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import java.util.List;
-
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 public class ProductoEliminarView extends JInternalFrame {
     private JTextField txtBuscar;

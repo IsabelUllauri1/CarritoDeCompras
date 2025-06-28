@@ -1,46 +1,116 @@
 package ec.edu.ups.poo.carrito;
 
 import ec.edu.ups.poo.carrito.controlador.*;
-import ec.edu.ups.poo.carrito.dao.ProductoDAO;
-import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
-import ec.edu.ups.poo.carrito.dao.impl.CarritoDAOMemoria;
-import ec.edu.ups.poo.carrito.dao.impl.ProductoDAOMemoria;
-import ec.edu.ups.poo.carrito.dao.impl.UsuarioDAOMemoria;
-import ec.edu.ups.poo.carrito.modelo.Producto;
+import ec.edu.ups.poo.carrito.dao.*;
+import ec.edu.ups.poo.carrito.dao.impl.*;
+import ec.edu.ups.poo.carrito.modelo.Rol;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 import ec.edu.ups.poo.carrito.view.*;
-import ec.edu.ups.poo.carrito.dao.CarritoDAO;
-import ec.edu.ups.poo.carrito.view.CarritoAnadirView;
-import ec.edu.ups.poo.carrito.view.CarritoListarView;
+import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
+import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
+import ec.edu.ups.poo.carrito.view.carrito.ListarMisCarritos;
+import ec.edu.ups.poo.carrito.view.carrito.VerDetalleView;
+import ec.edu.ups.poo.carrito.view.producto.AnadirProductosView;
+import ec.edu.ups.poo.carrito.view.producto.ProductoActualizarView;
+import ec.edu.ups.poo.carrito.view.producto.ProductoEliminarView;
+import ec.edu.ups.poo.carrito.view.producto.ProductoListarView;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyVetoException;
 
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            //usuario login
+
+            UsuarioDAO  usuarioDAO  = new UsuarioDAOMemoria();
             ProductoDAO productoDAO = new ProductoDAOMemoria();
-            MiPaginaView miPaginaView = new MiPaginaView();
-            VerDetalleView verDetalleView = new VerDetalleView();
+            CarritoDAO  carritoDAO  = new CarritoDAOMemoria();
+
             LoginView loginView = new LoginView();
-            ListarMisCarritos listar = new ListarMisCarritos();
-            CarritoAnadirView carritoAnadirView = new CarritoAnadirView();
-
-
-            productoDAO.crear(new Producto("Manzana", 1, 0.50));
-            productoDAO.crear(new Producto("Pan",     2, 1.20));
-            productoDAO.crear(new Producto("Leche",   3, 0.75));
-            productoDAO.crear(new Producto("Huevos",  4, 2.30));
-            productoDAO.crear(new Producto("Arroz",   5, 0.90));
-
-            new UsuarioControlador(new UsuarioDAOMemoria(), productoDAO, new CarritoDAOMemoria(), loginView, miPaginaView, verDetalleView, listar);
+            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView);
 
             loginView.setVisible(true);
+
+            loginView.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    Usuario usuarioAut = loginControlador.getUsuarioAutenticado();
+                    if (usuarioAut == null) {
+                        System.exit(0);
+                    }
+
+                    Principal principal = new Principal();
+
+                    AnadirProductosView anadirProdV = new AnadirProductosView();
+                    ProductoListarView listarProdV   = new ProductoListarView();
+                    ProductoEliminarView eliminarProdV = new ProductoEliminarView();
+                    ProductoActualizarView actualizarProdV = new ProductoActualizarView();
+
+                    CarritoAnadirView anadirCarritoV = new CarritoAnadirView();
+                    CarritoListarView listarCarritoV = new CarritoListarView();
+
+                    MiPaginaView miPaginaV           = new MiPaginaView();
+                    ListarMisCarritos listarMisV     = new ListarMisCarritos();
+                    VerDetalleView verDetalleV       = new VerDetalleView();
+
+
+                    ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV);
+                    CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
+                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,miPaginaV,listarMisV,verDetalleV);
+
+                    if (usuarioAut.getRol() == Rol.USUARIO) {
+                        principal.deshabilitarMenuAdministrador();
+                    }
+
+                    // — Producto —
+                    principal.getMenuItemCrear().addActionListener(ev -> {
+                        principal.getDesktopPanel().add(anadirProdV);
+                        anadirProdV.setVisible(true);
+                    });
+                    principal.getMenuItemListarProductos().addActionListener(ev -> {
+                        principal.getDesktopPanel().add(listarProdV);
+                        listarProdV.setVisible(true);
+                    });
+                    principal.getMenuItemEliminar().addActionListener(ev -> {
+                        principal.getDesktopPanel().add(eliminarProdV);
+                        eliminarProdV.setVisible(true);
+                    });
+                    principal.getMenuItemActualizar().addActionListener(ev -> {
+                        principal.getDesktopPanel().add(actualizarProdV);
+                        actualizarProdV.setVisible(true);
+                    });
+
+                    // — Carrito —
+                    principal.getMenuItemCarrito().addActionListener(ev -> {
+                        principal.getDesktopPanel().add(anadirCarritoV);
+                        anadirCarritoV.setVisible(true);
+                    });
+
+                    // — Cuenta —
+                    principal.getMenuItemMiPagina().addActionListener(ev -> {
+                        principal.getDesktopPanel().add(miPaginaV);
+                        miPaginaV.setVisible(true);
+                    });
+                    principal.getMenuItemMisCarritos().addActionListener(ev -> {
+                        principal.getDesktopPanel().add(listarMisV);
+                        listarMisV.setVisible(true);
+                    });
+
+                    // — Salir —
+                    principal.getMenuItemSalir().addActionListener(ev -> {
+                        principal.dispose();
+                        loginView.setVisible(true);
+                    });
+
+                    // — Internacionalizacion —
+                    principal.getMenuIdiomaIngles().addActionListener(ev -> principal.cambiarIdioma("en","US"));
+                    principal.getMenuIdiomaEspanol().addActionListener(ev -> principal.cambiarIdioma("es","EC"));
+                    principal.getMenuIdiomaAleman().addActionListener(ev -> principal.cambiarIdioma("de","DE"));
+
+                    principal.setVisible(true);
+                }
+            });
         });
     }
-
-
 }

@@ -6,8 +6,8 @@ import ec.edu.ups.poo.carrito.modelo.Carrito;
 import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
-import ec.edu.ups.poo.carrito.view.CarritoAnadirView;
-import ec.edu.ups.poo.carrito.view.CarritoListarView;
+import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
+import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -23,16 +23,15 @@ public class CarritoControlador {
     private Carrito carrito;
     private final DefaultTableModel modeloItems;
     private final DefaultTableModel modeloList;
-    private  final Usuario usuario;
+    private  final Usuario usuarioAutenticado;
 
-    public CarritoControlador(ProductoDAO productoDAO, CarritoDAO carritoDAO, CarritoAnadirView anadirView, CarritoListarView listarView, Usuario usuario) {
+    public CarritoControlador(ProductoDAO productoDAO, CarritoDAO carritoDAO, CarritoAnadirView anadirView, CarritoListarView listarView, Usuario usuarioAutenticado) {
         this.productoDAO = productoDAO;
         this.carritoDAO = carritoDAO;
         this.anadirView = anadirView;
         this.listarView = listarView;
-        this.usuario = usuario;
         this.carrito = new Carrito();
-        this.carrito.setUsuario(usuario);
+        this.usuarioAutenticado = usuarioAutenticado;
         this.modeloItems = (DefaultTableModel) anadirView.getTblProductos().getModel();
         this.modeloList = (DefaultTableModel) listarView.getTblCarritos().getModel();
 
@@ -87,6 +86,7 @@ public class CarritoControlador {
                 for (ItemCarrito iCarrito : carrito.obtenerItems()) {
                     modelo.addRow(new Object[]{iCarrito.getProducto().getCodigo(), iCarrito.getProducto().getNombre(), iCarrito.getCantidad(), iCarrito.getSubtotal()});
                 }
+
 
                 double sub   = carrito.calcularSubtotal();
                 double iva   = carrito.calcularIVA();
@@ -212,13 +212,13 @@ public class CarritoControlador {
             return;
         }
 
-        carrito.setUsuario(usuario);
+        carrito.setUsuario(usuarioAutenticado);
         //guarda
         carritoDAO.crear(carrito);
         listarView.mostrarMensaje("Carrito registrado con éxito. Código: " + carrito.getCodigo());
 
         carrito = new Carrito();
-        carrito.setUsuario(usuario);
+        carrito.setUsuario(usuarioAutenticado);
 
         refrescarTablaItems();
         refrescarLista();

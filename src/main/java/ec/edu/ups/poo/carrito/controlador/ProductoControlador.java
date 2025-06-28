@@ -1,9 +1,13 @@
 package ec.edu.ups.poo.carrito.controlador;
 
-import ec.edu.ups.poo.carrito.dao.CarritoDAO;
 import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.view.*;
+import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
+import ec.edu.ups.poo.carrito.view.producto.AnadirProductosView;
+import ec.edu.ups.poo.carrito.view.producto.ProductoActualizarView;
+import ec.edu.ups.poo.carrito.view.producto.ProductoEliminarView;
+import ec.edu.ups.poo.carrito.view.producto.ProductoListarView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,10 +19,10 @@ public class ProductoControlador {
 
     private final ProductoDAO productoDAO;
     private Principal principal;
-    private  AnadirProductosView vistaAnadir;
-    private  ProductoListarView  vistaListar;
+    private AnadirProductosView vistaAnadir;
+    private ProductoListarView vistaListar;
     private CarritoAnadirView vistaCarrito;
-    private CarritoDAO carritoDAO;
+
 
     public ProductoControlador(ProductoDAO dao, Principal principal, AnadirProductosView vAnadir, ProductoListarView vListar) {
         this.productoDAO = dao;
@@ -45,7 +49,7 @@ public class ProductoControlador {
         principal.getMenuItemAnadir().addActionListener(e -> {
             var v = new AnadirProductosView();
             principal.getDesktopPanel().add(v);
-            v.getBtnAceptar().addActionListener(ev ->{
+            v.getBtnAnadir().addActionListener(ev ->{
                 try {
                     String nombre    = vistaAnadir.getTextField1().getText().trim();
                     String codigoTxt = vistaAnadir.getTextField2().getText().trim();
@@ -90,9 +94,8 @@ public class ProductoControlador {
             v.setVisible(true);
         });
 
-        //creara
+        //crear
         principal.getMenuItemCrear().addActionListener(e -> {
-            // si “Crear” es lo mismo que “Anadir”, rediriges a ese flujo:
             principal.getMenuItemAnadir().doClick();
         });
 
@@ -270,7 +273,7 @@ public class ProductoControlador {
     }
 
     private void configurarEventosAñadirYListar() {
-        vistaAnadir.getBtnAceptar().addActionListener(e -> guardarProducto());
+        vistaAnadir.getBtnAnadir().addActionListener(e -> guardarProducto());
         vistaAnadir.getBtnLimpiar(). addActionListener(e -> limpiarCamposAnadir());
         vistaAnadir.getBtnSalir().  addActionListener(e -> vistaAnadir.dispose());
 
@@ -302,7 +305,7 @@ public class ProductoControlador {
     }
 
     private void configurarAnadirEventos(){
-        vistaAnadir.getBtnAceptar().addActionListener(new ActionListener() {
+        vistaAnadir.getBtnAnadir().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 guardarProducto();

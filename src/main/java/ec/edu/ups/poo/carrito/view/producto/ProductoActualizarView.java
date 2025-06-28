@@ -1,4 +1,4 @@
-package ec.edu.ups.poo.carrito.view;
+package ec.edu.ups.poo.carrito.view.producto;
 
 import ec.edu.ups.poo.carrito.modelo.Producto;
 
@@ -11,7 +11,6 @@ public class ProductoActualizarView extends JInternalFrame {
     private  JTextField   txtNombre;
     private  JTextField   txtPrecio;
     private JTextField txtCodigo;
-    private JTextField txtCantidad;
     private  JButton      btnActualizar;
     private  JButton      btnLimpiar;
     private  JButton      btnSalir;

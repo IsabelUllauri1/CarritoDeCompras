@@ -19,8 +19,8 @@ public class Principal extends JFrame {
     private JMenuItem menuItemEliminar;
     private JMenuItem menuItemActualizar;
     private JMenuItem menuItemAnadir;
-    private JDesktopPane desktopPanel;
-    private JMenuItem menuItemListar;
+    private MiJDesktopPane desktopPanel;
+    private JMenuItem menuItemListarProductos;
     private JMenuItem menuItemCarrito;
     private JMenu menuUsuario;
     private JMenuItem menuItemListarTodosUsuarios;
@@ -45,7 +45,7 @@ public class Principal extends JFrame {
         menuUsuario = new JMenu(mensajeInternacionalizacionHandler.get("menu.usuario"));
         menuCuenta = new JMenu(mensajeInternacionalizacionHandler.get("menu.cuenta"));//----
 
-        menuItemListar   = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ListarProductos"));
+        menuItemListarProductos = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ListarProductos"));
         menuItemCrear    = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.CrearProducto"));
         menuItemEliminar = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.EliminarProducto"));
         menuItemActualizar = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ActualizarProducto"));
@@ -70,7 +70,7 @@ public class Principal extends JFrame {
 
 
         menuSalir.add(menuItemSalir);
-        menuProducto.add(menuItemListar);
+        menuProducto.add(menuItemListarProductos);
         menuProducto.add(menuItemCrear);
         menuProducto.add(menuItemEliminar);
         menuProducto.add(menuItemActualizar);
@@ -100,9 +100,9 @@ public class Principal extends JFrame {
 
         super.setJMenuBar(menuBar);
 
-        desktopPanel = new JDesktopPane();
+        MiJDesktopPane  miJDesktopPane = new MiJDesktopPane();
 
-        setContentPane(desktopPanel);
+        setContentPane(miJDesktopPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 600);
         setLocationRelativeTo(null);
@@ -136,7 +136,7 @@ public class Principal extends JFrame {
         menuItemListarUsuarios.setText(mensajeInternacionalizacionHandler.get("menu.listarUsuarios"));
         menuItemListarPorRol.setText(mensajeInternacionalizacionHandler.get("menu.listarPorRol"));
 
-        menuItemListar.setText(mensajeInternacionalizacionHandler.get("menu.listar"));
+        menuItemListarProductos.setText(mensajeInternacionalizacionHandler.get("menu.listar"));
         menuItemCrear.setText(mensajeInternacionalizacionHandler.get("menu.crear"));
         menuItemEliminar.setText(mensajeInternacionalizacionHandler.get("menu.eliminar"));
         menuItemActualizar.setText(mensajeInternacionalizacionHandler.get("menu.actualizar"));
@@ -145,8 +145,8 @@ public class Principal extends JFrame {
 
     }
 
-    public JMenuItem getMenuItemListar() {
-        return menuItemListar;
+    public JMenuItem getMenuItemListarProductos() {
+        return menuItemListarProductos;
     }
 
     public void setMenuBar(JMenuBar menuBar) {
@@ -248,6 +248,8 @@ public class Principal extends JFrame {
     public void deshabilitarMenuAdministrador() {
         menuItemCrear.setEnabled(false);
         menuItemActualizar.setEnabled(false);
+        menuItemEliminar.setEnabled(false);
+
 
     }
 

@@ -15,6 +15,11 @@ public class ProductoDAOMemoria implements ProductoDAO {
 
     public ProductoDAOMemoria() {
         productos = new ArrayList<Producto>();
+        crear(new Producto("Manzanas", 1, 0.5));
+        crear(new Producto("Pan", 2, 0.5));
+        crear(new Producto("Carne", 3, 0.5));
+        crear(new Producto("Galletas", 4, 0.6));
+
     }
 
     @Override

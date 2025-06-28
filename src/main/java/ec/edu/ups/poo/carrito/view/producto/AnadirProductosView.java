@@ -1,4 +1,4 @@
-package ec.edu.ups.poo.carrito.view;
+package ec.edu.ups.poo.carrito.view.producto;
 
 import javax.swing.*;
 
@@ -43,14 +43,6 @@ public class AnadirProductosView extends JInternalFrame {
 
     public void setBtnLimpiar(JButton btnLimpiar) {
         this.btnLimpiar = btnLimpiar;
-    }
-
-    public JButton getBtnAceptar() {
-        return btnAnadir;
-    }
-
-    public void setBtnAceptar(JButton btnAceptar) {
-        this.btnAnadir = btnAceptar;
     }
 
     public JTextField getTextField3() {
