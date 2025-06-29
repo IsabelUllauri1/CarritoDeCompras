@@ -19,7 +19,7 @@ public class ListarUsuariosView extends JInternalFrame{
     public ListarUsuariosView() {
         super("Listar Usuarios", true, true, true, true);
 
-        setContentPane(panelPrincipal);
+
 
         cbxRol.setModel(new DefaultComboBoxModel<>(Rol.values()));
         tblUsuarios.setModel(new DefaultTableModel(
@@ -33,6 +33,7 @@ public class ListarUsuariosView extends JInternalFrame{
         pack();
         setSize(600, 400);
         setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+        setContentPane(panelPrincipal);
     }
 
     public JPanel getPanelPrincipal() {

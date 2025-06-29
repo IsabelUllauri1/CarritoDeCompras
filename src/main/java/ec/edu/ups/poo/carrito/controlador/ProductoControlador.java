@@ -23,11 +23,12 @@ public class ProductoControlador {
     private ListarProductosPorCodigoView vistaListarPorCodigo;
 
 
-    public ProductoControlador(ProductoDAO dao, Principal principal, AnadirProductosView vAnadir, ProductoListarView vListar, ListarProductosPorCodigoView vistaListarPorCodigo) {
+    public ProductoControlador(ProductoDAO dao, Principal principal, AnadirProductosView vAnadir, ProductoListarView vListar, ListarProductosPorCodigoView vistaListarPorCodigo, CarritoAnadirView vistaCarrito) {
         this.productoDAO = dao;
         this.principal =  principal;
         this.vistaAnadir = vAnadir;
         this.vistaListar = vListar;
+        this.vistaCarrito = vistaCarrito;
         this.vistaListarPorCodigo = vistaListarPorCodigo;
         configurarEventosAñadirYListar();
         configurarMenu();

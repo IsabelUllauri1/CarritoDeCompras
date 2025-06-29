@@ -48,7 +48,7 @@ public class UsuarioControlador {
 
         refrescarMisCarritos();
         listeners();
-        listarTodosUsuarios();
+
     }
 
     private void listeners() {
