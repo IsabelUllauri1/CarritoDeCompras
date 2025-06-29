@@ -6,10 +6,7 @@ import ec.edu.ups.poo.carrito.dao.impl.*;
 import ec.edu.ups.poo.carrito.modelo.Rol;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 import ec.edu.ups.poo.carrito.view.*;
-import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
-import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
-import ec.edu.ups.poo.carrito.view.carrito.ListarMisCarritos;
-import ec.edu.ups.poo.carrito.view.carrito.VerDetalleView;
+import ec.edu.ups.poo.carrito.view.carrito.*;
 import ec.edu.ups.poo.carrito.view.producto.*;
 import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
 import ec.edu.ups.poo.carrito.view.usuario.EditarUsuarioView;
@@ -48,6 +45,7 @@ public class Main {
                     ProductoEliminarView eliminarProdV = new ProductoEliminarView();
                     ProductoActualizarView actualizarProdV = new ProductoActualizarView();
                     ListarProductosPorCodigoView listarProdPorCodigo = new ListarProductosPorCodigoView();
+                    ListarTodosLosCarritosView listarTodosLosCarritosView = new ListarTodosLosCarritosView();
 
                     CarritoAnadirView anadirCarritoV = new CarritoAnadirView();
                     CarritoListarView listarCarritoV = new CarritoListarView();
@@ -64,7 +62,7 @@ public class Main {
 
                     ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV,listarProdPorCodigo, anadirCarritoV);
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
-                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal );
+                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView );
 
                     if (usuarioAut.getRol() == Rol.USUARIO) {
                         principal.deshabilitarMenuAdministrador();
@@ -144,6 +142,16 @@ public class Main {
                         crearUsuarioView.setVisible(true);
                         crearUsuarioView.moveToFront();
                         try { crearUsuarioView.setSelected(true); }
+                        catch(PropertyVetoException ignore){}
+                    });
+                    principal.getMenuItemListarTodosLosCarritos().addActionListener(e1 -> {
+                        usuarioControlador.mostrarTodosLosCarritos();
+                        if (!listarTodosLosCarritosView.isShowing()) {
+                            principal.getDesktopPanel().add(listarTodosLosCarritosView);
+                        }
+                        listarTodosLosCarritosView.setVisible(true);
+                        listarTodosLosCarritosView.moveToFront();
+                        try { listarTodosLosCarritosView.setSelected(true); }
                         catch(PropertyVetoException ignore){}
                     });
 

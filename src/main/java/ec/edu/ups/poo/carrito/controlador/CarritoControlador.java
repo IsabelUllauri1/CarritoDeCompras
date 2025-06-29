@@ -132,7 +132,6 @@ public class CarritoControlador {
             return;
         }
         carritoDAO.crear(carrito);
-        System.out.println("DAO contiene ahora: " + carritoDAO.listarTodos().size() + " carritos → " + carritoDAO.listarTodos());
         anadirView.mostrarMensaje("Carrito registrado. Código: " + carrito.getCodigo());
 
         this.carrito = new Carrito();

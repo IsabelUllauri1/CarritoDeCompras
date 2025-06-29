@@ -7,6 +7,7 @@ import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
 import ec.edu.ups.poo.carrito.modelo.Rol;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 import ec.edu.ups.poo.carrito.view.Principal;
+import ec.edu.ups.poo.carrito.view.carrito.ListarTodosLosCarritosView;
 import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
 import ec.edu.ups.poo.carrito.view.usuario.EditarUsuarioView;
 import ec.edu.ups.poo.carrito.view.usuario.ListarUsuariosView;
@@ -21,6 +22,7 @@ import java.beans.PropertyVetoException;
 import java.util.List;
 
 public class UsuarioControlador {
+    private final ListarTodosLosCarritosView listarTodosCarritosView;
     private final Usuario usuario;
     private final CarritoDAO carritoDAO;
     private final MiPaginaView miPaginaView;
@@ -34,7 +36,7 @@ public class UsuarioControlador {
     private Rol rol;
 
 
-    public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO,UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal) {
+    public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO,UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView) {
         this.usuario  = usuario;
         this.carritoDAO = carritoDAO;
         this.usuarioDAO = usuarioDAO;
@@ -45,6 +47,7 @@ public class UsuarioControlador {
         this.crearUsuarioView = crearUsuarioView;
         this.editarUsuarioView = editarUsuarioView;
         this.principal = principal;
+        this.listarTodosCarritosView = listarTodosCarritosView;
 
         refrescarMisCarritos();
         listeners();
@@ -84,8 +87,9 @@ public class UsuarioControlador {
         crearUsuarioView.getBtnSalir().addActionListener(e -> crearUsuarioView.dispose());
 
         listarView.getBtnRefrescar().addActionListener(e -> refrescarMisCarritos());
-        listarView.getBtnVerDetalles().addActionListener(e -> verDetalles());
+        listarView.getBtnVerDetalles().addActionListener(e -> verDetallesDesde(listarView.getTblCarritos(), listarView.getDesktopPane()));
         listarView.getBtnEliminar().addActionListener(e -> eliminarCarrito());
+        listarTodosCarritosView.getBtnVerDetalles().addActionListener(e -> verDetallesDesde(listarTodosCarritosView.getTblUsuarios(), listarTodosCarritosView.getDesktopPane()));
 
     }
 
@@ -150,10 +154,8 @@ public class UsuarioControlador {
 
     private void crearUsuario() {
         String username = crearUsuarioView.getTxtUsuarioNuevo().getText().trim();
-        String pass     = new String(crearUsuarioView.getPwdContrasenaNueva().getPassword()).trim();
-        Rol rol         = (Rol) crearUsuarioView.getCbxRol().getSelectedItem();
-
-        System.out.println("→ Intentando crear usuario: " + username + " - rol: " + rol);
+        String pass  = new String(crearUsuarioView.getPwdContrasenaNueva().getPassword()).trim();
+        Rol rol  = (Rol) crearUsuarioView.getCbxRol().getSelectedItem();
 
         if (username.isEmpty() || pass.isEmpty()) {
             crearUsuarioView.mostrarMensaje("Completa los campos", "Atención", JOptionPane.INFORMATION_MESSAGE);
@@ -168,11 +170,7 @@ public class UsuarioControlador {
         Usuario nuevo = new Usuario(username, pass, rol);
         usuarioDAO.crear(nuevo);
 
-        System.out.println("→ Usuario creado: " + nuevo.getUsername());
 
-        crearUsuarioView.mostrarMensaje("Usuario creado", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-        // Limpiar campos
         crearUsuarioView.getTxtUsuarioNuevo().setText("");
         crearUsuarioView.getPwdContrasenaNueva().setText("");
         crearUsuarioView.getCbxRol().setSelectedIndex(0);
@@ -236,38 +234,42 @@ public class UsuarioControlador {
 
         JOptionPane.showMessageDialog(listaUsuariosView, "Usuario \"" + username + "\" eliminado con éxito", "Eliminación realizada", JOptionPane.INFORMATION_MESSAGE);
     }
-    private void verDetalles() {
-        int row = listarView.getTblCarritos().getSelectedRow();
+    private void verDetallesDesde(JTable tabla, JDesktopPane contenedor) {
+        int row = tabla.getSelectedRow();
         if (row < 0) {
-            JOptionPane.showMessageDialog(listarView, "Selecciona un carrito primero", "Atención", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(contenedor, "Selecciona un carrito primero", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        int codigo = (int) listarView.getTblCarritos()
-                .getValueAt(row, 0);
+
+        int codigo = (int) tabla.getValueAt(row, 0);
         Carrito c = carritoDAO.buscarPorCodigo(codigo);
         if (c == null) {
-            JOptionPane.showMessageDialog(listarView, "No se encontró el carrito", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(contenedor, "No se encontró el carrito", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        DefaultTableModel dm = (DefaultTableModel) verDetalleView
-                .getTblProductos().getModel();
+
+        DefaultTableModel dm = (DefaultTableModel) verDetalleView.getTblProductos().getModel();
         dm.setRowCount(0);
         for (ItemCarrito it : c.obtenerItems()) {
             dm.addRow(new Object[]{
-                    it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(), String.format("%.2f", it.getSubtotal())
+                    it.getProducto().getCodigo(), it.getProducto().getNombre(),
+                    it.getCantidad(), String.format("%.2f", it.getSubtotal())
             });
         }
+
         verDetalleView.getTxtSubtotal().setText(String.format("%.2f", c.calcularSubtotal()));
         verDetalleView.getTxtIVA().setText(String.format("%.2f", c.calcularIVA()));
         verDetalleView.getTxtTotal().setText(String.format("%.2f", c.calcularTotal()));
 
         if (!verDetalleView.isShowing()) {
-            listarView.getDesktopPane().add(verDetalleView);
+            contenedor.add(verDetalleView);
         }
         verDetalleView.setVisible(true);
-        try { verDetalleView.setSelected(true); }
-        catch(PropertyVetoException ignore){}
+        try {
+            verDetalleView.setSelected(true);
+        } catch (PropertyVetoException ignore) {}
     }
+
 
     public void listarTodosUsuarios() {
         DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
@@ -281,6 +283,21 @@ public class UsuarioControlador {
         listaUsuariosView.setVisible(true);
         try { listaUsuariosView.setSelected(true); }
         catch(PropertyVetoException ignore){}
+    }
+    public void mostrarTodosLosCarritos() {
+        DefaultTableModel m = listarTodosCarritosView.getModelo();
+        m.setRowCount(0);
+
+        for (Carrito c : carritoDAO.listarTodos()) {
+            m.addRow(new Object[]{
+                    c.getCodigo(),
+                    c.getFechaCreacion().getTime(),
+                    c.getUsuario().getUsername()
+            });
+        }
+
+
+
     }
 
 }

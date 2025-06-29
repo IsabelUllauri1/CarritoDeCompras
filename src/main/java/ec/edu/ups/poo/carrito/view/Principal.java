@@ -31,6 +31,7 @@ public class Principal extends JFrame {
     private JMenuItem menuItemMiPagina;
     private JMenuItem menuItemMisCarritos;
     private JMenuItem menuItemCrearUsuario;
+    private JMenuItem menuItemListarTodosLosCarritos;
 
 
     //el modelo es el que hace los metodos. en controlador solo dice que en el view se usen ciertos metodos
@@ -57,6 +58,7 @@ public class Principal extends JFrame {
 
         menuItemListarTodosUsuarios   = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.listarTodos"));
         menuItemCrearUsuario = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.CrearUsuario"));
+        menuItemListarTodosLosCarritos= new JMenuItem(mensajeInternacionalizacionHandler.get("menu.listarTodosLosCarritos"));
 
         menuItemMiPagina          = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.miPagina"));
         menuItemMisCarritos    = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.misCarritos"));
@@ -78,6 +80,7 @@ public class Principal extends JFrame {
 
         menuUsuario.add(menuItemListarTodosUsuarios);
         menuUsuario.add(menuItemCrearUsuario);
+        menuUsuario.add(menuItemListarTodosLosCarritos);
 
 
         menuCuenta.add(menuItemMiPagina);
@@ -131,6 +134,7 @@ public class Principal extends JFrame {
 
         menuItemCrearUsuario.setText(mensajeInternacionalizacionHandler.get("menu.crearUsuario"));
         menuItemListarTodosUsuarios.setText(mensajeInternacionalizacionHandler.get("menu.listarTodosLosUsarios"));
+        menuItemListarTodosLosCarritos.setText(mensajeInternacionalizacionHandler.get("menu.listarTodosLosCarritos"));
 
 
         menuItemListarProductos.setText(mensajeInternacionalizacionHandler.get("menu.listar"));
@@ -166,6 +170,8 @@ public class Principal extends JFrame {
     public JMenuItem getMenuItemListarAdministradores() {
         return menuItemListarAdministradores;
     }
+
+    public JMenuItem getMenuItemListarTodosLosCarritos() {return menuItemListarTodosLosCarritos;}
 
     public JMenuItem getMenuItemCarrito() {
         return menuItemCarrito;
@@ -246,6 +252,7 @@ public class Principal extends JFrame {
         menuItemActualizar.setEnabled(false);
         menuItemEliminar.setEnabled(false);
         menuItemListarCodigo.setEnabled(false);
+        menuItemListarTodosLosCarritos.setEnabled(false);
 
 
     }
