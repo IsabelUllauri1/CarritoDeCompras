@@ -30,6 +30,7 @@ public class Principal extends JFrame {
     private JMenuItem menuCuenta;
     private JMenuItem menuItemMiPagina;
     private JMenuItem menuItemMisCarritos;
+    private JMenuItem menuItemCrearUsuario;
 
 
     //el modelo es el que hace los metodos. en controlador solo dice que en el view se usen ciertos metodos
@@ -55,9 +56,7 @@ public class Principal extends JFrame {
 
 
         menuItemListarTodosUsuarios   = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.listarTodos"));
-        menuItemListarAdministradores = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.listarAdministradores"));
-        menuItemListarUsuarios        = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.listarUsuarios"));
-        menuItemListarPorRol          = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.listarPorRol"));
+        menuItemCrearUsuario = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.CrearUsuario"));
 
         menuItemMiPagina          = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.miPagina"));
         menuItemMisCarritos    = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.misCarritos"));
@@ -78,9 +77,8 @@ public class Principal extends JFrame {
         menuProducto.add(menuItemListarCodigo);
 
         menuUsuario.add(menuItemListarTodosUsuarios);
-        menuUsuario.add(menuItemListarAdministradores);
-        menuUsuario.add(menuItemListarUsuarios);
-        menuUsuario.add(menuItemListarPorRol);
+        menuUsuario.add(menuItemCrearUsuario);
+
 
         menuCuenta.add(menuItemMiPagina);
         menuCuenta.add(menuItemMisCarritos);
@@ -131,10 +129,9 @@ public class Principal extends JFrame {
         menuIdiomaEspanol.setText(mensajeInternacionalizacionHandler.get("menu.es"));
         menuIdiomaAleman.setText(mensajeInternacionalizacionHandler.get("menu.de"));
 
+        menuItemCrearUsuario.setText(mensajeInternacionalizacionHandler.get("menu.crearUsuario"));
         menuItemListarTodosUsuarios.setText(mensajeInternacionalizacionHandler.get("menu.listarTodosLosUsarios"));
-        menuItemListarAdministradores.setText(mensajeInternacionalizacionHandler.get("menu.listarAdministradores"));
-        menuItemListarUsuarios.setText(mensajeInternacionalizacionHandler.get("menu.listarUsuarios"));
-        menuItemListarPorRol.setText(mensajeInternacionalizacionHandler.get("menu.listarPorRol"));
+
 
         menuItemListarProductos.setText(mensajeInternacionalizacionHandler.get("menu.listar"));
         menuItemCrear.setText(mensajeInternacionalizacionHandler.get("menu.crear"));
@@ -203,6 +200,8 @@ public class Principal extends JFrame {
     public JMenuItem getMenuCuenta() {
         return menuCuenta;
     }
+
+    public JMenuItem getMenuItemCrearUsuario() {return menuItemCrearUsuario;}
 
     public JMenuItem getMenuItemMiPagina() {
         return menuItemMiPagina;

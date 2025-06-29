@@ -137,8 +137,14 @@ public class Main {
                         try { listarUsuariosView.setSelected(true); }
                         catch(PropertyVetoException ignore){}
                     });
-                    principal.getMenuItemListarPorRol().addActionListener(ev -> {
-
+                    principal.getMenuItemCrearUsuario().addActionListener(ev -> {
+                        if (!principal.getDesktopPanel().isAncestorOf(crearUsuarioView)) {
+                            principal.getDesktopPanel().add(crearUsuarioView);
+                        }
+                        crearUsuarioView.setVisible(true);
+                        crearUsuarioView.moveToFront();
+                        try { crearUsuarioView.setSelected(true); }
+                        catch(PropertyVetoException ignore){}
                     });
 
                     // — Salir —

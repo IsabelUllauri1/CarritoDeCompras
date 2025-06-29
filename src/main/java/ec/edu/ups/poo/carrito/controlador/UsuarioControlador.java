@@ -54,13 +54,11 @@ public class UsuarioControlador {
     private void listeners() {
         miPaginaView.getBtnActualizarDatos().addActionListener(e -> actualizarDatosMet(e));
         miPaginaView.getBtnCerrarSesion().addActionListener(e -> miPaginaView.dispose());
-       // miPaginaView.getBtnListarCarritos().addActionListener(e -> );
 
         editarUsuarioView.getBtnGuardar().addActionListener(e ->  editarUsuario());
 
         listaUsuariosView.getBtnListar().addActionListener(e -> listarTodos());
 
-        // 2) Buscar por username parcial
         listaUsuariosView.getBtnBuscar().addActionListener(e -> {
             String txt = listaUsuariosView.getTxtBuscar().getText().trim();
             DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
@@ -77,13 +75,13 @@ public class UsuarioControlador {
             }
         });
 
-        // 3) Filtrar por rol
         listaUsuariosView.getCbxRol().addActionListener(e -> listarPorRol());
 
-        // 4) Eliminar seleccionado
         listaUsuariosView.getBtnElininar().addActionListener(e -> eliminarUsuarioSeleccionado());
 
         crearUsuarioView.getBtnGuardar().addActionListener(e -> crearUsuario());
+        crearUsuarioView.getCbxRol().setModel(new DefaultComboBoxModel<>(Rol.values()));
+        crearUsuarioView.getBtnSalir().addActionListener(e -> crearUsuarioView.dispose());
 
         listarView.getBtnRefrescar().addActionListener(e -> refrescarMisCarritos());
         listarView.getBtnVerDetalles().addActionListener(e -> verDetalles());
@@ -128,20 +126,7 @@ public class UsuarioControlador {
         mostrarInternal(listaUsuariosView);
     }
 
-//    private void buscarPorUsername() {
-//        String txt = listaUsuariosView.getTxtBuscar().getText().trim();
-//        DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
-//        m.setRowCount(0);
-//        if (txt.isEmpty()) {
-//            listarTodos();
-//            return;
-//        }
-//        List<Usuario> encontrados = usuarioDAO.buscarPorUsername(txt);
-//        for (Usuario u : encontrados) {
-//            m.addRow(new Object[]{u.getUsername(), u.getRol()});
-//        }
-//        mostrarInternal(listaUsuariosView);
-//    }
+//
     private void listarPorRol() {
         Rol rol = (Rol) listaUsuariosView.getCbxRol().getSelectedItem();
         DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
@@ -166,18 +151,34 @@ public class UsuarioControlador {
     private void crearUsuario() {
         String username = crearUsuarioView.getTxtUsuarioNuevo().getText().trim();
         String pass     = new String(crearUsuarioView.getPwdContrasenaNueva().getPassword()).trim();
-        Rol    rol      = (Rol) crearUsuarioView.getCbxRol().getSelectedItem();
+        Rol rol         = (Rol) crearUsuarioView.getCbxRol().getSelectedItem();
+
+        System.out.println("→ Intentando crear usuario: " + username + " - rol: " + rol);
+
         if (username.isEmpty() || pass.isEmpty()) {
-            crearUsuarioView.mostrarMensaje("Completa los campos", "Atencion", JOptionPane.INFORMATION_MESSAGE);
+            crearUsuarioView.mostrarMensaje("Completa los campos", "Atención", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+
         if (usuarioDAO.buscarPorUsername(username) != null) {
-            crearUsuarioView.mostrarMensaje("Ya existe ese usuario", "Atencion", JOptionPane.INFORMATION_MESSAGE);
+            crearUsuarioView.mostrarMensaje("Ya existe ese usuario", "Atención", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        usuarioDAO.crear(new Usuario(username, pass, rol));
-        crearUsuarioView.mostrarMensaje("Usuario creado", "Exito", JOptionPane.INFORMATION_MESSAGE);
+
+        Usuario nuevo = new Usuario(username, pass, rol);
+        usuarioDAO.crear(nuevo);
+
+        System.out.println("→ Usuario creado: " + nuevo.getUsername());
+
+        crearUsuarioView.mostrarMensaje("Usuario creado", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        // Limpiar campos
+        crearUsuarioView.getTxtUsuarioNuevo().setText("");
+        crearUsuarioView.getPwdContrasenaNueva().setText("");
+        crearUsuarioView.getCbxRol().setSelectedIndex(0);
     }
+
+
 
     private void editarUsuario() {
         String username = editarUsuarioView.getTxtUsuario().getText().trim();

@@ -5,10 +5,19 @@ import javax.swing.*;
 public class CrearUsuarioView extends JInternalFrame{
     private JPanel panelPrincipal;
     private JTextField txtUsuarioNuevo;
-    private JButton guardarButton;
     private JButton btnGuardar;
+    private JButton btnSalir;
     private JPasswordField pwdContrasenaNueva;
     private JComboBox cbxRol;
+
+
+    public CrearUsuarioView() {
+        super("Crear Usuario", true, true, true);
+        setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+        setContentPane(panelPrincipal);
+        setSize(600, 400);
+
+    }
 
 
     public JPanel getPanelPrincipal() {
@@ -23,17 +32,7 @@ public class CrearUsuarioView extends JInternalFrame{
         return btnGuardar;
     }
 
-    public void setBtnGuardar(JButton btnGuardar) {
-        this.btnGuardar = btnGuardar;
-    }
-
-    public JButton getGuardarButton() {
-        return guardarButton;
-    }
-
-    public void setGuardarButton(JButton guardarButton) {
-        this.guardarButton = guardarButton;
-    }
+    public JButton getBtnSalir() {return btnSalir;}
 
     public JTextField getTxtUsuarioNuevo() {
         return txtUsuarioNuevo;
