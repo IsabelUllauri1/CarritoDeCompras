@@ -3,23 +3,25 @@ package ec.edu.ups.poo.carrito.view.producto;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class ListarProductosView extends JInternalFrame{
+public class ListarProductosPorCodigoView extends JInternalFrame{
     private JPanel panelPrincipal;
     private JTable tblProductos;
+    private JTextField txtBuscar;
+    private JButton btnBuscar;
 
-    public ListarProductosView() {
-        super("Listar Productos", true, true, true,true);
-        panelPrincipal = new JPanel();
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"Código", "Nombre", "Cantidad", "Subtotal"}, 0) {
+    public ListarProductosPorCodigoView() {
+        super("Listar Productos", true, true, true, true);
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"Código", "Nombre", "Precio"}, 0
+        ) {
             @Override public boolean isCellEditable(int r, int c) {
-
                 return false;
             }
         };
-
         tblProductos.setModel(model);
         setContentPane(panelPrincipal);
         setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+        setSize(400, 300);
     }
 
     public JPanel getPanelPrincipal() {
@@ -32,6 +34,14 @@ public class ListarProductosView extends JInternalFrame{
 
     public JTable getTblProductos() {
         return tblProductos;
+    }
+
+    public JTextField getTxtBuscar() {
+        return txtBuscar;
+    }
+
+    public JButton getBtnBuscar() {
+        return btnBuscar;
     }
 
     public void setTblProductos(JTable tblProductos) {

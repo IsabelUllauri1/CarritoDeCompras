@@ -4,15 +4,13 @@ import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
-import ec.edu.ups.poo.carrito.view.producto.AnadirProductosView;
-import ec.edu.ups.poo.carrito.view.producto.ProductoActualizarView;
-import ec.edu.ups.poo.carrito.view.producto.ProductoEliminarView;
-import ec.edu.ups.poo.carrito.view.producto.ProductoListarView;
+import ec.edu.ups.poo.carrito.view.producto.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
 import java.util.List;
 
 public class ProductoControlador {
@@ -22,15 +20,18 @@ public class ProductoControlador {
     private AnadirProductosView vistaAnadir;
     private ProductoListarView vistaListar;
     private CarritoAnadirView vistaCarrito;
+    private ListarProductosPorCodigoView vistaListarPorCodigo;
 
 
-    public ProductoControlador(ProductoDAO dao, Principal principal, AnadirProductosView vAnadir, ProductoListarView vListar) {
+    public ProductoControlador(ProductoDAO dao, Principal principal, AnadirProductosView vAnadir, ProductoListarView vListar, ListarProductosPorCodigoView vistaListarPorCodigo) {
         this.productoDAO = dao;
         this.principal =  principal;
         this.vistaAnadir = vAnadir;
         this.vistaListar = vListar;
+        this.vistaListarPorCodigo = vistaListarPorCodigo;
         configurarEventosAñadirYListar();
         configurarMenu();
+        configurarBuscarPorCodigo();
     }
 
     private void buscarProductoPorCodigo() {
@@ -45,53 +46,28 @@ public class ProductoControlador {
     }
 
     private void configurarMenu() {
-        //anadir
-        principal.getMenuItemAnadir().addActionListener(e -> {
-            var v = new AnadirProductosView();
-            principal.getDesktopPanel().add(v);
-            v.getBtnAnadir().addActionListener(ev ->{
-                try {
-                    String nombre    = vistaAnadir.getTextField1().getText().trim();
-                    String codigoTxt = vistaAnadir.getTextField2().getText().trim();
-                    String precioTxt = vistaAnadir.getTxtPrecio().getText().trim();
-
-                    if (nombre.isEmpty() || codigoTxt.isEmpty() || precioTxt.isEmpty()) {
-                        JOptionPane.showMessageDialog(vistaAnadir,
-                                "Completa todos los campos",
-                                "Atención",
-                                JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    int    codigo = Integer.parseInt(codigoTxt);
-                    double precio = Double.parseDouble(precioTxt);
-
-                    if (productoDAO.buscarPorCodigo(codigo) != null) {
-                        JOptionPane.showMessageDialog(vistaAnadir,
-                                "Código repetido",
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    productoDAO.crear(new Producto(nombre, codigo, precio));
-                    JOptionPane.showMessageDialog(vistaAnadir,
-                            "Producto guardado",
-                            "Éxito",
-                            JOptionPane.INFORMATION_MESSAGE);
-
-                    limpiarCamposAnadir();
-                    listarProductos();
-
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(vistaAnadir,
-                            "Código/Precio inválidos",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            });
-            setVistaAnadir(v);
-            v.setVisible(true);
+        //crearprod
+        principal.getMenuItemCrear().addActionListener(e -> {
+            if (!vistaAnadir.isShowing()) {
+                principal.getDesktopPanel().add(vistaAnadir);
+            }
+            vistaAnadir.setVisible(true);
+            try {
+                vistaAnadir.setSelected(true);
+                vistaAnadir.moveToFront();
+            } catch (PropertyVetoException ignore) {}
+        });
+        //listarporcodigo
+        principal.getMenuItemListarCodigo().addActionListener(e -> {
+            if (!vistaListarPorCodigo.isShowing()) {
+                principal.getDesktopPanel().add(vistaListarPorCodigo);
+            }
+            cargarTodosEnBuscarCodigo();      // carga todos al abrir
+            vistaListarPorCodigo.setVisible(true);
+            try {
+                vistaListarPorCodigo.setSelected(true);
+                vistaListarPorCodigo.moveToFront();
+            } catch (PropertyVetoException ignore) {}
         });
 
 
@@ -142,6 +118,18 @@ public class ProductoControlador {
             v.getBtnSalir().addActionListener(ev -> v.dispose());
 
             v.setVisible(true);
+        });
+        //listar
+        principal.getMenuItemListarProductos().addActionListener(e -> {
+            if (!vistaListar.isShowing()) {
+                principal.getDesktopPanel().add(vistaListar);
+            }
+            listarProductos();
+            vistaListar.setVisible(true);
+            try {
+                vistaListar.setSelected(true);
+                vistaListar.moveToFront();
+            } catch (PropertyVetoException ignore) {}
         });
 
 
@@ -210,9 +198,77 @@ public class ProductoControlador {
             try { vistaCarrito.setSelected(true); } catch(Exception ignore){}
         });
     }
+    private void configurarBuscarPorCodigo() {
+        vistaListarPorCodigo.getBtnBuscar().addActionListener(ev -> {
+            String txt = vistaListarPorCodigo.getTxtBuscar().getText().trim();
+            DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
+            m.setRowCount(0);
+            if (txt.isEmpty()) {
+                cargarTodosEnBuscarCodigo();
+                return;
+            }
+            try {
+                int code = Integer.parseInt(txt);
+                Producto p = productoDAO.buscarPorCodigo(code);
+                if (p != null) {
+                    m.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
+                } else {
+                    JOptionPane.showMessageDialog(vistaListarPorCodigo, "No se encontró producto con código " + code, "Resultado", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(vistaListarPorCodigo, "Código inválido", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    }
+
+    private void cargarTodosEnBuscarCodigo() {
+        DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
+        m.setRowCount(0);
+        for (Producto p : productoDAO.listarTodos()) {
+            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
+        }
+    }
 
 
     private void guardarProducto() {
+        String nombre    = vistaAnadir.getTextField1().getText().trim();
+        String codigoTxt = vistaAnadir.getTextField2().getText().trim();
+        String precioTxt = vistaAnadir.getTxtPrecio().getText().trim();
+
+        if (nombre.isEmpty() || codigoTxt.isEmpty() || precioTxt.isEmpty()) {
+            JOptionPane.showMessageDialog(vistaAnadir, "Completa todos los campos", "Atención", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int codigo;
+        double precio;
+        try {
+            codigo = Integer.parseInt(codigoTxt);
+            precio = Double.parseDouble(precioTxt);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(vistaAnadir,
+                    "Código o precio inválido",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (productoDAO.buscarPorCodigo(codigo) != null) {
+            JOptionPane.showMessageDialog(vistaAnadir,
+                    "Ya existe un producto con ese código",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        productoDAO.crear(new Producto(nombre, codigo, precio));
+        JOptionPane.showMessageDialog(vistaAnadir, "Producto guardado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        listarProductos();
+
+        vistaAnadir.getTextField1().setText("");
+        vistaAnadir.getTextField2().setText("");
+        vistaAnadir.getTxtPrecio() .setText("");
 
     }
 
@@ -225,13 +281,11 @@ public class ProductoControlador {
 
     private void listarProductos() {
         List<Producto> todos = productoDAO.listarTodos();
-        vistaListar.getModelo().setRowCount(0);
+        DefaultTableModel m = vistaListar.getModelo();
+        m.setRowCount(0);
         for (Producto p : todos) {
-            vistaListar.getModelo().addRow(new Object[]{
-                    p.getCodigo(), p.getNombre(), p.getPrecio()
-            });
+            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
         }
-
     }
 
     private void buscarProducto() {
@@ -246,13 +300,24 @@ public class ProductoControlador {
     }
 
     private void configurarEventosAñadirYListar() {
-        vistaAnadir.getBtnAnadir().addActionListener(e -> guardarProducto());
+
         vistaAnadir.getBtnLimpiar(). addActionListener(e -> limpiarCamposAnadir());
         vistaAnadir.getBtnSalir().  addActionListener(e -> vistaAnadir.dispose());
+        vistaAnadir.getBtnAnadir().addActionListener(e -> guardarProducto());
 
 
         vistaListar.getBtnBuscar(). addActionListener(e -> buscarProducto());
         vistaListar.getBtnSalir().  addActionListener(e -> vistaListar.dispose());
+
+        vistaListarPorCodigo.getBtnBuscar().addActionListener(e -> buscarProductoPorCodigo());
+
+    }
+    public void listarProductosEnVistaPorCodigo() {
+        DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
+        m.setRowCount(0);
+        for (Producto p : productoDAO.listarTodos()) {
+            m.addRow(new Object[]{ p.getCodigo(), p.getNombre(), p.getPrecio() });
+        }
     }
 
     public ProductoDAO getProductoDAO() {

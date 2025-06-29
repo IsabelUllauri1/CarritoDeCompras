@@ -10,10 +10,7 @@ import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
 import ec.edu.ups.poo.carrito.view.carrito.ListarMisCarritos;
 import ec.edu.ups.poo.carrito.view.carrito.VerDetalleView;
-import ec.edu.ups.poo.carrito.view.producto.AnadirProductosView;
-import ec.edu.ups.poo.carrito.view.producto.ProductoActualizarView;
-import ec.edu.ups.poo.carrito.view.producto.ProductoEliminarView;
-import ec.edu.ups.poo.carrito.view.producto.ProductoListarView;
+import ec.edu.ups.poo.carrito.view.producto.*;
 import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
 import ec.edu.ups.poo.carrito.view.usuario.EditarUsuarioView;
 import ec.edu.ups.poo.carrito.view.usuario.ListarUsuariosView;
@@ -22,6 +19,7 @@ import ec.edu.ups.poo.carrito.view.usuario.MiPaginaView;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyVetoException;
 
 public class Main {
     public static void main(String[] args) {
@@ -49,6 +47,7 @@ public class Main {
                     ProductoListarView listarProdV   = new ProductoListarView();
                     ProductoEliminarView eliminarProdV = new ProductoEliminarView();
                     ProductoActualizarView actualizarProdV = new ProductoActualizarView();
+                    ListarProductosPorCodigoView listarProdPorCodigo = new ListarProductosPorCodigoView();
 
                     CarritoAnadirView anadirCarritoV = new CarritoAnadirView();
                     CarritoListarView listarCarritoV = new CarritoListarView();
@@ -62,7 +61,7 @@ public class Main {
                     EditarUsuarioView editarUsuarioView = new EditarUsuarioView();
 
 
-                    ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV);
+                    ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV,listarProdPorCodigo);
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
                     UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView);
 
@@ -71,12 +70,29 @@ public class Main {
                     }
 
                     // — Producto —
-                    principal.getMenuItemAnadir().addActionListener(ev -> {
+                    principal.getMenuItemCrear().addActionListener(ev -> {
 
                         if(!anadirProdV.isVisible()){
-                            principal.getDesktopPanel().add(anadirProdV);
                             anadirProdV.setVisible(true);
+                            anadirProdV.moveToFront();
+                            try {
+                                anadirProdV.setSelected(true);
+                            } catch (PropertyVetoException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         }
+                    });
+                    principal.getMenuItemListarCodigo().addActionListener(ev -> {
+                        if (!listarProdPorCodigo.isShowing()) {
+                            principal.getDesktopPanel().add(listarProdPorCodigo);
+                        }
+                        prodCtrl.listarProductosEnVistaPorCodigo();
+                        listarProdPorCodigo.setVisible(true);
+                        try {
+                            listarProdPorCodigo.setSelected(true);
+                            listarProdPorCodigo.moveToFront();
+                        } catch (PropertyVetoException ignore) {}
+
                     });
                     principal.getMenuItemListarProductos().addActionListener(ev -> {
                         principal.getDesktopPanel().add(listarProdV);

@@ -18,7 +18,7 @@ public class Principal extends JFrame {
     private JMenuItem menuItemCrear;
     private JMenuItem menuItemEliminar;
     private JMenuItem menuItemActualizar;
-    private JMenuItem menuItemAnadir;
+    private JMenuItem menuItemListarCodigo;
     private MiJDesktopPane desktopPanel;
     private JMenuItem menuItemListarProductos;
     private JMenuItem menuItemCarrito;
@@ -49,7 +49,8 @@ public class Principal extends JFrame {
         menuItemCrear    = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.CrearProducto"));
         menuItemEliminar = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.EliminarProducto"));
         menuItemActualizar = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ActualizarProducto"));
-        menuItemAnadir   = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.AnadirProducto"));
+        menuItemListarCodigo = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ListarCodigo"));
+
         menuItemCarrito  = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.GestionDeCarrito"));
 
 
@@ -73,8 +74,8 @@ public class Principal extends JFrame {
         menuProducto.add(menuItemListarProductos);
         menuProducto.add(menuItemCrear);
         menuProducto.add(menuItemEliminar);
-        menuProducto.add(menuItemActualizar);
         menuProducto.add(menuItemCarrito);
+        menuProducto.add(menuItemListarCodigo);
 
         menuUsuario.add(menuItemListarTodosUsuarios);
         menuUsuario.add(menuItemListarAdministradores);
@@ -139,7 +140,8 @@ public class Principal extends JFrame {
         menuItemCrear.setText(mensajeInternacionalizacionHandler.get("menu.crear"));
         menuItemEliminar.setText(mensajeInternacionalizacionHandler.get("menu.eliminar"));
         menuItemActualizar.setText(mensajeInternacionalizacionHandler.get("menu.actualizar"));
-        menuItemAnadir.setText(mensajeInternacionalizacionHandler.get("menu.anadir"));
+        menuItemListarCodigo.setText(mensajeInternacionalizacionHandler.get("menu.listarCodigo"));
+
         menuIdioma.setText(mensajeInternacionalizacionHandler.get("menu.Idioma"));
 
     }
@@ -190,10 +192,6 @@ public class Principal extends JFrame {
         return menuItemActualizar;
     }
 
-    public JMenuItem getMenuItemAnadir() {
-        return menuItemAnadir;
-    }
-
     public JMenu getMenuProducto() {
         return menuProducto;
     }
@@ -242,11 +240,13 @@ public class Principal extends JFrame {
         return menuItemSalir;
     }
 
+    public JMenuItem getMenuItemListarCodigo() {return menuItemListarCodigo;}
 
     public void deshabilitarMenuAdministrador() {
         menuItemCrear.setEnabled(false);
         menuItemActualizar.setEnabled(false);
         menuItemEliminar.setEnabled(false);
+        menuItemListarCodigo.setEnabled(false);
 
 
     }

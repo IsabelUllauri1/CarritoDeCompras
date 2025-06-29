@@ -25,7 +25,7 @@
         </constraints>
         <properties>
           <foreground color="-11044417"/>
-          <text value="Buscar"/>
+          <text value="Buscar por Nombre: "/>
         </properties>
       </component>
       <component id="6894a" class="javax.swing.JTextField" binding="txtBuscar">
