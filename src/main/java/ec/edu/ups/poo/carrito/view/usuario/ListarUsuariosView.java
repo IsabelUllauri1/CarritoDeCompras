@@ -1,14 +1,39 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
+import ec.edu.ups.poo.carrito.modelo.Rol;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class ListarUsuariosView extends JInternalFrame{
     private JPanel panelPrincipal;
     private JTable tblUsuarios;
     private JButton btnElininar;
-    private JButton buscarButton;
     private JButton btnListar;
-    private JButton btnListarRol;
+    private JTextField txtBuscar;
+    private JButton btnBuscar;
+    private JLabel lblBuscar;
+    private JComboBox cbxRol;
+    private JLabel lblListarUsuARIOS;
+
+    public ListarUsuariosView() {
+        super("Listar Usuarios", true, true, true, true);
+
+        setContentPane(panelPrincipal);
+
+        cbxRol.setModel(new DefaultComboBoxModel<>(Rol.values()));
+        tblUsuarios.setModel(new DefaultTableModel(
+                new Object[]{"Usuario","Rol"}, 0
+        ){
+            @Override public boolean isCellEditable(int row, int col){
+                return false;
+            }
+        });
+
+        pack();
+        setSize(600, 400);
+        setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+    }
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;
@@ -31,12 +56,28 @@ public class ListarUsuariosView extends JInternalFrame{
     }
 
 
+    public JLabel getLblBuscar() {
+        return lblBuscar;
+    }
+
+    public JButton getBtnBuscar() {
+        return btnBuscar;
+    }
+
+    public JTextField getTxtBuscar() {
+        return txtBuscar;
+    }
+
     public JButton getBtnElininar() {
         return btnElininar;
     }
 
-    public JButton getBtnListarRol() {
-        return btnListarRol;
+    public JComboBox getCbxRol() {
+        return cbxRol;
+    }
+
+    public JLabel getLblListarUsuARIOS() {
+        return lblListarUsuARIOS;
     }
 }
 

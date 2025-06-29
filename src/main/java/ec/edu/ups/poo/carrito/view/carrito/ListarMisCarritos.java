@@ -8,6 +8,7 @@ public class ListarMisCarritos extends JInternalFrame {
     private JTable tblCarritos;
     private JButton btnVerDetalles;
     private JButton btnEliminar;
+    private JButton btnRefrescar;
     private DefaultTableModel modelo;
     public ListarMisCarritos() {
         super("Listar Mis Carritos", true, true, true, true);
@@ -24,6 +25,8 @@ public class ListarMisCarritos extends JInternalFrame {
 
 
     }
+
+    public JButton getBtnRefrescar() {return btnRefrescar;}
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;

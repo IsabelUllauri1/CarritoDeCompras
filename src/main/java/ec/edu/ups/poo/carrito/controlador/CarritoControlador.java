@@ -12,6 +12,8 @@ import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
 import ec.edu.ups.poo.carrito.view.carrito.VerDetalleView;
 
 import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 import javax.swing.table.DefaultTableModel;
 
 import java.beans.PropertyVetoException;
@@ -60,6 +62,8 @@ public class CarritoControlador {
         listarView.getBtnEliminar().addActionListener(e -> eliminarCarrito());
         listarView.getBtnModificar().addActionListener(e -> modificarCarrito());
         listarView.getBtnDetalless().addActionListener(e -> verDetalles());
+        //miscarritos
+
     }
 
     private void buscarProducto() {
@@ -128,6 +132,7 @@ public class CarritoControlador {
             return;
         }
         carritoDAO.crear(carrito);
+        System.out.println("DAO contiene ahora: " + carritoDAO.listarTodos().size() + " carritos → " + carritoDAO.listarTodos());
         anadirView.mostrarMensaje("Carrito registrado. Código: " + carrito.getCodigo());
 
         this.carrito = new Carrito();

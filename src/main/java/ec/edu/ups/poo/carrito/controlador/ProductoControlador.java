@@ -246,18 +246,12 @@ public class ProductoControlador {
             codigo = Integer.parseInt(codigoTxt);
             precio = Double.parseDouble(precioTxt);
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(vistaAnadir,
-                    "Código o precio inválido",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vistaAnadir, "Código o precio inválido", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (productoDAO.buscarPorCodigo(codigo) != null) {
-            JOptionPane.showMessageDialog(vistaAnadir,
-                    "Ya existe un producto con ese código",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vistaAnadir, "Ya existe un producto con ese código", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -332,31 +326,7 @@ public class ProductoControlador {
         return vistaListar;
     }
 
-    public void setProductoListarView(ProductoListarView vistaListar) {
-        this.vistaListar = vistaListar;
-        configurarEventosAñadirYListar();
-    }
 
-    public void setVistaAnadir(AnadirProductosView vistaAnadir) {
-        this.vistaAnadir = vistaAnadir;
-        configurarEventosAñadirYListar();
-    }
-
-    private void configurarAnadirEventos(){
-        vistaAnadir.getBtnAnadir().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                guardarProducto();
-            }
-        });
-
-        vistaListar.getBtnBuscar().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buscarProducto();
-            }
-        });
-    }
 
 
 

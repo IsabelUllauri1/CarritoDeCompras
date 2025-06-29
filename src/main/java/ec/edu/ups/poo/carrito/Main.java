@@ -61,9 +61,10 @@ public class Main {
                     EditarUsuarioView editarUsuarioView = new EditarUsuarioView();
 
 
+
                     ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV,listarProdPorCodigo);
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
-                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView);
+                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal );
 
                     if (usuarioAut.getRol() == Rol.USUARIO) {
                         principal.deshabilitarMenuAdministrador();
@@ -119,8 +120,25 @@ public class Main {
                         miPaginaV.setVisible(true);
                     });
                     principal.getMenuItemMisCarritos().addActionListener(ev -> {
-                        principal.getDesktopPanel().add(listarMisV);
+                        if (!listarMisV.isShowing()) {
+                            principal.getDesktopPanel().add(listarMisV);
+                        }
                         listarMisV.setVisible(true);
+                        try { listarMisV.setSelected(true); }
+                        catch(PropertyVetoException ignore){}
+                    });
+                    // — Admin —
+                    principal.getMenuItemListarTodosUsuarios().addActionListener( e1 -> {
+                        if (!listarUsuariosView.isShowing()) {
+                            principal.getDesktopPanel().add(listarUsuariosView);
+                        }
+                        listarUsuariosView.setVisible(true);
+                        listarUsuariosView.moveToFront();
+                        try { listarUsuariosView.setSelected(true); }
+                        catch(PropertyVetoException ignore){}
+                    });
+                    principal.getMenuItemListarPorRol().addActionListener(ev -> {
+
                     });
 
                     // — Salir —
