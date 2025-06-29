@@ -15,6 +15,7 @@ public class MiJDesktopPane extends JDesktopPane {
     }
 
 
+
     //cerrar sesion en usuario controler usuario deberia ser null
 
 }

@@ -101,16 +101,6 @@ public class ProductoListarView extends JInternalFrame {
         this.tblProductos = tblProductos;
     }
 
-
-
-    /*public JButton getBtnListar() {
-        return btnListar;
-    }
-
-    public void setBtnListar(JButton btnListar) {
-        this.btnListar = btnListar;
-    }*/
-
     public JTextField getTxtBuscar() {
         return txtBuscar;
     }

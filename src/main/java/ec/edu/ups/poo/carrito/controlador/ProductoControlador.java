@@ -94,12 +94,6 @@ public class ProductoControlador {
             v.setVisible(true);
         });
 
-        //crear
-        principal.getMenuItemCrear().addActionListener(e -> {
-            principal.getMenuItemAnadir().doClick();
-        });
-
-
 
         //aactualizar
         principal.getMenuItemActualizar().addActionListener(e -> {
@@ -121,7 +115,7 @@ public class ProductoControlador {
                     v.cargarProducto(p);
                 }
             });
-
+            // actualizar
 
             v.getBtnActualizar().addActionListener(ev -> {
                 try {
@@ -218,23 +212,6 @@ public class ProductoControlador {
     }
 
 
-
-
-
-    private void configurarEventos() {
-        vistaAnadir.getBtnAnadir().addActionListener(e -> guardarProducto());
-        vistaAnadir.getBtnLimpiar(). addActionListener(e -> limpiarCamposAnadir());
-        vistaAnadir.getBtnSalir().  addActionListener(e -> vistaAnadir.dispose());
-
-        vistaListar.getBtnBuscar(). addActionListener(e -> buscarProducto());
-
-        vistaListar.getBtnSalir().  addActionListener(e -> vistaListar.dispose());
-
-
-
-
-    }
-
     private void guardarProducto() {
 
     }
@@ -265,11 +242,7 @@ public class ProductoControlador {
         }
         List<Producto> encontrados = productoDAO.buscarPorNombre(nombre);
         vistaListar.cargarDatos(encontrados);
-        vistaListar.mostrarMensaje(
-                encontrados.isEmpty()
-                        ? "No se encontraron productos"
-                        : "Se encontraron " + encontrados.size() + " productos"
-        );
+        vistaListar.mostrarMensaje(encontrados.isEmpty() ? "No se encontraron productos" : "Se encontraron " + encontrados.size() + " productos");
     }
 
     private void configurarEventosAñadirYListar() {

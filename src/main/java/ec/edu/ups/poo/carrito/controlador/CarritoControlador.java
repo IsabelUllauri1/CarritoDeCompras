@@ -6,34 +6,41 @@ import ec.edu.ups.poo.carrito.modelo.Carrito;
 import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
+import ec.edu.ups.poo.carrito.view.carrito.VerDetalleView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
 import java.beans.PropertyVetoException;
 import java.util.List;
 
 public class CarritoControlador {
 
     private final ProductoDAO productoDAO;
-    private final CarritoDAO carritoDAO;
+    private final CarritoDAO   carritoDAO;
     private final CarritoAnadirView anadirView;
     private final CarritoListarView listarView;
+    private final Usuario usuario;
     private Carrito carrito;
     private final DefaultTableModel modeloItems;
     private final DefaultTableModel modeloList;
-    private  final Usuario usuarioAutenticado;
+    private VerDetalleView verDetalleView;
+    private Principal principal;
 
-    public CarritoControlador(ProductoDAO productoDAO, CarritoDAO carritoDAO, CarritoAnadirView anadirView, CarritoListarView listarView, Usuario usuarioAutenticado) {
+    public CarritoControlador(ProductoDAO productoDAO, CarritoDAO carritoDAO, CarritoAnadirView anadirView, CarritoListarView listarView, Usuario usuario) {
         this.productoDAO = productoDAO;
         this.carritoDAO = carritoDAO;
         this.anadirView = anadirView;
         this.listarView = listarView;
+        this.usuario = usuario;
         this.carrito = new Carrito();
-        this.usuarioAutenticado = usuarioAutenticado;
+        this.carrito.setUsuario(usuario);
+
         this.modeloItems = (DefaultTableModel) anadirView.getTblProductos().getModel();
-        this.modeloList = (DefaultTableModel) listarView.getTblCarritos().getModel();
+        this.modeloList  = (DefaultTableModel) listarView.getTblCarritos().getModel();
 
         configurarEventos();
         refrescarTablaItems();
@@ -41,187 +48,182 @@ public class CarritoControlador {
     }
 
     private void configurarEventos() {
-        //anadirview
-        anadirView.getBtnBuscar().addActionListener(e -> {
-            try {
-                int code = Integer.parseInt(anadirView.getTxtCodigo().getText().trim());
-                Producto p = productoDAO.buscarPorCodigo(code);
-                if (p != null) {
-                    anadirView.getTxtNombre().setText(p.getNombre());
-                    anadirView.getTxtPrecio().setText(String.valueOf(p.getPrecio()));
-                } else {
-                    anadirView.mostrarMensaje("Producto no encontrado");
-                }
-            } catch (NumberFormatException ex) {
-                anadirView.mostrarMensaje("Código inválido");
-            }
-        });
-
-        anadirView.getBtnAnadir().addActionListener(e -> {
-            try {
-                int code = Integer.parseInt(anadirView.getTxtCodigo().getText().trim());
-                int qty  = Integer.parseInt(anadirView.getCbxCantidad().getSelectedItem().toString());
-                Producto p = productoDAO.buscarPorCodigo(code);
-                if (p == null) {
-                    anadirView.mostrarMensaje("Producto no encontrado");
-                    return;
-                }
-
-                //sustituye por cantidad actual
-                boolean encontrado = false;
-                for (ItemCarrito item : carrito.obtenerItems()) {
-                    if (item.getProducto().getCodigo() == code) {
-                        item.setCantidad(qty);
-                        encontrado = true;
-                        break;
-                    }
-                }
-                if (!encontrado) {
-                    carrito.agregarProducto(p, qty);
-                }
-
-
-                DefaultTableModel modelo = (DefaultTableModel) anadirView.getTblProductos().getModel();
-                modelo.setRowCount(0);
-                for (ItemCarrito iCarrito : carrito.obtenerItems()) {
-                    modelo.addRow(new Object[]{iCarrito.getProducto().getCodigo(), iCarrito.getProducto().getNombre(), iCarrito.getCantidad(), iCarrito.getSubtotal()});
-                }
-
-
-                double sub   = carrito.calcularSubtotal();
-                double iva   = carrito.calcularIVA();
-                double total = carrito.calcularTotal();
-
-                anadirView.getTxtSubtotal().setText(String.format("%.2f", sub));
-                anadirView.getTxtIVA().setText   (String.format("%.2f", iva));
-                anadirView.getTxtTotal().setText (String.format("%.2f", total));
-
-            } catch (NumberFormatException ex) {
-                anadirView.mostrarMensaje("Datos inválidos");
-            }
-        });
-
-
-        anadirView.getBtnVaciar().addActionListener(e -> {
-            carrito.vaciarCarrito();
-            refrescarTablaItems();
-        });
-
-        anadirView.getBtnEliminar().addActionListener(e -> {
-            int row = anadirView.getTblProductos().getSelectedRow();
-            if (row >= 0) {
-                int code = (int) modeloItems.getValueAt(row, 0);
-                int opt = JOptionPane.showConfirmDialog(anadirView,
-                        "¿Eliminar item código " + code + "?",
-                        "Confirmar eliminación",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-                if (opt == JOptionPane.YES_OPTION) {
-                    carrito.eliminarProducto(code);
-                    refrescarTablaItems();
-                }
-            } else {
-                anadirView.mostrarMensaje("Selecciona un ítem primero");
-            }
-        });
-
-        anadirView.getBtnGuardar().addActionListener(e -> {
-            guardarCarrito();
-        });
-
+        // — AnadirView —
+        anadirView.getBtnBuscar().addActionListener(e -> buscarProducto());
+        anadirView.getBtnAnadir().addActionListener(e -> agregarItem());
+        anadirView.getBtnVaciar().addActionListener(e -> vaciarCarrito());
+        anadirView.getBtnEliminar().addActionListener(e -> eliminarItem());
+        anadirView.getBtnGuardar().addActionListener(e -> guardarCarrito());
         anadirView.getBtnCancelar().addActionListener(e -> anadirView.dispose());
 
-        //listarview
-        listarView.getBtnRefrescar().addActionListener(e -> refrescarLista());
+        // — ListarView —
+        listarView.getBtnEliminar().addActionListener(e -> eliminarCarrito());
+        listarView.getBtnModificar().addActionListener(e -> modificarCarrito());
+        listarView.getBtnDetalless().addActionListener(e -> verDetalles());
+    }
 
-        listarView.getBtnEliminar().addActionListener(e -> {
-            int row = listarView.getTblCarritos().getSelectedRow();
-            if (row >= 0) {
-                int code = (int) modeloList.getValueAt(row, 0);
-                int opt = JOptionPane.showConfirmDialog(listarView,
-                        "¿Eliminar carrito #" + code + "?",
-                        "Confirmar eliminación",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-                if (opt == JOptionPane.YES_OPTION) {
-                    carritoDAO.eliminar(code);
-                    refrescarLista();
-                }
+    private void buscarProducto() {
+        try {
+            int code = Integer.parseInt(anadirView.getTxtCodigo().getText().trim());
+            Producto p = productoDAO.buscarPorCodigo(code);
+            if (p == null) {
+                anadirView.mostrarMensaje("Producto no encontrado");
             } else {
-                JOptionPane.showMessageDialog(listarView, "Selecciona un carrito primero");
+                anadirView.getTxtNombre().setText(p.getNombre());
+                anadirView.getTxtPrecio().setText(String.valueOf(p.getPrecio()));
             }
-        });
+        } catch (NumberFormatException ex) {
+            anadirView.mostrarMensaje("Código inválido");
+        }
+    }
 
-        listarView.getBtnModificar().addActionListener(e -> {
-            int row = listarView.getTblCarritos().getSelectedRow();
-            if (row >= 0) {
-                int code = (int) modeloList.getValueAt(row, 0);
-                Carrito c = carritoDAO.buscarPorCodigo(code);
-                if (c != null) {
-                    // abrir AddView para edición
-                    try {
-                        anadirView.setTitle("Modificar Carrito #" + code);
-                        listarView.getDesktopPane().add(anadirView);
-                        anadirView.setSelected(true);
-                    } catch (PropertyVetoException ignore) {}
-                    carrito = c; // carga carrito existente
-                    refrescarTablaItems();
-                    anadirView.setVisible(true);
-                }
-            } else {
-                JOptionPane.showMessageDialog(listarView, "Selecciona un carrito primero");
+    private void agregarItem() {
+        try {
+            int code = Integer.parseInt(anadirView.getTxtCodigo().getText().trim());
+            int qty  = Integer.parseInt(anadirView.getCbxCantidad().getSelectedItem().toString());
+            Producto p = productoDAO.buscarPorCodigo(code);
+            if (p == null) {
+                anadirView.mostrarMensaje("Producto no encontrado");
+                return;
             }
-        });
+            boolean encontrado = false;
+            for (ItemCarrito it : carrito.obtenerItems()) {
+                if (it.getProducto().getCodigo() == code) {
+                    it.setCantidad(qty);
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (!encontrado) {
+                carrito.agregarProducto(p, qty);
+            }
+            refrescarTablaItems();
+        } catch (NumberFormatException ex) {
+            anadirView.mostrarMensaje("Datos inválidos");
+        }
+    }
+
+    private void vaciarCarrito() {
+        carrito.vaciarCarrito();
+        refrescarTablaItems();
+    }
+
+    private void eliminarItem() {
+        int row = anadirView.getTblProductos().getSelectedRow();
+        if (row < 0) {
+            anadirView.mostrarMensaje("Selecciona un ítem primero");
+            return;
+        }
+        int code = (int) modeloItems.getValueAt(row, 0);
+        int opt = JOptionPane.showConfirmDialog(anadirView, "¿Eliminar item código " + code + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        if (opt == JOptionPane.YES_OPTION) {
+            carrito.eliminarProducto(code);
+            refrescarTablaItems();
+        }
+    }
+
+    private void guardarCarrito() {
+        if (carrito.estaVacio()) {
+            anadirView.mostrarMensaje("El carrito está vacío.");
+            return;
+        }
+        carritoDAO.crear(carrito);
+        anadirView.mostrarMensaje("Carrito registrado. Código: " + carrito.getCodigo());
+
+        this.carrito = new Carrito();
+        this.carrito.setUsuario(usuario);
+        refrescarTablaItems();
+        refrescarLista();
     }
 
     private void refrescarTablaItems() {
         modeloItems.setRowCount(0);
         for (ItemCarrito it : carrito.obtenerItems()) {
             modeloItems.addRow(new Object[]{
-                    it.getProducto().getCodigo(),
-                    it.getProducto().getNombre(),
-                    it.getCantidad(),
-                    it.getSubtotal()
+                    it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(), it.getSubtotal()
             });
         }
-        //titales
-        double sub = carrito.calcularSubtotal();
-        anadirView.getTxtSubtotal().setText(String.format("%.2f", sub));
-        anadirView.getTxtIVA().setText(String.format("%.2f", carrito.calcularIVA()));
-        anadirView.getTxtTotal().setText(String.format("%.2f", carrito.calcularTotal()));
+        anadirView.getTxtSubtotal().setText(String.format("%.2f", carrito.calcularSubtotal()));
+        anadirView.getTxtIVA().setText   (String.format("%.2f", carrito.calcularIVA()));
+        anadirView.getTxtTotal().setText (String.format("%.2f", carrito.calcularTotal()));
     }
 
     private void refrescarLista() {
         modeloList.setRowCount(0);
-        List<Carrito> list = carritoDAO.listarTodos();
-        for (Carrito c : list) {
-            modeloList.addRow(new Object[]{
-                    c.getCodigo(),
-                    c.getFechaCreacion().getTime(),
-                    c.calcularSubtotal(),
-                    c.calcularIVA(),
-                    c.calcularTotal()
+        List<Carrito> todos = carritoDAO.listarTodos();
+        for (Carrito c : todos) {
+            modeloList.addRow(new Object[]{c.getCodigo(), c.getFechaCreacion().getTime(), c.calcularSubtotal(), c.calcularIVA(), c.calcularTotal()
             });
         }
     }
 
-    private void guardarCarrito() {
+    private void modificarCarrito() {
+        int row = listarView.getTblCarritos().getSelectedRow();
+        if (row < 0) {
+            listarView.mostrarMensaje("Selecciona un carrito primero");
+            return;
+        }
+        int code = (int) modeloList.getValueAt(row, 0);
+        Carrito c = carritoDAO.buscarPorCodigo(code);
+        if (c == null) return;
+        anadirView.setTitle("Modificar Carrito #" + code);
+        if(!anadirView.isShowing()){
+            listarView.getDesktopPane().add(anadirView);
+        }
+        anadirView.setVisible(true);
+        refrescarTablaItems();
+    }
 
-        if (carrito.estaVacio()) {
-            listarView.mostrarMensaje("El carrito está vacío.");
+    private void eliminarCarrito() {
+        int row = listarView.getTblCarritos().getSelectedRow();
+        if (row < 0) {
+            listarView.mostrarMensaje("Selecciona un carrito primero");
+            return;
+        }
+        int code = (int) modeloList.getValueAt(row, 0);
+        int opt = JOptionPane.showConfirmDialog(listarView, "¿Eliminar carrito #" + code + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        if (opt == JOptionPane.YES_OPTION) {
+            carritoDAO.eliminar(code);
+            refrescarLista();
+        }
+    }
+
+    private void verDetalles() {
+        int row = listarView.getTblCarritos().getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(listarView, "Selecciona un carrito primero", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        carrito.setUsuario(usuarioAutenticado);
-        //guarda
-        carritoDAO.crear(carrito);
-        listarView.mostrarMensaje("Carrito registrado con éxito. Código: " + carrito.getCodigo());
+        int codigo = (int) listarView.getTblCarritos()
+                .getValueAt(row, 0);
 
-        carrito = new Carrito();
-        carrito.setUsuario(usuarioAutenticado);
+        Carrito c = carritoDAO.buscarPorCodigo(codigo);
+        if (c == null) {
+            JOptionPane.showMessageDialog(listarView, "No se encontró el carrito", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        refrescarTablaItems();
-        refrescarLista();
+        DefaultTableModel dm = (DefaultTableModel) verDetalleView.getTblProductos().getModel();
+        dm.setRowCount(0);
+        for (ItemCarrito it : c.obtenerItems()) {
+            dm.addRow(new Object[]{it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(), String.format("%.2f", it.getSubtotal())
+            });
+        }
+
+        verDetalleView.getTxtSubtotal().setText(String.format("%.2f", c.calcularSubtotal()));
+        verDetalleView.getTxtIVA().setText(   String.format("%.2f", c.calcularIVA()));
+        verDetalleView.getTxtTotal().setText(  String.format("%.2f", c.calcularTotal()));
+
+
+        try {
+            if (!verDetalleView.isShowing()) {principal.getDesktopPanel().add(verDetalleView);
+            }
+            verDetalleView.setVisible(true);
+            verDetalleView.setSelected(true);
+        } catch (PropertyVetoException ex) {
+        }
     }
 
+    //
 }

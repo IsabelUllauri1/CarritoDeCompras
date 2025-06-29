@@ -14,6 +14,10 @@ import ec.edu.ups.poo.carrito.view.producto.AnadirProductosView;
 import ec.edu.ups.poo.carrito.view.producto.ProductoActualizarView;
 import ec.edu.ups.poo.carrito.view.producto.ProductoEliminarView;
 import ec.edu.ups.poo.carrito.view.producto.ProductoListarView;
+import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
+import ec.edu.ups.poo.carrito.view.usuario.EditarUsuarioView;
+import ec.edu.ups.poo.carrito.view.usuario.ListarUsuariosView;
+import ec.edu.ups.poo.carrito.view.usuario.MiPaginaView;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -29,7 +33,6 @@ public class Main {
 
             LoginView loginView = new LoginView();
             LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView);
-
             loginView.setVisible(true);
 
             loginView.addWindowListener(new WindowAdapter() {
@@ -54,19 +57,26 @@ public class Main {
                     ListarMisCarritos listarMisV     = new ListarMisCarritos();
                     VerDetalleView verDetalleV       = new VerDetalleView();
 
+                    ListarUsuariosView listarUsuariosView = new ListarUsuariosView();
+                    CrearUsuarioView crearUsuarioView = new CrearUsuarioView();
+                    EditarUsuarioView editarUsuarioView = new EditarUsuarioView();
+
 
                     ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV);
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
-                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,miPaginaV,listarMisV,verDetalleV);
+                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView);
 
                     if (usuarioAut.getRol() == Rol.USUARIO) {
                         principal.deshabilitarMenuAdministrador();
                     }
 
                     // — Producto —
-                    principal.getMenuItemCrear().addActionListener(ev -> {
-                        principal.getDesktopPanel().add(anadirProdV);
-                        anadirProdV.setVisible(true);
+                    principal.getMenuItemAnadir().addActionListener(ev -> {
+
+                        if(!anadirProdV.isVisible()){
+                            principal.getDesktopPanel().add(anadirProdV);
+                            anadirProdV.setVisible(true);
+                        }
                     });
                     principal.getMenuItemListarProductos().addActionListener(ev -> {
                         principal.getDesktopPanel().add(listarProdV);

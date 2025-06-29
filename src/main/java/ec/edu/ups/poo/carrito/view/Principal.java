@@ -74,7 +74,6 @@ public class Principal extends JFrame {
         menuProducto.add(menuItemCrear);
         menuProducto.add(menuItemEliminar);
         menuProducto.add(menuItemActualizar);
-        menuProducto.add(menuItemAnadir);
         menuProducto.add(menuItemCarrito);
 
         menuUsuario.add(menuItemListarTodosUsuarios);
@@ -100,9 +99,9 @@ public class Principal extends JFrame {
 
         super.setJMenuBar(menuBar);
 
-        MiJDesktopPane  miJDesktopPane = new MiJDesktopPane();
+        desktopPanel = new MiJDesktopPane();
+        setContentPane(desktopPanel);
 
-        setContentPane(miJDesktopPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 600);
         setLocationRelativeTo(null);
@@ -177,9 +176,7 @@ public class Principal extends JFrame {
         return panelPrincipal;
     }
 
-    public JDesktopPane getDesktopPanel() {
-        return desktopPanel;
-    }
+    public MiJDesktopPane getDesktopPanel() { return desktopPanel;}
 
     public JMenuItem getMenuItemCrear() {
         return menuItemCrear;
@@ -244,6 +241,7 @@ public class Principal extends JFrame {
     public JMenuItem getMenuItemSalir() {
         return menuItemSalir;
     }
+
 
     public void deshabilitarMenuAdministrador() {
         menuItemCrear.setEnabled(false);

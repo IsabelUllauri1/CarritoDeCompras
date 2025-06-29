@@ -8,7 +8,7 @@ public class CarritoListarView extends JInternalFrame {
     private JPanel panelPrincipal;
     private JTable tblCarritos;
     private JButton btnEliminar;
-    private JButton btnRefrescar;
+    private JButton btnDetalless;
     private JButton btnModificar;
     public CarritoListarView() {
         super("Listar Carritos", true, true, true, true);
@@ -32,9 +32,7 @@ public class CarritoListarView extends JInternalFrame {
         return btnModificar;
     }
 
-    public JButton getBtnRefrescar() {
-        return btnRefrescar;
-    }
+    public JButton getBtnDetalless() {return btnDetalless;   }
 
     public JButton getBtnEliminar() {
         return btnEliminar;
