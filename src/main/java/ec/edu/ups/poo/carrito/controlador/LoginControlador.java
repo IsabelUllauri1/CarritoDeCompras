@@ -1,27 +1,137 @@
 package ec.edu.ups.poo.carrito.controlador;
 
+import ec.edu.ups.poo.carrito.dao.PreguntaDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
+import ec.edu.ups.poo.carrito.modelo.Pregunta;
+import ec.edu.ups.poo.carrito.modelo.PreguntaRespondida;
 import ec.edu.ups.poo.carrito.modelo.Rol;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
-import ec.edu.ups.poo.carrito.view.LoginView;
+import ec.edu.ups.poo.carrito.view.login.LoginView;
+import ec.edu.ups.poo.carrito.view.login.OlvideContrasenaView;
+import ec.edu.ups.poo.carrito.view.login.PreguntasView;
+import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class LoginControlador {
     private final UsuarioDAO usuarioDAO;
     private final LoginView  loginView;
-    private       Usuario    usuarioAutenticado;
+    private Usuario usuarioAutenticado;
+    private RegistrarseView registrarseView;
+    private PreguntasView preguntasView;
+    private Usuario usuarioTemp;
+    private PreguntaRespondida preguntaRespondida;
+    private OlvideContrasenaView olvideContrasenaView;
+    private PreguntaRespondida preguntaRespondidaTemp;
+    private final PreguntaDAO preguntaDAO;
 
-    public LoginControlador(UsuarioDAO usuarioDAO, LoginView loginView) {
+    public LoginControlador(UsuarioDAO usuarioDAO, LoginView loginView, RegistrarseView registrarseView, PreguntasView preguntasView, OlvideContrasenaView olvideContrasenaView, PreguntaDAO preguntaDAO) {
         this.usuarioDAO = usuarioDAO;
         this.loginView  = loginView;
         this.usuarioAutenticado = null;
+        this.registrarseView = registrarseView;
+        this.preguntasView = preguntasView;
+        this.olvideContrasenaView = olvideContrasenaView;
+        this.preguntaDAO = preguntaDAO;
         loginListeners();
     }
 
     private void loginListeners() {
-        loginView.getBtnIniciarSesion().addActionListener(this::logear);
-        loginView.getBtnRegistrarse().addActionListener(this::registrarse);
+        loginView.getBtnIniciarSesion().addActionListener(e -> logear(e));
+        loginView.getBtnRegistrarse().addActionListener(e -> {
+            registrarseView.setVisible(true);
+        });
+
+        registrarseView.getBtnSiguiente().addActionListener(e -> {
+            String username = registrarseView.getTextField1().getText().trim();
+            String password = new String(registrarseView.getPasswordField1().getPassword()).trim();
+
+            if (username.isEmpty() || password.isEmpty()) {
+                registrarseView.mostrarMensaje("Completa usuario y contraseña");
+                return;
+            }
+
+            this.usuarioTemp = new Usuario(username, password, Rol.USUARIO); // o setear después
+            preguntasCombobox();
+            preguntasView.setVisible(true);
+            registrarseView.setVisible(false);
+        });
+        preguntasView.getBtnGuardar().addActionListener(e -> {
+            preguntasView.setVisible(false);
+            registrarseView.setVisible(true);
+        });
+
+        preguntasView.getBtnGuardar().addActionListener(e -> {
+            List<PreguntaRespondida> respuestas = new ArrayList<>();
+            JComboBox<Pregunta>[] cbx = preguntasView.getCbxPreguntas();
+            JTextField[] txt = preguntasView.getTxtRespuestas();
+
+            for (int i = 0; i < 10; i++) {
+                Pregunta p = (Pregunta) cbx[i].getSelectedItem();
+                String r = txt[i].getText().trim();
+
+                if (p != null && !r.isEmpty()) {
+                    respuestas.add(new PreguntaRespondida(p, r, usuarioTemp.getUsername()));
+                }
+            }
+
+            if (respuestas.size() < 3) {
+                preguntasView.mostrarMensaje("Debes responder al menos 3 preguntas");
+                return;
+            }
+
+            usuarioTemp.setPreguntasRespondidas(respuestas);
+            usuarioDAO.crear(usuarioTemp);
+
+            preguntasView.mostrarMensaje("¡Usuario registrado con éxito!");
+            preguntasView.dispose();
+        });
+        olvideContrasenaView.getBtnBuscarUsuario().addActionListener(e -> {
+            String username = olvideContrasenaView.getTxtUser().getText().trim();
+            usuarioTemp = usuarioDAO.buscarPorUsername(username);
+
+            if (usuarioTemp == null) {
+                JOptionPane.showMessageDialog(olvideContrasenaView, "Usuario no encontrado");
+                return;
+            }
+
+            List<PreguntaRespondida> respuestas = usuarioTemp.getPreguntasRespondidas();
+            if (respuestas == null || respuestas.isEmpty()) {
+                JOptionPane.showMessageDialog(olvideContrasenaView, "No hay preguntas registradas para este usuario");
+                return;
+            }
+
+            preguntaRespondida = respuestas.get(new Random().nextInt(respuestas.size()));
+            olvideContrasenaView.getTxtPregunta().setText(preguntaRespondida.getPregunta().getTexto());
+        });
+        olvideContrasenaView.getBtnGuardar().addActionListener(e -> {
+            String respuestaIngresada = olvideContrasenaView.getTxtRespuesta().getText().trim();
+
+            if (preguntaRespondida == null || usuarioTemp == null) {
+                JOptionPane.showMessageDialog(olvideContrasenaView, "Primero busca el usuario");
+                return;
+            }
+
+            if (respuestaIngresada.equalsIgnoreCase(preguntaRespondida.getRespuesta())) {
+                String nuevaPass = JOptionPane.showInputDialog(olvideContrasenaView, "Respuesta correcta. Ingresa nueva contraseña:");
+                if (nuevaPass != null && !nuevaPass.isBlank()) {
+                    usuarioTemp.setContrasenia(nuevaPass.trim());
+                    usuarioDAO.actualizar(usuarioTemp);
+                    JOptionPane.showMessageDialog(olvideContrasenaView, "Contraseña actualizada correctamente");
+                    olvideContrasenaView.dispose();
+                }
+            } else {
+                JOptionPane.showMessageDialog(olvideContrasenaView, "Respuesta incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        loginView.getBtnOlvide().addActionListener(e ->{
+            olvideContrasenaView.setVisible(true);
+        } );
+
     }
 
     private void logear (ActionEvent e) {
@@ -35,24 +145,38 @@ public class LoginControlador {
         loginView.dispose();
     }
 
-    private void registrarse(ActionEvent e) {
-        String u = loginView.getTxtUsername().getText().trim();
-        String p = loginView.getTxtContrasena().getText().trim();
-        if (u.isEmpty() || p.isEmpty()) {
-            loginView.mostrarMensaje("Completa ambos campos");
-            return;
+    private void preguntasCombobox() {
+        List<Pregunta> todas = preguntaDAO.listarPreguntas();
+
+        JComboBox<Pregunta>[] cbx = preguntasView.getCbxPreguntas();
+        for (int i = 0; i < cbx.length; i++) {
+            cbx[i].removeAllItems();
+            for (Pregunta p : todas) {
+                cbx[i].addItem(p);
+            }
         }
-        if (usuarioDAO.buscarPorUsername(u) != null) {
-            loginView.mostrarMensaje("Usuario ya en uso");
-            return;
-        }
-        usuarioDAO.crear(new Usuario(u, p, Rol.USUARIO));
-        loginView.mostrarMensaje("Usuario registrado");
-        loginView.getTxtUsername().setText("");
-        loginView.getTxtContrasena().setText("");
     }
+
+
+//    private void registrarse(ActionEvent e) {
+//        String u = loginView.getTxtUsername().getText().trim();
+//        String p = loginView.getTxtContrasena().getText().trim();
+//        if (u.isEmpty() || p.isEmpty()) {
+//            loginView.mostrarMensaje("Completa ambos campos");
+//            return;
+//        }
+//        if (usuarioDAO.buscarPorUsername(u) != null) {
+//            loginView.mostrarMensaje("Usuario ya en uso");
+//            return;
+//        }
+//        usuarioDAO.crear(new Usuario(u, p, Rol.USUARIO));
+//        loginView.mostrarMensaje("Usuario registrado");
+//        loginView.getTxtUsername().setText("");
+//        loginView.getTxtContrasena().setText("");
+//    }
 
     public Usuario getUsuarioAutenticado() {
         return usuarioAutenticado;
     }
+
 }

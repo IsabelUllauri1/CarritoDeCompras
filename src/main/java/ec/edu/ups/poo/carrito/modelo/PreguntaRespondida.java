@@ -1,21 +1,21 @@
 package ec.edu.ups.poo.carrito.modelo;
 
 public class PreguntaRespondida {
-    private String pregunta;
+    private Pregunta pregunta;
     private String respuesta;
     private String username;
 
-    public PreguntaRespondida(String pregunta, String username, String respuesta) {
+    public PreguntaRespondida(Pregunta pregunta, String username, String respuesta) {
         this.pregunta = pregunta;
         this.username = username;
         this.respuesta = respuesta;
     }
 
-    public String getPregunta() {
+    public Pregunta getPregunta() {
         return pregunta;
     }
 
-    public void setPregunta(String pregunta) {
+    public void setPregunta(Pregunta pregunta) {
         this.pregunta = pregunta;
     }
 

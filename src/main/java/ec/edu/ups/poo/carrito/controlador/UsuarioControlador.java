@@ -2,10 +2,7 @@ package ec.edu.ups.poo.carrito.controlador;
 
 import ec.edu.ups.poo.carrito.dao.CarritoDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
-import ec.edu.ups.poo.carrito.modelo.Carrito;
-import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
-import ec.edu.ups.poo.carrito.modelo.Rol;
-import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.modelo.*;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.ListarTodosLosCarritosView;
@@ -20,6 +17,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -156,11 +154,11 @@ public class UsuarioControlador {
         Usuario nuevo = new Usuario(username, pass, rol);
         usuarioDAO.crear(nuevo);
 
-
         crearUsuarioView.getTxtUsuarioNuevo().setText("");
         crearUsuarioView.getPwdContrasenaNueva().setText("");
         crearUsuarioView.getCbxRol().setSelectedIndex(0);
     }
+
 
 
 
@@ -255,20 +253,6 @@ public class UsuarioControlador {
         } catch (PropertyVetoException ignore) {}
     }
 
-
-    public void listarTodosUsuarios() {
-        DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
-        m.setRowCount(0);
-        for (Usuario u : usuarioDAO.listarTodos()) {
-            m.addRow(new Object[]{u.getUsername(), u.getRol()});
-        }
-        if (!listaUsuariosView.isShowing()) {
-            miPaginaView.getDesktopPane().add(listaUsuariosView);
-        }
-        listaUsuariosView.setVisible(true);
-        try { listaUsuariosView.setSelected(true); }
-        catch(PropertyVetoException ignore){}
-    }
 
     public void buscarUsuarioPorNombre() {
         String txt = listaUsuariosView.getTxtBuscar().getText().trim();

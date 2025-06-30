@@ -1,4 +1,4 @@
-package ec.edu.ups.poo.carrito.view;
+package ec.edu.ups.poo.carrito.view.login;
 
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 
@@ -12,6 +12,7 @@ public class LoginView extends JFrame {
     private JButton btnIniciarSesion;
     private JButton btnRegistrarse;
     private JPanel panelSecundario;
+    private JButton btnOlvide;
     private JLabel lblUsuario;
     private JLabel lblContrasena;
 
@@ -79,9 +80,11 @@ public class LoginView extends JFrame {
     public void setPanelSecundario(JPanel panelSecundario) {
         this.panelSecundario = panelSecundario;
     }
+
+    public JButton getBtnOlvide() {return btnOlvide;}
+
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
-
     }
     public void cambiarIdioma(MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler){
         lblUsuario.setText(mensajeInternacionalizacionHandler.get("menu.usu"));

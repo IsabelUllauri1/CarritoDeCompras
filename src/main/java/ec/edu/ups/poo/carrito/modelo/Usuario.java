@@ -1,17 +1,29 @@
 package ec.edu.ups.poo.carrito.modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Usuario {
     private String username;
     private String contrasenia;
     private Rol rol;
+    private List<PreguntaRespondida> preguntasRespondidas = new ArrayList<>();
 
 
     public Usuario(String nombreDeUsuario, String contrasenia, Rol rol) {
         this.username = nombreDeUsuario;
         this.contrasenia = contrasenia;
         this.rol = rol;
+        this.preguntasRespondidas = new ArrayList<>();
     }
     public Usuario() {}
+
+    public void setPreguntasRespondidas(List<PreguntaRespondida> preguntasRespondidas) {
+        this.preguntasRespondidas = preguntasRespondidas;
+    }
+    public List<PreguntaRespondida> getPreguntasRespondidas() {
+        return preguntasRespondidas;
+    }
 
     public String getUsername() {
         return username;

@@ -7,6 +7,10 @@ import ec.edu.ups.poo.carrito.modelo.Rol;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.*;
+import ec.edu.ups.poo.carrito.view.login.LoginView;
+import ec.edu.ups.poo.carrito.view.login.OlvideContrasenaView;
+import ec.edu.ups.poo.carrito.view.login.PreguntasView;
+import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
 import ec.edu.ups.poo.carrito.view.producto.*;
 import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
 import ec.edu.ups.poo.carrito.view.usuario.EditarUsuarioView;
@@ -26,9 +30,15 @@ public class Main {
             UsuarioDAO  usuarioDAO  = new UsuarioDAOMemoria();
             ProductoDAO productoDAO = new ProductoDAOMemoria();
             CarritoDAO  carritoDAO  = new CarritoDAOMemoria();
+            PreguntaDAO  preguntaDAO = new PreguntaDAOMemoria();
 
             LoginView loginView = new LoginView();
-            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView);
+            RegistrarseView registrarseView = new RegistrarseView();
+            PreguntasView preguntasView = new PreguntasView();
+            OlvideContrasenaView olvideContrasenaView = new OlvideContrasenaView();
+
+
+            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView,registrarseView,preguntasView,olvideContrasenaView,preguntaDAO);
             loginView.setVisible(true);
 
             loginView.addWindowListener(new WindowAdapter() {

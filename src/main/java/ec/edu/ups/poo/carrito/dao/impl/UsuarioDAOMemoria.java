@@ -10,7 +10,7 @@ import java.util.List;
 
 public class UsuarioDAOMemoria implements UsuarioDAO {
 
-    private List<Usuario> usuarios;
+    private List<Usuario> usuarios = new ArrayList<>();
     public UsuarioDAOMemoria() {
         usuarios = new ArrayList<Usuario>();
         crear(new Usuario("admin", "12345", Rol.ADMINISTRADOR));
@@ -78,11 +78,13 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
 
     @Override
     public List<Usuario> listarAdministradores() {
+
         return List.of();
     }
 
     @Override
     public List<Usuario> listarUsuarios() {
+
         return List.of();
     }
 
