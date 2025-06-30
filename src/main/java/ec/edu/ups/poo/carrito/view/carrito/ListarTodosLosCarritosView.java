@@ -11,7 +11,7 @@ public class ListarTodosLosCarritosView extends JInternalFrame{
 
     public ListarTodosLosCarritosView(){
         super("Listar Todos Los Carritos", true, true,true,true);
-        setContentPane(panelPrincipal);
+
         setSize(400, 400);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
@@ -22,6 +22,7 @@ public class ListarTodosLosCarritosView extends JInternalFrame{
             }
         };
         tblUsuarios.setModel(modelo);
+        setContentPane(panelPrincipal);
     }
 
     public JPanel getPanelPrincipal() {

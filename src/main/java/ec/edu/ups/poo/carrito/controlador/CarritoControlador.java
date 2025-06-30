@@ -6,6 +6,7 @@ import ec.edu.ups.poo.carrito.modelo.Carrito;
 import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
@@ -18,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 
 import java.beans.PropertyVetoException;
 import java.util.List;
+import java.util.Locale;
 
 public class CarritoControlador {
 
@@ -31,6 +33,7 @@ public class CarritoControlador {
     private final DefaultTableModel modeloList;
     private VerDetalleView verDetalleView;
     private Principal principal;
+    private FormatosUtils formatosUtils;
 
     public CarritoControlador(ProductoDAO productoDAO, CarritoDAO carritoDAO, CarritoAnadirView anadirView, CarritoListarView listarView, Usuario usuario) {
         this.productoDAO = productoDAO;
@@ -144,19 +147,23 @@ public class CarritoControlador {
         modeloItems.setRowCount(0);
         for (ItemCarrito it : carrito.obtenerItems()) {
             modeloItems.addRow(new Object[]{
-                    it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(), it.getSubtotal()
+                    it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(), formatosUtils.formatearMoneda(it.getSubtotal(), Locale.getDefault())
             });
         }
-        anadirView.getTxtSubtotal().setText(String.format("%.2f", carrito.calcularSubtotal()));
-        anadirView.getTxtIVA().setText   (String.format("%.2f", carrito.calcularIVA()));
-        anadirView.getTxtTotal().setText (String.format("%.2f", carrito.calcularTotal()));
+        anadirView.getTxtSubtotal().setText(formatosUtils.formatearMoneda(carrito.calcularSubtotal(), Locale.getDefault()));
+        anadirView.getTxtIVA().setText(formatosUtils.formatearMoneda(carrito.calcularIVA(), Locale.getDefault()));
+        anadirView.getTxtTotal().setText(formatosUtils.formatearMoneda(carrito.calcularTotal(), Locale.getDefault()));
     }
 
     private void refrescarLista() {
         modeloList.setRowCount(0);
         List<Carrito> todos = carritoDAO.listarTodos();
         for (Carrito c : todos) {
-            modeloList.addRow(new Object[]{c.getCodigo(), c.getFechaCreacion().getTime(), c.calcularSubtotal(), c.calcularIVA(), c.calcularTotal()
+            modeloList.addRow(new Object[]{c.getCodigo(),
+                    formatosUtils.formatearFecha(c.getFechaCreacion().getTime(),Locale.getDefault()),
+                    formatosUtils.formatearMoneda(c.calcularSubtotal(), Locale.getDefault()),
+                    formatosUtils.formatearMoneda(c.calcularIVA(), Locale.getDefault()),
+                    formatosUtils.formatearMoneda(c.calcularTotal(), Locale.getDefault())
             });
         }
     }
@@ -211,7 +218,7 @@ public class CarritoControlador {
         DefaultTableModel dm = (DefaultTableModel) verDetalleView.getTblProductos().getModel();
         dm.setRowCount(0);
         for (ItemCarrito it : c.obtenerItems()) {
-            dm.addRow(new Object[]{it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(), String.format("%.2f", it.getSubtotal())
+            dm.addRow(new Object[]{it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(),formatosUtils.formatearMoneda(it.getCantidad(), Locale.getDefault())
             });
         }
 

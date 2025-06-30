@@ -1,6 +1,7 @@
 package ec.edu.ups.poo.carrito.util;
 
 import javax.xml.crypto.Data;
+import java.text.DateFormat;
 import java.text.Format;
 import java.text.NumberFormat;
 import java.util.Date;
@@ -13,7 +14,12 @@ public class FormatosUtils {
 
     }
     public static String formatearFecha(Date fecha,Locale local) {
-        Format formatoFecha = NumberFormat.getCurrencyInstance(local);
+        Format formatoFecha = DateFormat.getDateInstance(DateFormat.MEDIUM, local);
         return formatoFecha.format(fecha);
     }
+    public static String formatearNumero(double numero) {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
+        return nf.format(numero);
+    }
+
 }

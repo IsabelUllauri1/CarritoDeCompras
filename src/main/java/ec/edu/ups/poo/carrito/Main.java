@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
+import java.util.Locale;
 
 public class Main {
     public static void main(String[] args) {
@@ -162,9 +163,20 @@ public class Main {
                     });
 
                     // — Internacionalizacion —
-                    principal.getMenuIdiomaIngles().addActionListener(ev -> principal.cambiarIdioma("en","US"));
-                    principal.getMenuIdiomaEspanol().addActionListener(ev -> principal.cambiarIdioma("es","EC"));
-                    principal.getMenuIdiomaAleman().addActionListener(ev -> principal.cambiarIdioma("de","DE"));
+                    principal.getMenuIdiomaIngles().addActionListener(ev -> {
+                        principal.cambiarIdioma("en","US");
+                        usuarioControlador.mostrarTodosLosCarritos();
+                    });
+                    principal.getMenuIdiomaEspanol().addActionListener(ev -> {
+                            principal.cambiarIdioma("es","EC");
+                            usuarioControlador.mostrarTodosLosCarritos();}
+                    );
+                    principal.getMenuIdiomaAleman().addActionListener(ev ->{
+                        principal.cambiarIdioma("de","DE");
+                        usuarioControlador.mostrarTodosLosCarritos();
+                    });
+                    System.out.println("Idioma del sistema: " + Locale.getDefault());
+
 
                     principal.setVisible(true);
                 }

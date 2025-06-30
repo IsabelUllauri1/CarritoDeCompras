@@ -6,6 +6,7 @@ import ec.edu.ups.poo.carrito.modelo.Carrito;
 import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
 import ec.edu.ups.poo.carrito.modelo.Rol;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.ListarTodosLosCarritosView;
 import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
@@ -20,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 import java.util.List;
+import java.util.Locale;
 
 public class UsuarioControlador {
     private final ListarTodosLosCarritosView listarTodosCarritosView;
@@ -34,6 +36,7 @@ public class UsuarioControlador {
     private final EditarUsuarioView editarUsuarioView;
     private  Principal principal;
     private Rol rol;
+    private FormatosUtils formatosUtils;
 
 
     public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO,UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView) {
@@ -61,25 +64,8 @@ public class UsuarioControlador {
         editarUsuarioView.getBtnGuardar().addActionListener(e ->  editarUsuario());
 
         listaUsuariosView.getBtnListar().addActionListener(e -> listarTodos());
-
-        listaUsuariosView.getBtnBuscar().addActionListener(e -> {
-            String txt = listaUsuariosView.getTxtBuscar().getText().trim();
-            DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
-            m.setRowCount(0);
-
-            Usuario u = usuarioDAO.buscarPorUsername(txt);
-            if (u != null) {
-                m.addRow(new Object[]{ u.getUsername(), u.getRol() });
-            } else {
-                JOptionPane.showMessageDialog(listaUsuariosView,
-                        "Usuario \"" + txt + "\" no encontrado",
-                        "Atención",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
+        listaUsuariosView.getBtnBuscar().addActionListener(e -> buscarUsuarioPorNombre());
         listaUsuariosView.getCbxRol().addActionListener(e -> listarPorRol());
-
         listaUsuariosView.getBtnElininar().addActionListener(e -> eliminarUsuarioSeleccionado());
 
         crearUsuarioView.getBtnGuardar().addActionListener(e -> crearUsuario());
@@ -101,7 +87,7 @@ public class UsuarioControlador {
         for (Carrito c : todos) {
             if (c.getUsuario().equals(usuario)) {
                 m.addRow(new Object[]{
-                        c.getCodigo(), c.getFechaCreacion().getTime(), c.calcularSubtotal(), c.calcularIVA(), c.calcularTotal()
+                        c.getCodigo(), formatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()), c.calcularSubtotal(), c.calcularIVA(), c.calcularTotal()
                 });
             }
         }
@@ -202,8 +188,7 @@ public class UsuarioControlador {
                 JOptionPane.showMessageDialog(listarView, "Selecciona un carrito primero", "Atención", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            int codigo = (int) listarView.getTblCarritos()
-                    .getValueAt(row, 0);
+            int codigo = (int) listarView.getTblCarritos().getValueAt(row, 0);
             int opt = JOptionPane.showConfirmDialog(listarView, "¿Eliminar carrito #" + codigo + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (opt == JOptionPane.YES_OPTION) {
                 carritoDAO.eliminar(codigo);
@@ -253,13 +238,13 @@ public class UsuarioControlador {
         for (ItemCarrito it : c.obtenerItems()) {
             dm.addRow(new Object[]{
                     it.getProducto().getCodigo(), it.getProducto().getNombre(),
-                    it.getCantidad(), String.format("%.2f", it.getSubtotal())
+                    it.getCantidad(), formatosUtils.formatearMoneda(it.getSubtotal(), Locale.getDefault())
             });
         }
 
-        verDetalleView.getTxtSubtotal().setText(String.format("%.2f", c.calcularSubtotal()));
-        verDetalleView.getTxtIVA().setText(String.format("%.2f", c.calcularIVA()));
-        verDetalleView.getTxtTotal().setText(String.format("%.2f", c.calcularTotal()));
+        verDetalleView.getTxtSubtotal().setText(FormatosUtils.formatearMoneda( c.calcularSubtotal(), Locale.getDefault()));
+        verDetalleView.getTxtIVA().setText(FormatosUtils.formatearMoneda( c.calcularIVA(), Locale.getDefault()));
+        verDetalleView.getTxtTotal().setText(FormatosUtils.formatearMoneda( c.calcularTotal(), Locale.getDefault()));
 
         if (!verDetalleView.isShowing()) {
             contenedor.add(verDetalleView);
@@ -284,6 +269,20 @@ public class UsuarioControlador {
         try { listaUsuariosView.setSelected(true); }
         catch(PropertyVetoException ignore){}
     }
+
+    public void buscarUsuarioPorNombre() {
+        String txt = listaUsuariosView.getTxtBuscar().getText().trim();
+        DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
+        m.setRowCount(0);
+
+        Usuario u = usuarioDAO.buscarPorUsername(txt);
+        if (u != null) {
+            m.addRow(new Object[]{ u.getUsername(), u.getRol() });
+        } else {
+            JOptionPane.showMessageDialog(listaUsuariosView, "Usuario \"" + txt + "\" no encontrado", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     public void mostrarTodosLosCarritos() {
         DefaultTableModel m = listarTodosCarritosView.getModelo();
         m.setRowCount(0);
@@ -291,7 +290,7 @@ public class UsuarioControlador {
         for (Carrito c : carritoDAO.listarTodos()) {
             m.addRow(new Object[]{
                     c.getCodigo(),
-                    c.getFechaCreacion().getTime(),
+                    FormatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()),
                     c.getUsuario().getUsername()
             });
         }

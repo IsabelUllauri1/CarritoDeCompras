@@ -2,6 +2,7 @@ package ec.edu.ups.poo.carrito.controlador;
 
 import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Producto;
+import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.producto.*;
@@ -21,6 +22,7 @@ public class ProductoControlador {
     private ProductoListarView vistaListar;
     private CarritoAnadirView vistaCarrito;
     private ListarProductosPorCodigoView vistaListarPorCodigo;
+    private FormatosUtils formatosUtils;
 
 
     public ProductoControlador(ProductoDAO dao, Principal principal, AnadirProductosView vAnadir, ProductoListarView vListar, ListarProductosPorCodigoView vistaListarPorCodigo, CarritoAnadirView vistaCarrito) {
@@ -152,7 +154,7 @@ public class ProductoControlador {
                     int code = Integer.parseInt(txt);
                     Producto p = productoDAO.buscarPorCodigo(code);
                     if (p!=null) {
-                        modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
+                        modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), FormatosUtils.formatearNumero(p.getPrecio())});
                     } else {
                         JOptionPane.showMessageDialog(v, "No encontrado");
                     }
@@ -167,16 +169,13 @@ public class ProductoControlador {
                     return;
                 }
                 int code = (int)modelo.getValueAt(0,0);
-                int ok = JOptionPane.showConfirmDialog(v,
-                        "¿Eliminar producto " + code + "?",
-                        "Confirmar",
-                        JOptionPane.YES_NO_OPTION);
+                int ok = JOptionPane.showConfirmDialog(v, "¿Eliminar producto " + code + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
                 if (ok==JOptionPane.YES_OPTION) {
                     productoDAO.eliminar(code);
-                    // recarga lista completa:
+                    //actualizar lista
                     modelo.setRowCount(0);
                     for (Producto p : productoDAO.listarTodos()) {
-                        modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
+                        modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio())});
                     }
                     JOptionPane.showMessageDialog(v, "Eliminado");
                 }
@@ -187,7 +186,7 @@ public class ProductoControlador {
 
             // carga inicial
             for (Producto p : productoDAO.listarTodos()) {
-                modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
+                modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio())});
             }
 
             v.setVisible(true);
@@ -212,7 +211,7 @@ public class ProductoControlador {
                 int code = Integer.parseInt(txt);
                 Producto p = productoDAO.buscarPorCodigo(code);
                 if (p != null) {
-                    m.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
+                    m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio())});
                 } else {
                     JOptionPane.showMessageDialog(vistaListarPorCodigo, "No se encontró producto con código " + code, "Resultado", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -226,7 +225,7 @@ public class ProductoControlador {
         DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
         m.setRowCount(0);
         for (Producto p : productoDAO.listarTodos()) {
-            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
+            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio())});
         }
     }
 
@@ -279,7 +278,7 @@ public class ProductoControlador {
         DefaultTableModel m = vistaListar.getModelo();
         m.setRowCount(0);
         for (Producto p : todos) {
-            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getPrecio()});
+            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio())});
         }
     }
 
@@ -311,7 +310,7 @@ public class ProductoControlador {
         DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
         m.setRowCount(0);
         for (Producto p : productoDAO.listarTodos()) {
-            m.addRow(new Object[]{ p.getCodigo(), p.getNombre(), p.getPrecio() });
+            m.addRow(new Object[]{ p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio()) });
         }
     }
 

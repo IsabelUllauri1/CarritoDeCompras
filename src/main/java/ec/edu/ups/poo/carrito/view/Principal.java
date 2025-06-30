@@ -3,6 +3,9 @@ package ec.edu.ups.poo.carrito.view;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Principal extends JFrame {
     private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
@@ -37,9 +40,9 @@ public class Principal extends JFrame {
     //el modelo es el que hace los metodos. en controlador solo dice que en el view se usen ciertos metodos
 
     public Principal() {
-        mensajeInternacionalizacionHandler= new MensajeInternacionalizacionHandler("en", "US");
-        mensajeInternacionalizacionHandler= new MensajeInternacionalizacionHandler("es", "EC");
-        mensajeInternacionalizacionHandler= new MensajeInternacionalizacionHandler("de", "DE");
+        Locale defaultLocale = Locale.getDefault();
+        mensajeInternacionalizacionHandler = new MensajeInternacionalizacionHandler(defaultLocale.getLanguage(), defaultLocale.getCountry());
+
 
         menuBar = new JMenuBar();
         menuIdioma = new JMenu(mensajeInternacionalizacionHandler.get("menu.Idioma"));
@@ -115,7 +118,14 @@ public class Principal extends JFrame {
 
     }
     public void cambiarIdioma(String lenguaje, String pais){
+        Locale locale = new Locale(lenguaje, pais);
+        Locale.setDefault(locale);
         mensajeInternacionalizacionHandler.setLanguage(lenguaje, pais);
+
+        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        NumberFormat nf = NumberFormat.getNumberInstance(locale);
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(locale);
+
 
         setTitle(mensajeInternacionalizacionHandler.get("app.titulo"));
 
