@@ -27,7 +27,9 @@ public class PreguntasView extends JFrame {
     private JTextField txt7;
     private JTextField txt8;
     private JButton btnGuardar;
-
+    private JTextField txtP1;
+    private JTextField txtP2;
+    private JTextField txtP3;
 
 
     public PreguntasView() {
