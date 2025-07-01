@@ -55,27 +55,32 @@ public class LoginControlador {
                 return;
             }
 
-            this.usuarioTemp = new Usuario(username, password, Rol.USUARIO); // o setear después
-            preguntasCombobox();
+            this.usuarioTemp = new Usuario(username, password, Rol.USUARIO); //
             preguntasView.setVisible(true);
             registrarseView.setVisible(false);
         });
-        preguntasView.getBtnGuardar().addActionListener(e -> {
-            preguntasView.setVisible(false);
-            registrarseView.setVisible(true);
+        registrarseView.getBtnRegresar().addActionListener(e -> {
+            registrarseView.setVisible(false);
+            loginView.setVisible(true);
+
+
         });
 
         preguntasView.getBtnGuardar().addActionListener(e -> {
             List<PreguntaRespondida> respuestas = new ArrayList<>();
-            JComboBox<Pregunta>[] cbx = preguntasView.getCbxPreguntas();
-            JTextField[] txt = preguntasView.getTxtRespuestas();
+            JTextField[] preguntas = preguntasView.getCamposPreguntas();
+            JTextField[] respuestasUsuario = preguntasView.getCamposRespuestas();
 
             for (int i = 0; i < 10; i++) {
-                Pregunta p = (Pregunta) cbx[i].getSelectedItem();
-                String r = txt[i].getText().trim();
+                String textoPregunta = preguntas[i].getText().trim();
+                String textoRespuesta = respuestasUsuario[i].getText().trim();
 
-                if (p != null && !r.isEmpty()) {
-                    respuestas.add(new PreguntaRespondida(p, r, usuarioTemp.getUsername()));
+                if (!textoRespuesta.isEmpty()) {
+                    respuestas.add(new PreguntaRespondida(
+                            new Pregunta(textoPregunta,i + 1),
+                            textoRespuesta,
+                            usuarioTemp.getUsername()
+                    ));
                 }
             }
 
@@ -89,7 +94,41 @@ public class LoginControlador {
 
             preguntasView.mostrarMensaje("¡Usuario registrado con éxito!");
             preguntasView.dispose();
+            loginView.setVisible(true);
         });
+
+
+        preguntasView.getBtnGuardar().addActionListener(e -> {
+            JTextField[] preguntas = preguntasView.getCamposPreguntas();
+            JTextField[] respuestas = preguntasView.getCamposRespuestas();
+            List<PreguntaRespondida> respondidas = new ArrayList<>();
+
+            for (int i = 0; i < 10; i++) {
+                String textoPregunta = preguntas[i].getText().trim();
+                String respuesta = respuestas[i].getText().trim();
+
+                if (!respuesta.isEmpty()) {
+                    respondidas.add(new PreguntaRespondida(new Pregunta(textoPregunta,i + 1), respuesta, usuarioTemp.getUsername()));
+                }
+            }
+
+            if (respondidas.size() < 3) {
+                preguntasView.mostrarMensaje("Debes responder al menos 3 preguntas");
+                return;
+            }
+
+
+            preguntasView.dispose();
+            loginView.setVisible(true);
+
+
+        });
+
+        preguntasView.getBtnRegresar().addActionListener(e -> {
+            preguntasView.setVisible(false);
+            registrarseView.setVisible(true);
+        });
+
         olvideContrasenaView.getBtnBuscarUsuario().addActionListener(e -> {
             String username = olvideContrasenaView.getTxtUser().getText().trim();
             usuarioTemp = usuarioDAO.buscarPorUsername(username);
@@ -116,7 +155,10 @@ public class LoginControlador {
                 return;
             }
 
-            if (respuestaIngresada.equalsIgnoreCase(preguntaRespondida.getRespuesta())) {
+            System.out.println("Esperado: " + preguntaRespondida.getRespuesta());
+            System.out.println("Ingresado: " + respuestaIngresada);
+
+            if (respuestaIngresada.equalsIgnoreCase(preguntaRespondida.getRespuesta().trim())) {
                 String nuevaPass = JOptionPane.showInputDialog(olvideContrasenaView, "Respuesta correcta. Ingresa nueva contraseña:");
                 if (nuevaPass != null && !nuevaPass.isBlank()) {
                     usuarioTemp.setContrasenia(nuevaPass.trim());
@@ -145,35 +187,7 @@ public class LoginControlador {
         loginView.dispose();
     }
 
-    private void preguntasCombobox() {
-        List<Pregunta> todas = preguntaDAO.listarPreguntas();
 
-        JComboBox<Pregunta>[] cbx = preguntasView.getCbxPreguntas();
-        for (int i = 0; i < cbx.length; i++) {
-            cbx[i].removeAllItems();
-            for (Pregunta p : todas) {
-                cbx[i].addItem(p);
-            }
-        }
-    }
-
-
-//    private void registrarse(ActionEvent e) {
-//        String u = loginView.getTxtUsername().getText().trim();
-//        String p = loginView.getTxtContrasena().getText().trim();
-//        if (u.isEmpty() || p.isEmpty()) {
-//            loginView.mostrarMensaje("Completa ambos campos");
-//            return;
-//        }
-//        if (usuarioDAO.buscarPorUsername(u) != null) {
-//            loginView.mostrarMensaje("Usuario ya en uso");
-//            return;
-//        }
-//        usuarioDAO.crear(new Usuario(u, p, Rol.USUARIO));
-//        loginView.mostrarMensaje("Usuario registrado");
-//        loginView.getTxtUsername().setText("");
-//        loginView.getTxtContrasena().setText("");
-//    }
 
     public Usuario getUsuarioAutenticado() {
         return usuarioAutenticado;

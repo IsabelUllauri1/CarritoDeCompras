@@ -9,6 +9,7 @@ public class OlvideContrasenaView extends JFrame{
     private JTextField txtRespuesta;
     private JButton btnGuardar;
     private JButton btnBuscarUsuario;
+    private JLabel lblSiDesea;
     private JPasswordField pwdNueva;
 
     public OlvideContrasenaView() {
@@ -16,8 +17,12 @@ public class OlvideContrasenaView extends JFrame{
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
+        setSize(600,300);
+        setResizable(false);
 
     }
+
+    public JLabel getLblSiDesea() {return lblSiDesea;}
 
     public JPasswordField getPwdNueva() {return pwdNueva;}
 

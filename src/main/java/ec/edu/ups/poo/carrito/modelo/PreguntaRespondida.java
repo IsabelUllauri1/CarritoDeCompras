@@ -5,7 +5,7 @@ public class PreguntaRespondida {
     private String respuesta;
     private String username;
 
-    public PreguntaRespondida(Pregunta pregunta, String username, String respuesta) {
+    public PreguntaRespondida(Pregunta pregunta, String respuesta, String username) {
         this.pregunta = pregunta;
         this.username = username;
         this.respuesta = respuesta;

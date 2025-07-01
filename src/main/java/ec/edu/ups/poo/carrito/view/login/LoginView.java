@@ -13,6 +13,7 @@ public class LoginView extends JFrame {
     private JButton btnRegistrarse;
     private JPanel panelSecundario;
     private JButton btnOlvide;
+    private JLabel lblIniciarSesion;
     private JLabel lblUsuario;
     private JLabel lblContrasena;
 
@@ -82,6 +83,14 @@ public class LoginView extends JFrame {
     }
 
     public JButton getBtnOlvide() {return btnOlvide;}
+
+    public JLabel getLblUsuario() {return lblUsuario;}
+
+    public JLabel getLblIniciarSesion() {return lblIniciarSesion;}
+
+    public JLabel getLblContrasena() {
+        return lblContrasena;
+    }
 
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);

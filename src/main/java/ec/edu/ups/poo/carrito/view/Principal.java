@@ -263,6 +263,9 @@ public class Principal extends JFrame {
         menuItemEliminar.setEnabled(false);
         menuItemListarCodigo.setEnabled(false);
         menuItemListarTodosLosCarritos.setEnabled(false);
+        menuItemListarTodosUsuarios.setEnabled(false);
+        menuItemCrearUsuario.setEnabled(false);
+
 
 
     }
