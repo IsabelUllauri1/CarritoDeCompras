@@ -6,6 +6,7 @@ import ec.edu.ups.poo.carrito.modelo.Pregunta;
 import ec.edu.ups.poo.carrito.modelo.PreguntaRespondida;
 import ec.edu.ups.poo.carrito.modelo.Rol;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.view.login.LoginView;
 import ec.edu.ups.poo.carrito.view.login.OlvideContrasenaView;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
@@ -13,9 +14,10 @@ import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ForkJoinPool;
 
 public class LoginControlador {
     private final UsuarioDAO usuarioDAO;
@@ -49,22 +51,29 @@ public class LoginControlador {
         registrarseView.getBtnSiguiente().addActionListener(e -> {
             String username = registrarseView.getTextField1().getText().trim();
             String password = new String(registrarseView.getPasswordField1().getPassword()).trim();
+            String nombreCompleto = registrarseView.getTxtNombre().getText().trim();
+            String correo = registrarseView.getTxtCorreo().getText().trim();
+            String telefono = registrarseView.getTxtTelefono().getText().trim();
+            Date fechaNacimiento = (Date) registrarseView.getSpinnerFecha().getValue();
 
-            if (username.isEmpty() || password.isEmpty()) {
-                registrarseView.mostrarMensaje("Completa usuario y contraseña");
+            if (username.isEmpty() || password.isEmpty() || nombreCompleto.isEmpty()
+                    || correo.isEmpty() || telefono.isEmpty()) {
+                registrarseView.mostrarMensaje("Completa todos los campos");
                 return;
             }
 
-            this.usuarioTemp = new Usuario(username, password, Rol.USUARIO); //
+            this.usuarioTemp = new Usuario(username, password, Rol.USUARIO, correo, nombreCompleto, telefono, fechaNacimiento);
             preguntasView.setVisible(true);
             registrarseView.setVisible(false);
         });
+
         registrarseView.getBtnRegresar().addActionListener(e -> {
             registrarseView.setVisible(false);
             loginView.setVisible(true);
 
 
         });
+
 
         preguntasView.getBtnGuardar().addActionListener(e -> {
             List<PreguntaRespondida> respuestas = new ArrayList<>();

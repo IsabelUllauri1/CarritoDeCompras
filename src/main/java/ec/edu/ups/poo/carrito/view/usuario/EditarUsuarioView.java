@@ -8,10 +8,24 @@ public class EditarUsuarioView extends JInternalFrame{
     private JPasswordField pwdNContrasena;
     private JButton btnGuardar;
     private JComboBox cbxRol;
+    private JLabel lblRol;
+    private JLabel lblNuevaContrasena;
+    private JLabel lblNuevoNombre;
+    private JLabel lblEditarUsuario;
+    private JSpinner spinnerFecha;
+
+    public EditarUsuarioView() {
+        setSize(500, 500);
+        setResizable(false);
+        setContentPane(panelPrincipal);
+
+    }
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;
     }
+
+    public JSpinner getSpinnerFecha() { return spinnerFecha;}
 
     public void setPanelPrincipal(JPanel panelPrincipal) {
         this.panelPrincipal = panelPrincipal;

@@ -21,8 +21,9 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
 
     @Override
     public Usuario autenticar(String username, String contrasenia) {
-        for(Usuario u : usuarios) {
-            if(u.getUsername().equals(username) && u.getContrasenia().equals(contrasenia)) {
+        for (Usuario u : usuarios) {
+            if (u.getUsername() != null && u.getContrasenia() != null &&
+                    u.getUsername().equals(username) && u.getContrasenia().equals(contrasenia)) {
                 return u;
             }
         }

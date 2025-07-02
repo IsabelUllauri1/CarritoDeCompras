@@ -6,6 +6,7 @@ import ec.edu.ups.poo.carrito.modelo.*;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.ListarTodosLosCarritosView;
+import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
 import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
 import ec.edu.ups.poo.carrito.view.usuario.EditarUsuarioView;
 import ec.edu.ups.poo.carrito.view.usuario.ListarUsuariosView;
@@ -17,7 +18,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +39,7 @@ public class UsuarioControlador {
     private  Principal principal;
     private Rol rol;
     private FormatosUtils formatosUtils;
+    private RegistrarseView registrarseView;
 
 
     public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO,UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView) {
@@ -95,14 +100,26 @@ public class UsuarioControlador {
     private void actualizarDatosMet(ActionEvent e) {
         String nu = miPaginaView.getTxtUsuario().getText().trim();
         String np = new String(miPaginaView.getPwdContrasena().getPassword()).trim();
-        if (nu.isEmpty() || np.isEmpty()) {
-            miPaginaView.mostrarMensaje("Completa ambos campos");
+        String nombre = miPaginaView.getTxtNombreCompleto().getText().trim();
+        String correo = miPaginaView.getTxtCorreo().getText().trim();
+        String telefono = miPaginaView.getTxtTelefono().getText().trim();
+        Date fechaNacimiento = (Date) miPaginaView.getSpinnerFecha().getValue();
+
+        if (nu.isEmpty() || np.isEmpty() || nombre.isEmpty() || correo.isEmpty() || telefono.isEmpty()) {
+            miPaginaView.mostrarMensaje("Completa todos los campos");
             return;
         }
+
         usuario.setUsername(nu);
         usuario.setContrasenia(np);
+        usuario.setNombreCompleto(nombre);
+        usuario.setCorreo(correo);
+        usuario.setTelefono(telefono);
+        usuario.setFechaNacimiento(fechaNacimiento);
+
         miPaginaView.mostrarMensaje("Datos actualizados");
     }
+
 
 
     private void listarTodos() {
@@ -141,10 +158,12 @@ public class UsuarioControlador {
         String pass  = new String(crearUsuarioView.getPwdContrasenaNueva().getPassword()).trim();
         Rol rol  = (Rol) crearUsuarioView.getCbxRol().getSelectedItem();
 
+
         if (username.isEmpty() || pass.isEmpty()) {
             crearUsuarioView.mostrarMensaje("Completa los campos", "Atención", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+
 
         if (usuarioDAO.buscarPorUsername(username) != null) {
             crearUsuarioView.mostrarMensaje("Ya existe ese usuario", "Atención", JOptionPane.INFORMATION_MESSAGE);
