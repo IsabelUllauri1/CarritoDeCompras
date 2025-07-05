@@ -1,6 +1,10 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
+import ec.edu.ups.poo.carrito.view.login.PreguntasView;
+
 import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 
 public class MiPaginaView extends JInternalFrame{
     private JPanel panelPrincipal;
@@ -17,6 +21,10 @@ public class MiPaginaView extends JInternalFrame{
     private JTextField txtTelefono;
     private JTextField txtCorreo;
     private JSpinner spinnerFecha;
+    private JLabel lblMiPagina;
+    private JButton btnResponderPreguntas;
+    private JLabel lblUsuaraio;
+    private JLabel lblContrasena;
 
     public MiPaginaView() {
         super("Mi Pagina", false, true,true,true);
@@ -25,18 +33,50 @@ public class MiPaginaView extends JInternalFrame{
         setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
         setSize(600,600);
         SpinnerDateModel model = new SpinnerDateModel();
-        JSpinner spinnerFecha = new JSpinner(model);
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinnerFecha, "dd/MM/yyyy");
-        spinnerFecha.setEditor(editor);
+        spinnerFecha.setModel(model);
+        spinnerFecha.setEditor(new JSpinner.DateEditor(spinnerFecha, "dd/MM/yyyy"));
+
+
+        URL actualizarURL = PreguntasView.class.getClassLoader().getResource("imagenes/actualizarD.png");
+        if (actualizarURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(actualizarURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            btnActualizarDatos.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de actuD");
+        }
+
+        URL salirURL = PreguntasView.class.getClassLoader().getResource("imagenes/logout.png");
+        if (salirURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(salirURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            btnCerrarSesion.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de logout");
+        }
+
+        URL listarCURL = PreguntasView.class.getClassLoader().getResource("imagenes/cartlist.png");
+        if (listarCURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(listarCURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            btnListarCarritos.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de lupa");
+        }
     }
 
     public JSpinner getSpinnerFecha() {
         return spinnerFecha;
     }
 
+    public void setSpinnerFecha(JSpinner spinnerFecha) {
+        this.spinnerFecha = spinnerFecha;
+    }
+
     public JLabel getLblNombreCompleto() {
         return lblNombreCompleto;
     }
+
 
     public JTextField getTxtCorreo() {
         return txtCorreo;
@@ -46,9 +86,19 @@ public class MiPaginaView extends JInternalFrame{
         return txtTelefono;
     }
 
-    public void setPanelPrincipal(JPanel panelPrincipal) {
-        this.panelPrincipal = panelPrincipal;
+    public JLabel getLblMiPagina() {
+        return lblMiPagina;
     }
+
+    public JButton getBtnResponderPreguntas() {
+        return btnResponderPreguntas;
+    }
+
+    public void setPanelPrincipal(JPanel panelPrincipal) {this.panelPrincipal = panelPrincipal;}
+
+    public JLabel getLblUsuaraio() {return lblUsuaraio;}
+
+    public JLabel getLblContrasena() {return lblContrasena;}
 
     public void setPwdContrasena(JPasswordField pwdContrasena) {
         this.pwdContrasena = pwdContrasena;

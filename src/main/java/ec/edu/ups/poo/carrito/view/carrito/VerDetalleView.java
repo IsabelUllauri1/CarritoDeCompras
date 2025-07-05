@@ -10,6 +10,10 @@ public class VerDetalleView extends  JInternalFrame{
     private JTextField txtSubtotal;
     private JTextField txtIVA;
     private JTextField txtTotal;
+    private JLabel lblSubtotal;
+    private JLabel lblIVA;
+    private JLabel lblTotal;
+    private JLabel lblVerDetalles;
 
 
     public VerDetalleView() {
@@ -31,7 +35,6 @@ public class VerDetalleView extends  JInternalFrame{
         return panelPrincipal;
     }
 
-
     public JTextField getTxtTotal() {
         return txtTotal;
     }
@@ -48,5 +51,11 @@ public class VerDetalleView extends  JInternalFrame{
         return tblProductos;
     }
 
+    public JLabel getLblSubtotal() {return lblSubtotal;}
 
+    public JLabel getLblTotal() {return lblTotal;}
+
+    public JLabel getLblIVA() {return lblIVA;}
+
+    public JLabel getLblVerDetalles() {return lblVerDetalles;}
 }

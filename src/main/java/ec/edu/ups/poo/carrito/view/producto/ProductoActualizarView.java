@@ -3,6 +3,8 @@ package ec.edu.ups.poo.carrito.view.producto;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 
 import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 
 public class ProductoActualizarView extends JInternalFrame {
     private  JPanel       panelPrincipal;
@@ -12,58 +14,51 @@ public class ProductoActualizarView extends JInternalFrame {
     private  JTextField   txtPrecio;
     private JTextField txtCodigo;
     private  JButton      btnActualizar;
-    private  JButton      btnLimpiar;
     private  JButton      btnSalir;
     private  JLabel       lblMensaje;
     private JPanel panelDatos;
+    private JLabel lblActualizarProd;
+    private JLabel lblBuscar;
+    private JLabel lblNombre;
+    private JLabel lblCodigo;
+    private JLabel lblPreci;
 
-    public ProductoActualizarView() {
+    public ProductoActualizarView()  {
         super("Actualizar Producto", true, true, true, true);
 
-        // → Panel principal
-        panelPrincipal = new JPanel();
-        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-
-        // → Buscar por código
-        JPanel pBuscar = new JPanel();
-        pBuscar.add(new JLabel("Código:"));
-        txtCodigoBuscar = new JTextField(8);
-        pBuscar.add(txtCodigoBuscar);
-        btnBuscar = new JButton("Buscar");
-        pBuscar.add(btnBuscar);
-        panelPrincipal.add(pBuscar);
-
-        JPanel pNombre = new JPanel();
-        pNombre.add(new JLabel("Nombre:"));
-        txtNombre = new JTextField(15);
-        pNombre.add(txtNombre);
-        panelPrincipal.add(pNombre);
-
-        JPanel pPrecio = new JPanel();
-        pPrecio.add(new JLabel("Precio:"));
-        txtPrecio = new JTextField(10);
-        pPrecio.add(txtPrecio);
-        panelPrincipal.add(pPrecio);
-
-        JPanel pBotones = new JPanel();
-        btnActualizar = new JButton("Actualizar");
-        btnLimpiar    = new JButton("Limpiar");
-        btnSalir      = new JButton("Salir");
-        pBotones.add(btnActualizar);
-        pBotones.add(btnLimpiar);
-        pBotones.add(btnSalir);
-        panelPrincipal.add(pBotones);
-
-        lblMensaje = new JLabel(" ");
-        lblMensaje.setAlignmentX(CENTER_ALIGNMENT);
-        panelPrincipal.add(lblMensaje);
-
         setContentPane(panelPrincipal);
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
         pack();
-        setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+
+        setIcono(btnActualizar, "imagenes/actualizar.png", "act");
+        setIcono(btnBuscar, "imagenes/lupa.png", "lupa");
+        setIcono(btnSalir, "imagenes/close.png", "close");
     }
 
+    private void setIcono(JButton boton, String ruta, String nombre) {
+        URL url = ProductoActualizarView.class.getClassLoader().getResource(ruta);
+        if (url != null) {
+            ImageIcon iconoOriginal = new ImageIcon(url);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+            boton.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de " + nombre);
+        }
+    }
+
+    public JTextField getTxtCodigo() {return txtCodigo;}
+
+    public JLabel getLblPreci() {return lblPreci;}
+
+    public JLabel getLblCodigo() {return lblCodigo;}
+
+    public JLabel getLblNombre() {return lblNombre;}
+
+    public JLabel getLblBuscar() {return lblBuscar;}
+
+    public JLabel getLblActualizarProd() {return lblActualizarProd;}
+
+    public JLabel getLblMensaje() {return lblMensaje;}
 
     public JPanel getPanelPrincipal(){
         return panelPrincipal;
@@ -88,10 +83,7 @@ public class ProductoActualizarView extends JInternalFrame {
     public JButton    getBtnActualizar(){
         return btnActualizar;
     }
-
-    public JButton    getBtnLimpiar(){
-        return btnLimpiar;
-    }
+    
 
     public JButton    getBtnSalir(){
         return btnSalir;

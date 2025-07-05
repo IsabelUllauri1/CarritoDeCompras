@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.util.List;
+import java.util.Locale;
 
 public class ProductoControlador {
 
@@ -72,6 +73,7 @@ public class ProductoControlador {
                 vistaListarPorCodigo.moveToFront();
             } catch (PropertyVetoException ignore) {}
         });
+
 
 
         //aactualizar
@@ -201,22 +203,27 @@ public class ProductoControlador {
     private void configurarBuscarPorCodigo() {
         vistaListarPorCodigo.getBtnBuscar().addActionListener(ev -> {
             String txt = vistaListarPorCodigo.getTxtBuscar().getText().trim();
-            DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
-            m.setRowCount(0);
             if (txt.isEmpty()) {
-                cargarTodosEnBuscarCodigo();
+                vistaListarPorCodigo.mostrarMensaje("Ingresa un código de producto");
                 return;
             }
+
             try {
-                int code = Integer.parseInt(txt);
-                Producto p = productoDAO.buscarPorCodigo(code);
-                if (p != null) {
-                    m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio())});
+                int codigo = Integer.parseInt(txt);
+                Producto producto = productoDAO.buscarPorCodigo(codigo);
+                DefaultTableModel modelo = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
+                modelo.setRowCount(0); // Limpiar tabla
+                if (producto != null) {
+                    modelo.addRow(new Object[]{
+                            producto.getCodigo(),
+                            producto.getNombre(),
+                            formatosUtils.formatearMoneda(producto.getPrecio(), Locale.getDefault())
+                    });
                 } else {
-                    JOptionPane.showMessageDialog(vistaListarPorCodigo, "No se encontró producto con código " + code, "Resultado", JOptionPane.INFORMATION_MESSAGE);
+                    vistaListarPorCodigo.mostrarMensaje("Producto no encontrado");
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(vistaListarPorCodigo, "Código inválido", "Error", JOptionPane.ERROR_MESSAGE);
+                vistaListarPorCodigo.mostrarMensaje("Código inválido (debe ser un número)");
             }
         });
     }
@@ -278,7 +285,7 @@ public class ProductoControlador {
         DefaultTableModel m = vistaListar.getModelo();
         m.setRowCount(0);
         for (Producto p : todos) {
-            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio())});
+            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
         }
     }
 
@@ -307,10 +314,11 @@ public class ProductoControlador {
 
     }
     public void listarProductosEnVistaPorCodigo() {
+
         DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
         m.setRowCount(0);
         for (Producto p : productoDAO.listarTodos()) {
-            m.addRow(new Object[]{ p.getCodigo(), p.getNombre(), formatosUtils.formatearNumero(p.getPrecio()) });
+            m.addRow(new Object[]{ p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault()) });
         }
     }
 

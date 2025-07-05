@@ -3,6 +3,8 @@ package ec.edu.ups.poo.carrito.view;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -101,6 +103,7 @@ public class Principal extends JFrame {
         menuBar.add(menuSalir);
 
 
+        cargarIconosIdiomas();
 
         super.setJMenuBar(menuBar);
 
@@ -116,6 +119,23 @@ public class Principal extends JFrame {
 
 
 
+    }
+
+    private void cargarIconosIdiomas() {
+        ponerIcono(menuIdiomaEspanol, "imagenes/bandera.png");
+        ponerIcono(menuIdiomaIngles, "imagenes/USA_Flag.png");
+        ponerIcono(menuIdiomaAleman, "imagenes/alemania.png");
+    }
+
+    private void ponerIcono(JMenuItem item, String ruta) {
+        URL url = Principal.class.getClassLoader().getResource(ruta);
+        if (url != null) {
+            ImageIcon original = new ImageIcon(url);
+            Image imgEscalada = original.getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH);
+            item.setIcon(new ImageIcon(imgEscalada));
+        } else {
+            System.err.println("No se pudo cargar el ícono de " + ruta);
+        }
     }
     public void cambiarIdioma(String lenguaje, String pais){
         Locale locale = new Locale(lenguaje, pais);

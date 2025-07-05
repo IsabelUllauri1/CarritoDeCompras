@@ -3,6 +3,7 @@ package ec.edu.ups.poo.carrito.view.login;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.URL;
 
 public class LoginView extends JFrame {
@@ -24,12 +25,22 @@ public class LoginView extends JFrame {
         setLocationRelativeTo(null);
         setContentPane(panelPrincipal);
 
-        URL loginURL = LoginView.class.getClassLoader().getResource("login.html");
+        URL loginURL = LoginView.class.getClassLoader().getResource("imagenes/login.png");
         if (loginURL != null) {
-            ImageIcon iconIS = new ImageIcon(loginURL);
-            btnIniciarSesion.setIcon(iconIS);
-        }else {
-            System.err.println("Error: Login URL not found");
+            ImageIcon iconoOriginal = new ImageIcon(loginURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            btnIniciarSesion.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de Login");
+        }
+
+        URL registrarseURL = LoginView.class.getClassLoader().getResource("imagenes/registarse.png");
+        if (registrarseURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(registrarseURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            btnRegistrarse.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de Registrarse");
         }
     }
 
@@ -91,6 +102,8 @@ public class LoginView extends JFrame {
     public JLabel getLblContrasena() {
         return lblContrasena;
     }
+
+
 
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);

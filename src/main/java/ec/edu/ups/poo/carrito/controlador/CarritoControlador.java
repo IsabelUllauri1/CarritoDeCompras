@@ -206,8 +206,7 @@ public class CarritoControlador {
             return;
         }
 
-        int codigo = (int) listarView.getTblCarritos()
-                .getValueAt(row, 0);
+        int codigo = (int) listarView.getTblCarritos().getValueAt(row, 0);
 
         Carrito c = carritoDAO.buscarPorCodigo(codigo);
         if (c == null) {
@@ -222,9 +221,9 @@ public class CarritoControlador {
             });
         }
 
-        verDetalleView.getTxtSubtotal().setText(String.format("%.2f", c.calcularSubtotal()));
-        verDetalleView.getTxtIVA().setText(   String.format("%.2f", c.calcularIVA()));
-        verDetalleView.getTxtTotal().setText(  String.format("%.2f", c.calcularTotal()));
+        verDetalleView.getTxtSubtotal().setText(formatosUtils.formatearMoneda(c.calcularSubtotal(), Locale.getDefault()));
+        verDetalleView.getTxtIVA().setText (formatosUtils.formatearMoneda(c.calcularIVA(), Locale.getDefault()));
+        verDetalleView.getTxtTotal().setText (formatosUtils.formatearMoneda(c.calcularTotal(), Locale.getDefault()));
 
 
         try {

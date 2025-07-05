@@ -16,11 +16,11 @@
           <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-1051909"/>
+          <background color="-5127709"/>
         </properties>
         <border type="none"/>
         <children>
-          <component id="b34f4" class="javax.swing.JLabel">
+          <component id="b34f4" class="javax.swing.JLabel" binding="lblCrearUsuario">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -37,7 +37,7 @@
           </vspacer>
         </children>
       </grid>
-      <component id="40877" class="javax.swing.JLabel">
+      <component id="40877" class="javax.swing.JLabel" binding="lblUsuario">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -56,7 +56,7 @@
           <background color="-1051909"/>
         </properties>
       </component>
-      <component id="f0b78" class="javax.swing.JLabel">
+      <component id="f0b78" class="javax.swing.JLabel" binding="lblContrasena">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -103,7 +103,7 @@
           <background color="-1051909"/>
         </properties>
       </component>
-      <component id="c87cd" class="javax.swing.JLabel">
+      <component id="c87cd" class="javax.swing.JLabel" binding="lblRol">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>

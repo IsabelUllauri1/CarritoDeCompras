@@ -1,17 +1,16 @@
 package ec.edu.ups.poo.carrito.controlador;
 
 import ec.edu.ups.poo.carrito.dao.CarritoDAO;
+import ec.edu.ups.poo.carrito.dao.PreguntaDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
 import ec.edu.ups.poo.carrito.modelo.*;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.ListarTodosLosCarritosView;
+import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
-import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
-import ec.edu.ups.poo.carrito.view.usuario.EditarUsuarioView;
-import ec.edu.ups.poo.carrito.view.usuario.ListarUsuariosView;
+import ec.edu.ups.poo.carrito.view.usuario.*;
 import ec.edu.ups.poo.carrito.view.carrito.ListarMisCarritos;
-import ec.edu.ups.poo.carrito.view.usuario.MiPaginaView;
 import ec.edu.ups.poo.carrito.view.carrito.VerDetalleView;
 
 import javax.swing.*;
@@ -29,6 +28,7 @@ public class UsuarioControlador {
     private final ListarTodosLosCarritosView listarTodosCarritosView;
     private final Usuario usuario;
     private final CarritoDAO carritoDAO;
+    private final PreguntaDAO preguntaDAO;
     private final MiPaginaView miPaginaView;
     private final ListarMisCarritos listarView;
     private final VerDetalleView verDetalleView;
@@ -40,18 +40,21 @@ public class UsuarioControlador {
     private Rol rol;
     private FormatosUtils formatosUtils;
     private RegistrarseView registrarseView;
+    private PreguntasUView preguntasViewU;
 
 
-    public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO,UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView) {
+    public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO, UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView, PreguntasUView preguntasViewU,PreguntaDAO preguntaDAO) {
         this.usuario  = usuario;
         this.carritoDAO = carritoDAO;
         this.usuarioDAO = usuarioDAO;
+        this.preguntaDAO = preguntaDAO;
         this.miPaginaView = miPaginaView;
         this.listarView = listarView;
         this.verDetalleView  = verDetalleView;
         this.listaUsuariosView = listaUsuariosView;
         this.crearUsuarioView = crearUsuarioView;
         this.editarUsuarioView = editarUsuarioView;
+        this.preguntasViewU = preguntasViewU;
         this.principal = principal;
         this.listarTodosCarritosView = listarTodosCarritosView;
 
@@ -63,6 +66,8 @@ public class UsuarioControlador {
     private void listeners() {
         miPaginaView.getBtnActualizarDatos().addActionListener(e -> actualizarDatosMet(e));
         miPaginaView.getBtnCerrarSesion().addActionListener(e -> miPaginaView.dispose());
+        miPaginaView.getBtnResponderPreguntas().addActionListener(e -> abrirPreguntasParaEditar());
+
 
         editarUsuarioView.getBtnGuardar().addActionListener(e ->  editarUsuario());
 
@@ -96,6 +101,73 @@ public class UsuarioControlador {
         }
     }
 
+    public void cargarDatosEnMiPagina() {
+        miPaginaView.getTxtUsuario().setText(usuario.getUsername());
+        miPaginaView.getPwdContrasena().setText(usuario.getContrasenia());
+        miPaginaView.getTxtNombreCompleto().setText(usuario.getNombreCompleto());
+        miPaginaView.getTxtCorreo().setText(usuario.getCorreo());
+        miPaginaView.getTxtTelefono().setText(usuario.getTelefono());
+        if (usuario.getFechaNacimiento() != null) {
+            miPaginaView.getSpinnerFecha().setValue(usuario.getFechaNacimiento());
+        }
+    }
+
+    private void abrirPreguntasParaEditar() {
+        if (!preguntasViewU.isShowing()) {
+            principal.getDesktopPanel().add(preguntasViewU);
+        }
+
+        JTextField[] camposPreguntas   = preguntasViewU.getCamposPreguntas();
+        JTextField[] camposRespuestas = preguntasViewU.getCamposRespuestas();
+
+        List<Pregunta> preguntasFijas = preguntaDAO.listarPreguntas();
+        for (int i = 0; i < 10; i++) {
+            camposPreguntas[i].setText(preguntasFijas.get(i).getTexto());
+            camposPreguntas[i].setEditable(false);
+            camposRespuestas[i].setText("");
+        }
+
+        preguntasViewU.setVisible(true);
+        try {
+            preguntasViewU.setSelected(true);
+        } catch (Exception ignored) {}
+
+        preguntasViewU.getBtnGuardar().addActionListener(ev -> guardarPreguntasActualizadas(preguntasFijas));
+    }
+
+
+
+
+
+    private void guardarPreguntasActualizadas(List<Pregunta> preguntasFijas) {
+        List<PreguntaRespondida> respuestas = new ArrayList<>();
+        JTextField[] respuestasUsuario = preguntasViewU.getCamposRespuestas();
+
+        for (int i = 0; i < 10; i++) {
+            String textoRespuesta = respuestasUsuario[i].getText().trim();
+            if (!textoRespuesta.isEmpty()) {
+                respuestas.add(new PreguntaRespondida(preguntasFijas.get(i), textoRespuesta, usuario.getUsername()
+                ));
+            }
+        }
+
+        if (respuestas.size() < 3) {
+            preguntasViewU.mostrarMensaje("Debes responder al menos 3 preguntas");
+            return;
+        }
+
+        usuario.setPreguntasRespondidas(respuestas);
+        usuarioDAO.actualizar(usuario);
+        preguntasViewU.mostrarMensaje("Preguntas actualizadas correctamente");
+        preguntasViewU.dispose();
+    }
+
+
+
+
+
+
+
 
     private void actualizarDatosMet(ActionEvent e) {
         String nu = miPaginaView.getTxtUsuario().getText().trim();
@@ -116,6 +188,8 @@ public class UsuarioControlador {
         usuario.setCorreo(correo);
         usuario.setTelefono(telefono);
         usuario.setFechaNacimiento(fechaNacimiento);
+
+        usuarioDAO.actualizar(usuario);
 
         miPaginaView.mostrarMensaje("Datos actualizados");
     }

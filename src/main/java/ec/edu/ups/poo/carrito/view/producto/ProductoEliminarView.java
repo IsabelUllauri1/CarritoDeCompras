@@ -1,10 +1,13 @@
 package ec.edu.ups.poo.carrito.view.producto;
 
 import ec.edu.ups.poo.carrito.modelo.Producto;
+import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.*;
+import java.net.URL;
 import java.util.List;
 
 public class ProductoEliminarView extends JInternalFrame {
@@ -14,6 +17,8 @@ public class ProductoEliminarView extends JInternalFrame {
     private JButton btnEliminar;
     private JButton btnSalir;
     private JPanel panelPrincipal;
+    private JLabel lblBuscar;
+    private JLabel lblEliminarProducto;
     private DefaultTableModel modelo;
 
     public ProductoEliminarView() {
@@ -29,6 +34,32 @@ public class ProductoEliminarView extends JInternalFrame {
         setContentPane(panelPrincipal);
         pack();
         setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+
+        URL lupaURL = PreguntasView.class.getClassLoader().getResource("imagenes/lupa.png");
+        if (lupaURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(lupaURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+            btnBuscar.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de lupa");
+        }
+        URL elimURL = PreguntasView.class.getClassLoader().getResource("imagenes/basurero.png");
+        if (elimURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(elimURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+            btnEliminar.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de basurero");
+        }
+
+        URL closeURL = PreguntasView.class.getClassLoader().getResource("imagenes/close.png");
+        if (closeURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(closeURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+            btnSalir.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de close");
+        }
 
     }
 
@@ -68,4 +99,8 @@ public class ProductoEliminarView extends JInternalFrame {
     public JTable getTblProductos() {
         return tblProductos;
     }
+
+    public JLabel getLblBuscar() {return lblBuscar;}
+
+    public JLabel getLblEliminarProducto() {return lblEliminarProducto;}
 }

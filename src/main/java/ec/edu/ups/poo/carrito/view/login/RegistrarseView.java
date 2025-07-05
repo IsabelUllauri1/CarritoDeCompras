@@ -1,13 +1,15 @@
 package ec.edu.ups.poo.carrito.view.login;
 
 import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 
 public class RegistrarseView extends JFrame{
     private JPanel panelPrincipal;
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JLabel lblCont;
-    private JLabel lblUusuario;
+    private JLabel lblUsuario;
     private JButton btnSiguiente;
     private JButton btnRegresar;
     private JLabel lblNombreComp;
@@ -18,6 +20,7 @@ public class RegistrarseView extends JFrame{
     private JTextField txtCorreo;
     private JTextField txtTelefono;
     private JSpinner spinnerFecha;
+    private JLabel lblddmmyyyy;
     private JTextField txtFechaN;
 
     public RegistrarseView() {
@@ -31,6 +34,24 @@ public class RegistrarseView extends JFrame{
 
         JSpinner.DateEditor editor = new JSpinner.DateEditor(spinnerFecha, "dd/MM/yyyy");
         spinnerFecha.setEditor(editor);
+
+        URL atrasURL = PreguntasView.class.getClassLoader().getResource("imagenes/atras.png");
+        if (atrasURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(atrasURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            btnRegresar.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de atras");
+        }
+
+        URL sigURL = PreguntasView.class.getClassLoader().getResource("imagenes/siguiente.png");
+        if (sigURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(sigURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            btnSiguiente.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de siguiente");
+        }
     }
 
     public JButton getBtnRegresar() {
@@ -49,13 +70,8 @@ public class RegistrarseView extends JFrame{
         return btnSiguiente;
     }
 
-    public JLabel getLblUusuario() {
-        return lblUusuario;
-    }
 
-    public JLabel getLblCont() {
-        return lblCont;
-    }
+    public JLabel getLblCont() {return lblCont;}
 
     public JTextField getTextField1() {
         return textField1;
@@ -95,6 +111,11 @@ public class RegistrarseView extends JFrame{
 
     public JTextField getTxtFechaN() {
         return txtFechaN;
+    }
+
+    public JLabel getLblddmmyyyy() {return lblddmmyyyy;}
+
+    public JLabel getLblUsuario() {return lblUsuario;
     }
 
     public void mostrarMensaje(String mensaje) {

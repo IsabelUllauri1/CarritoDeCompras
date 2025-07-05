@@ -1,6 +1,8 @@
 package ec.edu.ups.poo.carrito.view.login;
 
 import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 
 public class PreguntasView extends JFrame {
     private JPanel panelPrincipal;
@@ -27,8 +29,7 @@ public class PreguntasView extends JFrame {
     private JTextField txtP9;
     private JTextField txtP10;
     private JButton btnRegresar;
-
-
+    private JLabel lblPreguntasSeguridad;
 
 
     public PreguntasView() {
@@ -48,6 +49,23 @@ public class PreguntasView extends JFrame {
         txt9.setText("¿Lugar de tus vacaciones más memorables?");
         txt10.setText("¿Nombre del primer videojuego que jugaste?");
 
+        URL guardarURL = PreguntasView.class.getClassLoader().getResource("imagenes/guardar.png");
+        if (guardarURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(guardarURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            btnGuardar.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de guardar");
+        }
+        URL atrasURL = PreguntasView.class.getClassLoader().getResource("imagenes/atras.png");
+        if (atrasURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(atrasURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            btnRegresar.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de atras");
+        }
+
 
     }
 
@@ -64,97 +82,79 @@ public class PreguntasView extends JFrame {
     }
 
 
-    public JButton getBtnGuardar() {
-        return btnGuardar;
+    public JButton getBtnGuardar() {return btnGuardar;
     }
 
-    public JButton getBtnRegresar() {
-        return btnRegresar;
+    public JButton getBtnRegresar() {return btnRegresar;
     }
 
-    public JTextField getTxtP10() {
-        return txtP10;
+    public JTextField getTxtP10() {return txtP10;
     }
 
-    public JTextField getTxtP9() {
-        return txtP9;
+    public JTextField getTxtP9() {return txtP9;
     }
 
-    public JTextField getTxtP8() {
-        return txtP8;
+    public JTextField getTxtP8() {return txtP8;
     }
 
-    public JPanel getPanelPrincipal() {
-        return panelPrincipal;
+    public JPanel getPanelPrincipal() {return panelPrincipal;
     }
 
-    public JTextField getTxt1() {
-        return txt1;
+    public JTextField getTxt1() {return txt1;
     }
 
-    public JTextField getTxt2() {
-        return txt2;
+    public JTextField getTxt2() {return txt2;
     }
 
-    public JTextField getTxt3() {
-        return txt3;
+    public JTextField getTxt3() {return txt3;
     }
 
-    public JTextField getTxt4() {
-        return txt4;
+    public JTextField getTxt4() {return txt4;
     }
 
-    public JTextField getTxt9() {
-        return txt9;
+    public JTextField getTxt9() {return txt9;
     }
 
-    public JTextField getTxt5() {
-        return txt5;
+    public JTextField getTxt5() {return txt5;
     }
 
-    public JTextField getTxt6() {
-        return txt6;
+    public JTextField getTxt6() {return txt6;
     }
 
-    public JTextField getTxt7() {
-        return txt7;
+    public JTextField getTxt7() {return txt7;
     }
 
-    public JTextField getTxt8() {
-        return txt8;
+    public JTextField getTxt8() {return txt8;
     }
 
-    public JTextField getTxt10() {
-        return txt10;
+    public JTextField getTxt10() {return txt10;
     }
 
-    public JTextField getTxtP1() {
-        return txtP1;
+    public JTextField getTxtP1() {return txtP1;
     }
 
-    public JTextField getTxtP2() {
-        return txtP2;
+    public JTextField getTxtP2() {return txtP2;
     }
 
-    public JTextField getTxtP3() {
-        return txtP3;
+    public JTextField getTxtP3() {return txtP3;
     }
 
-    public JTextField getTxtP4() {
-        return txtP4;
+    public JTextField getTxtP4() {return txtP4;
     }
 
-    public JTextField getTxtP5() {
-        return txtP5;
+    public JTextField getTxtP5() {return txtP5;
     }
 
-    public JTextField getTxtP6() {
-        return txtP6;
+    public JTextField getTxtP6() {return txtP6;
     }
 
-    public JTextField getTxtP7() {
-        return txtP7;
+    public JTextField getTxtP7() {return txtP7;
     }
+
+    public JLabel getLblPreguntasSeguridad() {return lblPreguntasSeguridad;
+    }
+
+
 
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);

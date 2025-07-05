@@ -62,6 +62,17 @@ public class LoginControlador {
                 return;
             }
 
+            if (!nombreCompleto.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+                registrarseView.mostrarMensaje("Nombre inválido. Solo se permiten letras y espacios.");
+                return;
+            }
+
+
+            if (!telefono.matches("\\d{7,10}")) {
+                registrarseView.mostrarMensaje("Teléfono inválido. Debe tener entre 7 y 10 dígitos.");
+                return;
+            }
+
             this.usuarioTemp = new Usuario(username, password, Rol.USUARIO, correo, nombreCompleto, telefono, fechaNacimiento);
             preguntasView.setVisible(true);
             registrarseView.setVisible(false);
@@ -189,11 +200,15 @@ public class LoginControlador {
         String user = loginView.getTxtUsername().getText();
         String passw = loginView.getTxtContrasena().getText();
         usuarioAutenticado = usuarioDAO.autenticar(user, passw);
+        loginView.getTxtUsername().setText("");
+        loginView.getTxtContrasena().setText("");
         if (usuarioAutenticado == null) {
             loginView.mostrarMensaje("Usuario o contraseña incorrectos");
             return;
         }
         loginView.dispose();
+
+
     }
 
 

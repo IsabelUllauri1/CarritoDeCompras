@@ -12,10 +12,7 @@ import ec.edu.ups.poo.carrito.view.login.OlvideContrasenaView;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
 import ec.edu.ups.poo.carrito.view.producto.*;
-import ec.edu.ups.poo.carrito.view.usuario.CrearUsuarioView;
-import ec.edu.ups.poo.carrito.view.usuario.EditarUsuarioView;
-import ec.edu.ups.poo.carrito.view.usuario.ListarUsuariosView;
-import ec.edu.ups.poo.carrito.view.usuario.MiPaginaView;
+import ec.edu.ups.poo.carrito.view.usuario.*;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -61,19 +58,18 @@ public class Main {
                     CarritoAnadirView anadirCarritoV = new CarritoAnadirView();
                     CarritoListarView listarCarritoV = new CarritoListarView();
 
-                    MiPaginaView miPaginaV           = new MiPaginaView();
-                    ListarMisCarritos listarMisV     = new ListarMisCarritos();
-                    VerDetalleView verDetalleV       = new VerDetalleView();
+                    MiPaginaView miPaginaV  = new MiPaginaView();
+                    ListarMisCarritos listarMisV  = new ListarMisCarritos();
+                    VerDetalleView verDetalleV  = new VerDetalleView();
+                    PreguntasUView preguntasUV = new PreguntasUView();
 
                     ListarUsuariosView listarUsuariosView = new ListarUsuariosView();
                     CrearUsuarioView crearUsuarioView = new CrearUsuarioView();
                     EditarUsuarioView editarUsuarioView = new EditarUsuarioView();
 
-
-
                     ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV,listarProdPorCodigo, anadirCarritoV);
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
-                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView );
+                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView, preguntasUV,preguntaDAO);
 
                     if (usuarioAut.getRol() == Rol.USUARIO) {
                         principal.deshabilitarMenuAdministrador();
@@ -125,8 +121,12 @@ public class Main {
 
                     // — Cuenta —
                     principal.getMenuItemMiPagina().addActionListener(ev -> {
-                        principal.getDesktopPanel().add(miPaginaV);
+                        if (!miPaginaV.isShowing()) {
+                            principal.getDesktopPanel().add(miPaginaV);
+                        }
+                        usuarioControlador.cargarDatosEnMiPagina();
                         miPaginaV.setVisible(true);
+                        miPaginaV.moveToFront();
                     });
                     principal.getMenuItemMisCarritos().addActionListener(ev -> {
                         if (!listarMisV.isShowing()) {
