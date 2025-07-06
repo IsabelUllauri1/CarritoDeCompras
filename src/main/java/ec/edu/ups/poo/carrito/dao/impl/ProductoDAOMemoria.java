@@ -41,7 +41,7 @@ public class ProductoDAOMemoria implements ProductoDAO {
     public List<Producto> buscarPorNombre(String nombre) {
         List<Producto> productosEncontrados = new ArrayList<>();
         for (Producto producto : productos) {
-            if (producto.getNombre().startsWith(nombre)) {
+            if (producto.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
                 productosEncontrados.add(producto);
             }
         }

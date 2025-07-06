@@ -1,6 +1,7 @@
 package ec.edu.ups.poo.carrito.view;
 
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.poo.carrito.view.producto.ProductoActualizarView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +11,11 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class Principal extends JFrame {
-    private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
-    private JMenu menuIdioma;
-    private JMenuItem menuIdiomaEspanol;
-    private JMenuItem menuIdiomaAleman;
-    private JMenuItem menuIdiomaIngles;
+    private final MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
+    private final JMenu menuIdioma;
+    private final JMenuItem menuIdiomaEspanol;
+    private final JMenuItem menuIdiomaAleman;
+    private final  JMenuItem menuIdiomaIngles;
     private JMenu menuSalir;
     private JMenuItem menuItemSalir;
     private JPanel panelPrincipal;
@@ -37,6 +38,7 @@ public class Principal extends JFrame {
     private JMenuItem menuItemMisCarritos;
     private JMenuItem menuItemCrearUsuario;
     private JMenuItem menuItemListarTodosLosCarritos;
+    private ProductoActualizarView actualizarProducto;
 
 
     //el modelo es el que hace los metodos. en controlador solo dice que en el view se usen ciertos metodos
@@ -68,9 +70,9 @@ public class Principal extends JFrame {
         menuItemMiPagina          = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.miPagina"));
         menuItemMisCarritos    = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.misCarritos"));
 
-        menuIdiomaAleman = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.en"));
-        menuIdiomaEspanol = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.es"));
-        menuIdiomaIngles = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.de"));
+        menuIdiomaAleman = new JMenuItem();
+        menuIdiomaEspanol = new JMenuItem();
+        menuIdiomaIngles = new JMenuItem();
 
         menuSalir = new JMenu(mensajeInternacionalizacionHandler.get("menu.salir"));
         menuItemSalir = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ItemSalir"));
@@ -80,6 +82,7 @@ public class Principal extends JFrame {
         menuProducto.add(menuItemListarProductos);
         menuProducto.add(menuItemCrear);
         menuProducto.add(menuItemEliminar);
+        menuProducto.add(menuItemActualizar);
         menuProducto.add(menuItemCarrito);
         menuProducto.add(menuItemListarCodigo);
 
@@ -131,7 +134,7 @@ public class Principal extends JFrame {
         URL url = Principal.class.getClassLoader().getResource(ruta);
         if (url != null) {
             ImageIcon original = new ImageIcon(url);
-            Image imgEscalada = original.getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH);
+            Image imgEscalada = original.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             item.setIcon(new ImageIcon(imgEscalada));
         } else {
             System.err.println("No se pudo cargar el ícono de " + ruta);
@@ -158,9 +161,9 @@ public class Principal extends JFrame {
         menuItemMiPagina.setText(mensajeInternacionalizacionHandler.get("menu.miPagina"));
         menuItemMisCarritos.setText(mensajeInternacionalizacionHandler.get("menu.misCarritos"));
 
-        menuIdiomaIngles.setText(mensajeInternacionalizacionHandler.get("menu.en"));
-        menuIdiomaEspanol.setText(mensajeInternacionalizacionHandler.get("menu.es"));
-        menuIdiomaAleman.setText(mensajeInternacionalizacionHandler.get("menu.de"));
+//        menuIdiomaIngles.setText(mensajeInternacionalizacionHandler.get("menu.en"));
+//        menuIdiomaEspanol.setText(mensajeInternacionalizacionHandler.get("menu.es"));
+//        menuIdiomaAleman.setText(mensajeInternacionalizacionHandler.get("menu.de"));
 
         menuItemCrearUsuario.setText(mensajeInternacionalizacionHandler.get("menu.crearUsuario"));
         menuItemListarTodosUsuarios.setText(mensajeInternacionalizacionHandler.get("menu.listarTodosLosUsarios"));
@@ -174,6 +177,8 @@ public class Principal extends JFrame {
         menuItemListarCodigo.setText(mensajeInternacionalizacionHandler.get("menu.listarCodigo"));
 
         menuIdioma.setText(mensajeInternacionalizacionHandler.get("menu.Idioma"));
+        actualizarProducto.actualizarTexto(mensajeInternacionalizacionHandler);
+
 
     }
 
@@ -285,8 +290,6 @@ public class Principal extends JFrame {
         menuItemListarTodosLosCarritos.setEnabled(false);
         menuItemListarTodosUsuarios.setEnabled(false);
         menuItemCrearUsuario.setEnabled(false);
-
-
 
     }
 

@@ -68,7 +68,7 @@
             </constraints>
             <properties>
               <foreground color="-9137921"/>
-              <text value="Buscar"/>
+              <text value=" Buscar Por Codigo"/>
             </properties>
           </component>
         </children>

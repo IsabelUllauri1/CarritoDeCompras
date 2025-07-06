@@ -1,21 +1,22 @@
 package ec.edu.ups.poo.carrito.view.producto;
 
 import ec.edu.ups.poo.carrito.modelo.Producto;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
 public class ProductoActualizarView extends JInternalFrame {
-    private  JPanel       panelPrincipal;
-    private  JTextField   txtCodigoBuscar;
-    private  JButton      btnBuscar;
+    private  JPanel panelPrincipal;
+    private  JTextField txtCodigoBuscar;
+    private  JButton  btnBuscar;
     private  JTextField   txtNombre;
     private  JTextField   txtPrecio;
     private JTextField txtCodigo;
-    private  JButton      btnActualizar;
-    private  JButton      btnSalir;
-    private  JLabel       lblMensaje;
+    private  JButton  btnActualizar;
+    private  JButton btnSalir;
+    private  JLabel  lblMensaje;
     private JPanel panelDatos;
     private JLabel lblActualizarProd;
     private JLabel lblBuscar;
@@ -25,10 +26,11 @@ public class ProductoActualizarView extends JInternalFrame {
 
     public ProductoActualizarView()  {
         super("Actualizar Producto", true, true, true, true);
+        setSize(500,500);
 
         setContentPane(panelPrincipal);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
-        pack();
+
 
         setIcono(btnActualizar, "imagenes/actualizar.png", "act");
         setIcono(btnBuscar, "imagenes/lupa.png", "lupa");
@@ -45,6 +47,19 @@ public class ProductoActualizarView extends JInternalFrame {
             System.err.println("Error: No se ha cargado el icono de " + nombre);
         }
     }
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("producto.actualizar.titulo"));
+        lblBuscar.setText(mh.get("lblBuscar"));
+        lblActualizarProd.setText(mh.get("lblActualizar"));
+        lblCodigo.setText(mh.get("lblCodigo"));
+        lblPreci.setText(mh.get("lblPrecio"));
+        lblNombre.setText(mh.get("lblNombre"));
+        lblMensaje.setText(mh.get("lblMensaje"));
+        btnBuscar.setText(mh.get("btnBuscar"));
+        btnActualizar.setText(mh.get("btnActualizar"));
+        btnSalir.setText(mh.get("btnSalir"));
+    }
+
 
     public JTextField getTxtCodigo() {return txtCodigo;}
 

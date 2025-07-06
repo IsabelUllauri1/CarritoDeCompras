@@ -95,7 +95,7 @@ public class UsuarioControlador {
         for (Carrito c : todos) {
             if (c.getUsuario().equals(usuario)) {
                 m.addRow(new Object[]{
-                        c.getCodigo(), formatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()), c.calcularSubtotal(), c.calcularIVA(), c.calcularTotal()
+                        c.getCodigo(), formatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()), formatosUtils.formatearMoneda(c.calcularSubtotal(), Locale.getDefault()), formatosUtils.formatearMoneda(c.calcularIVA(), Locale.getDefault()), formatosUtils.formatearMoneda(c.calcularTotal(), Locale.getDefault())
                 });
             }
         }
@@ -161,13 +161,6 @@ public class UsuarioControlador {
         preguntasViewU.mostrarMensaje("Preguntas actualizadas correctamente");
         preguntasViewU.dispose();
     }
-
-
-
-
-
-
-
 
     private void actualizarDatosMet(ActionEvent e) {
         String nu = miPaginaView.getTxtUsuario().getText().trim();
@@ -371,8 +364,6 @@ public class UsuarioControlador {
                     c.getUsuario().getUsername()
             });
         }
-
-
 
     }
 

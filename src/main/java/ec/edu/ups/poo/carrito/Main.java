@@ -67,7 +67,7 @@ public class Main {
                     CrearUsuarioView crearUsuarioView = new CrearUsuarioView();
                     EditarUsuarioView editarUsuarioView = new EditarUsuarioView();
 
-                    ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV,listarProdPorCodigo, anadirCarritoV);
+                    ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV,listarProdPorCodigo, anadirCarritoV,eliminarProdV,actualizarProdV);
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
                     UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView, preguntasUV,preguntaDAO);
 
@@ -77,17 +77,28 @@ public class Main {
 
                     // — Producto —
                     principal.getMenuItemCrear().addActionListener(ev -> {
-
-                        if(!anadirProdV.isVisible()){
-                            anadirProdV.setVisible(true);
-                            anadirProdV.moveToFront();
-                            try {
-                                anadirProdV.setSelected(true);
-                            } catch (PropertyVetoException ex) {
-                                throw new RuntimeException(ex);
-                            }
+                        if (!anadirProdV.isShowing()) {
+                            principal.getDesktopPanel().add(anadirProdV);
+                        }
+                        anadirProdV.setVisible(true);
+                        anadirProdV.moveToFront();
+                        try {
+                            anadirProdV.setSelected(true);
+                        } catch (PropertyVetoException ex) {
+                            ex.printStackTrace();
                         }
                     });
+                    principal.getMenuItemActualizar().addActionListener(ev -> {
+                        if (!actualizarProdV.isShowing()) {
+                            principal.getDesktopPanel().add(actualizarProdV);
+                        }
+                        actualizarProdV.setVisible(true);
+                        try {
+                            actualizarProdV.setSelected(true);
+                            actualizarProdV.moveToFront();
+                        } catch (PropertyVetoException ignored) {}
+                    });
+
                     principal.getMenuItemListarCodigo().addActionListener(ev -> {
                         if (!listarProdPorCodigo.isShowing()) {
                             principal.getDesktopPanel().add(listarProdPorCodigo);
@@ -101,9 +112,17 @@ public class Main {
 
                     });
                     principal.getMenuItemListarProductos().addActionListener(ev -> {
-                        principal.getDesktopPanel().add(listarProdV);
+                        if (!listarProdV.isShowing()) {
+                            principal.getDesktopPanel().add(listarProdV);
+                        }
+                        prodCtrl.listarProductos(); //
                         listarProdV.setVisible(true);
+                        try {
+                            listarProdV.setSelected(true);
+                            listarProdV.moveToFront();
+                        } catch (Exception ignored) {}
                     });
+
                     principal.getMenuItemEliminar().addActionListener(ev -> {
                         principal.getDesktopPanel().add(eliminarProdV);
                         eliminarProdV.setVisible(true);
@@ -185,7 +204,7 @@ public class Main {
                         principal.cambiarIdioma("de","DE");
                         usuarioControlador.mostrarTodosLosCarritos();
                     });
-                    System.out.println("Idioma del sistema: " + Locale.getDefault());
+
 
 
                     principal.setVisible(true);

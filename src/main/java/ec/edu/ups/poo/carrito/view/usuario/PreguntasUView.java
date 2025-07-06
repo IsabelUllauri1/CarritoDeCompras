@@ -1,6 +1,10 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
+import ec.edu.ups.poo.carrito.view.login.PreguntasView;
+
 import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 
 public class PreguntasUView extends JInternalFrame {
     private JButton btnGuardar;
@@ -32,6 +36,16 @@ public class PreguntasUView extends JInternalFrame {
         setClosable( true );
         setContentPane(panelPrncipal);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
+
+
+        URL guardarURL = PreguntasView.class.getClassLoader().getResource("imagenes/guardar.png");
+        if (guardarURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(guardarURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            btnGuardar.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de preguntas");
+        }
     }
 
     public JTextField[] getCamposPreguntas() {

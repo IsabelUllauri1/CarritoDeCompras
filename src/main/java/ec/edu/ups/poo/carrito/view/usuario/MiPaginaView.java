@@ -63,6 +63,14 @@ public class MiPaginaView extends JInternalFrame{
         } else {
             System.err.println("Error: No se ha cargado el icono de lupa");
         }
+        URL preguntasURL = PreguntasView.class.getClassLoader().getResource("imagenes/listaUsuarios.png");
+        if (preguntasURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(preguntasURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            btnResponderPreguntas.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de preguntas");
+        }
     }
 
     public JSpinner getSpinnerFecha() {

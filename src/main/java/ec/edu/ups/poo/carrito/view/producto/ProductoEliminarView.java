@@ -1,6 +1,7 @@
 package ec.edu.ups.poo.carrito.view.producto;
 
 import ec.edu.ups.poo.carrito.modelo.Producto;
+import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 
 public class ProductoEliminarView extends JInternalFrame {
     private JTextField txtBuscar;
@@ -20,6 +22,7 @@ public class ProductoEliminarView extends JInternalFrame {
     private JLabel lblBuscar;
     private JLabel lblEliminarProducto;
     private DefaultTableModel modelo;
+    private FormatosUtils formatosUtils;
 
     public ProductoEliminarView() {
         super("Eliminar Producto", true, true, true, true);
@@ -67,7 +70,7 @@ public class ProductoEliminarView extends JInternalFrame {
         modelo.setRowCount(0);
         for (Producto p : productos) {
             modelo.addRow(new Object[]{
-                    p.getCodigo(), p.getNombre(), p.getPrecio()
+                    p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())
             });
         }
     }

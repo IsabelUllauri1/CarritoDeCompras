@@ -37,10 +37,19 @@ public class LoginView extends JFrame {
         URL registrarseURL = LoginView.class.getClassLoader().getResource("imagenes/registarse.png");
         if (registrarseURL != null) {
             ImageIcon iconoOriginal = new ImageIcon(registrarseURL);
-            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
             btnRegistrarse.setIcon(new ImageIcon(imagenEscalada));
         } else {
             System.err.println("Error: No se ha cargado el icono de Registrarse");
+        }
+
+        URL olvideURL = LoginView.class.getClassLoader().getResource("imagenes/pregunta.png");
+        if (olvideURL != null) {
+            ImageIcon iconoOriginal = new ImageIcon(olvideURL);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            btnOlvide.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de pregunta");
         }
     }
 
