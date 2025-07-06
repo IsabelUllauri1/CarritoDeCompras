@@ -1,5 +1,7 @@
 package ec.edu.ups.poo.carrito.view.carrito;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -30,6 +32,15 @@ public class VerDetalleView extends  JInternalFrame{
         pack();
 
     }
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("carrito.detalle.titulo"));
+
+        lblVerDetalles.setText(mh.get("etiqueta.verDetalles"));
+        lblSubtotal.setText(mh.get("etiqueta.subtotal"));
+        lblIVA.setText(mh.get("etiqueta.iva"));
+        lblTotal.setText(mh.get("etiqueta.total"));
+    }
+
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;

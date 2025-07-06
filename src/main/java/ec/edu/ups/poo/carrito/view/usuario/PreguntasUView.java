@@ -1,5 +1,6 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -47,6 +48,24 @@ public class PreguntasUView extends JInternalFrame {
             System.err.println("Error: No se ha cargado el icono de preguntas");
         }
     }
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("preguntas.responder.titulo"));
+
+        lblResponderPreguntas.setText(mh.get("preguntas.responder.titulo"));
+        btnGuardar.setText(mh.get("boton.guardar"));
+
+        txtP1.setText(mh.get("pregunta.1"));
+        txtP2.setText(mh.get("pregunta.2"));
+        txtP3.setText(mh.get("pregunta.3"));
+        txtP4.setText(mh.get("pregunta.4"));
+        txtP5.setText(mh.get("pregunta.5"));
+        txtP6.setText(mh.get("pregunta.6"));
+        txtP7.setText(mh.get("pregunta.7"));
+        txtP8.setText(mh.get("pregunta.8"));
+        txtP9.setText(mh.get("pregunta.9"));
+        txtP10.setText(mh.get("pregunta.10"));
+    }
+
 
     public JTextField[] getCamposPreguntas() {
         return new JTextField[] {

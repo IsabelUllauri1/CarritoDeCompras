@@ -1,5 +1,7 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
+import ec.edu.ups.poo.carrito.util.ComboRol;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -17,6 +19,7 @@ public class CrearUsuarioView extends JInternalFrame{
     private JLabel lblContrasena;
     private JLabel lblRol;
     private JLabel lblCrearUsuario;
+    private ComboRol comboRol;
 
 
     public CrearUsuarioView() {
@@ -42,8 +45,23 @@ public class CrearUsuarioView extends JInternalFrame{
         } else {
             System.err.println("Error: No se ha cargado el icono de close");
         }
-
     }
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        System.out.println("Actualizando idioma en AnadirProductoView");
+
+        setTitle(mh.get("usuario.crear.titulo"));
+
+        lblCrearUsuario.setText(mh.get("usuario.crear.titulo"));
+        lblUsuario.setText(mh.get("etiqueta.Usuario"));
+        lblContrasena.setText(mh.get("etiqueta.contrasena"));
+        lblRol.setText(mh.get("etiqueta.rol"));
+
+        btnGuardar.setText(mh.get("boton.guardar"));
+        btnSalir.setText(mh.get("boton.salir"));
+
+        comboRol.aplicarInternacionalizacionRolCombo(cbxRol, mh);
+    }
+
 
 
     public JPanel getPanelPrincipal() {
@@ -99,6 +117,7 @@ public class CrearUsuarioView extends JInternalFrame{
     public void setCbxRol(JComboBox cbxRol) {
         this.cbxRol = cbxRol;
     }
+
     public void mostrarMensaje(String mensaje, String titulo, int tipo) {
         JOptionPane.showMessageDialog(this, mensaje, titulo, tipo);
     }

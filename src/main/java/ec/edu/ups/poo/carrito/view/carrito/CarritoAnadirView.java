@@ -1,5 +1,6 @@
 package ec.edu.ups.poo.carrito.view.carrito;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -20,8 +21,6 @@ public class CarritoAnadirView extends JInternalFrame{
     private JTextField txtNombre;
     private JTextField txtPrecio;
     private JComboBox cbxCantidad;
-    private JButton btnDescuento;
-    private JTextField txtDescuento;
     private JButton btnVaciar;
     private JButton btnEliminar;
     private JPanel panelPrincipal;
@@ -33,20 +32,21 @@ public class CarritoAnadirView extends JInternalFrame{
     private JLabel lblIVA;
     private JLabel lblTotal;
     private JLabel lblAnadirAlCarrito;
-    private JButton btnActualizar;
+    private DefaultTableModel modelo;
+
+
 
     public CarritoAnadirView() {
         super("Gestión de Carrito", true, true, true, true);
         setContentPane(panelPrincipal);
-        pack();
-        String[] columnas = { "Código", "Nombre", "Cantidad", "Subtotal" };
-        DefaultTableModel tm = new DefaultTableModel(columnas, 0) {
+        setSize(500, 500);
+        modelo = new DefaultTableModel(0, 4) {
             @Override public boolean isCellEditable(int row, int col) {
                 return false;
             }
         };
+        tblProductos.setModel(modelo);
 
-        tblProductos.setModel(tm);
         for (int i=1; i<=10; i++) {
             cbxCantidad.addItem(i);
         }
@@ -107,10 +107,37 @@ public class CarritoAnadirView extends JInternalFrame{
         }
 
     }
-
-    public JButton getBtnActualizar() {
-        return btnActualizar;
+    public void actualizarColumnas(MensajeInternacionalizacionHandler mh) {
+        modelo.setColumnIdentifiers(new Object[]{
+                mh.get("tabla.codigo"),
+                mh.get("tabla.nombre"),
+                mh.get("tabla.cantidad"),
+                mh.get("tabla.subtotal")
+        });
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("carrito.anadir.titulo"));
+
+        lblCodigo.setText(mh.get("etiqueta.codigo"));
+        lblNombre.setText(mh.get("etiqueta.nombre"));
+        lblPrecio.setText(mh.get("etiqueta.precio"));
+        lblCantidad.setText(mh.get("etiqueta.cantidad"));
+        lblSubtotal.setText(mh.get("etiqueta.subtotal"));
+        lblIVA.setText(mh.get("etiqueta.iva"));
+        lblTotal.setText(mh.get("etiqueta.total"));
+        lblAnadirAlCarrito.setText(mh.get("etiqueta.anadiralcarrito"));
+
+        btnBuscar.setText(mh.get("boton.buscar"));
+        btnAnadir.setText(mh.get("boton.anadir"));
+        btnGuardar.setText(mh.get("boton.guardar"));
+        btnCancelar.setText(mh.get("boton.cancelar"));
+        btnVaciar.setText(mh.get("boton.vaciar"));
+        btnEliminar.setText(mh.get("boton.eliminar"));
+        actualizarColumnas(mh);
+    }
+
+
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;
@@ -123,13 +150,14 @@ public class CarritoAnadirView extends JInternalFrame{
     public JButton getBtnBuscar() {
         return btnBuscar;
     }
+
     public JTable getTableProductos() {
         return tblProductos;
     }
 
-    public JTextField getTxtDescuento() {
-        return txtDescuento;
-    }
+
+
+
 
     public void setBtnBuscar(JButton btnBuscar) {
         this.btnBuscar = btnBuscar;
@@ -139,13 +167,6 @@ public class CarritoAnadirView extends JInternalFrame{
         return txtPrecio;
     }
 
-    public JButton getBtnDescuento() {
-        return btnDescuento;
-    }
-
-    public void setBtnDescuento(JButton btnDescuento) {
-        this.btnDescuento = btnDescuento;
-    }
 
     public JButton getBtnEliminar() {
         return btnEliminar;
@@ -163,13 +184,6 @@ public class CarritoAnadirView extends JInternalFrame{
         this.btnVaciar = btnVaciar;
     }
 
-    public JTextField getTextField1() {
-        return txtDescuento;
-    }
-
-    public void setTextField1(JTextField textField1) {
-        this.txtDescuento = textField1;
-    }
 
     public void setTxtPrecio(JTextField txtPrecio) {
         this.txtPrecio = txtPrecio;

@@ -7,6 +7,7 @@ import ec.edu.ups.poo.carrito.modelo.PreguntaRespondida;
 import ec.edu.ups.poo.carrito.modelo.Rol;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.LoginView;
 import ec.edu.ups.poo.carrito.view.login.OlvideContrasenaView;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
@@ -30,6 +31,7 @@ public class LoginControlador {
     private OlvideContrasenaView olvideContrasenaView;
     private PreguntaRespondida preguntaRespondidaTemp;
     private final PreguntaDAO preguntaDAO;
+    private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
 
     public LoginControlador(UsuarioDAO usuarioDAO, LoginView loginView, RegistrarseView registrarseView, PreguntasView preguntasView, OlvideContrasenaView olvideContrasenaView, PreguntaDAO preguntaDAO) {
         this.usuarioDAO = usuarioDAO;
@@ -58,18 +60,18 @@ public class LoginControlador {
 
             if (username.isEmpty() || password.isEmpty() || nombreCompleto.isEmpty()
                     || correo.isEmpty() || telefono.isEmpty()) {
-                registrarseView.mostrarMensaje("Completa todos los campos");
+                registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.camposObligatorios"));
                 return;
             }
 
             if (!nombreCompleto.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
-                registrarseView.mostrarMensaje("Nombre inválido. Solo se permiten letras y espacios.");
+                registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.nombreInvalido"));
                 return;
             }
 
 
             if (!telefono.matches("\\d{7,10}")) {
-                registrarseView.mostrarMensaje("Teléfono inválido. Debe tener entre 7 y 10 dígitos.");
+                registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.telefonoInvalido"));
                 return;
             }
 
@@ -105,14 +107,15 @@ public class LoginControlador {
             }
 
             if (respuestas.size() < 3) {
-                preguntasView.mostrarMensaje("Debes responder al menos 3 preguntas");
+                preguntasView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.minimoTresRespuestas"));
                 return;
             }
 
             usuarioTemp.setPreguntasRespondidas(respuestas);
             usuarioDAO.crear(usuarioTemp);
 
-            preguntasView.mostrarMensaje("¡Usuario registrado con éxito!");
+            preguntasView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.usuarioRegistrado"));
+
             preguntasView.dispose();
             loginView.setVisible(true);
         });
@@ -133,7 +136,7 @@ public class LoginControlador {
             }
 
             if (respondidas.size() < 3) {
-                preguntasView.mostrarMensaje("Debes responder al menos 3 preguntas");
+                preguntasView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.minimoTresRespuestas"));
                 return;
             }
 
@@ -154,13 +157,13 @@ public class LoginControlador {
             usuarioTemp = usuarioDAO.buscarPorUsername(username);
 
             if (usuarioTemp == null) {
-                JOptionPane.showMessageDialog(olvideContrasenaView, "Usuario no encontrado");
+                JOptionPane.showMessageDialog(olvideContrasenaView, mensajeInternacionalizacionHandler.get("mensaje.usuarioNoEncontrado"));
                 return;
             }
 
             List<PreguntaRespondida> respuestas = usuarioTemp.getPreguntasRespondidas();
             if (respuestas == null || respuestas.isEmpty()) {
-                JOptionPane.showMessageDialog(olvideContrasenaView, "No hay preguntas registradas para este usuario");
+                JOptionPane.showMessageDialog(olvideContrasenaView, mensajeInternacionalizacionHandler.get("mensaje.preguntasNoRegistradas"));
                 return;
             }
 
@@ -171,7 +174,7 @@ public class LoginControlador {
             String respuestaIngresada = olvideContrasenaView.getTxtRespuesta().getText().trim();
 
             if (preguntaRespondida == null || usuarioTemp == null) {
-                JOptionPane.showMessageDialog(olvideContrasenaView, "Primero busca el usuario");
+                JOptionPane.showMessageDialog(olvideContrasenaView, mensajeInternacionalizacionHandler.get("mensaje.buscarUsuarioPrimero"));
                 return;
             }
 
@@ -179,16 +182,16 @@ public class LoginControlador {
             System.out.println("Ingresado: " + respuestaIngresada);
 
             if (respuestaIngresada.equalsIgnoreCase(preguntaRespondida.getRespuesta().trim())) {
-                String nuevaPass = JOptionPane.showInputDialog(olvideContrasenaView, "Respuesta correcta. Ingresa nueva contraseña:");
+                String mensaje = mensajeInternacionalizacionHandler.get("input.nuevaContrasena");
+                String nuevaPass = JOptionPane.showInputDialog(mensaje);
                 if (nuevaPass != null && !nuevaPass.isBlank()) {
                     usuarioTemp.setContrasenia(nuevaPass.trim());
                     usuarioDAO.actualizar(usuarioTemp);
-                    JOptionPane.showMessageDialog(olvideContrasenaView, "Contraseña actualizada correctamente");
+                    JOptionPane.showMessageDialog(olvideContrasenaView, mensajeInternacionalizacionHandler.get("mensaje.contrasenaAct"));
                     olvideContrasenaView.dispose();
                 }
             } else {
-                JOptionPane.showMessageDialog(olvideContrasenaView, "Respuesta incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+                JOptionPane.showMessageDialog(null, mensajeInternacionalizacionHandler.get("mensaje.respuestaIncorrecta"), mensajeInternacionalizacionHandler.get("titulo.error"), JOptionPane.ERROR_MESSAGE);            }
         });
         loginView.getBtnOlvide().addActionListener(e ->{
             olvideContrasenaView.setVisible(true);
@@ -203,14 +206,16 @@ public class LoginControlador {
         loginView.getTxtUsername().setText("");
         loginView.getTxtContrasena().setText("");
         if (usuarioAutenticado == null) {
-            loginView.mostrarMensaje("Usuario o contraseña incorrectos");
+            loginView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.credencialesInvalidas"));
             return;
         }
         loginView.dispose();
 
 
     }
-
+    public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
+        this.mensajeInternacionalizacionHandler = mh;
+    }
 
 
     public Usuario getUsuarioAutenticado() {

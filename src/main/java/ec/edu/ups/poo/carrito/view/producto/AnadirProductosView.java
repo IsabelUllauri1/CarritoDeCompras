@@ -1,5 +1,6 @@
 package ec.edu.ups.poo.carrito.view.producto;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -58,9 +59,21 @@ public class AnadirProductosView extends JInternalFrame {
         } else {
             System.err.println("Error: No se ha cargado el icono de add");
         }
+    }
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("producto.anadir.titulo"));
 
+        lblCrrearProducto.setText(mh.get("producto.anadir.titulo"));
+        lblCodigo.setText(mh.get("etiqueta.codigo"));
+        lblNombre.setText(mh.get("etiqueta.nombre"));
+        lblPrecio.setText(mh.get("etiqueta.precio"));
+
+        btnAnadir.setText(mh.get("boton.anadir"));
+        btnLimpiar.setText(mh.get("boton.limpiar"));
+        btnSalir.setText(mh.get("boton.salir"));
 
     }
+
 
     public JTextField getTextField1() {
         return textField1;

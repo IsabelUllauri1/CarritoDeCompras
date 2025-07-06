@@ -1,5 +1,6 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -31,7 +32,22 @@ public class EditarUsuarioView extends JInternalFrame{
         } else {
             System.err.println("Error: No se ha cargado el icono de guardar");
         }
+    }
 
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("usuario.editar.titulo"));
+
+        lblEditarUsuario.setText(mh.get("usuario.editar.titulo"));
+        lblNuevoNombre.setText(mh.get("etiqueta.usuario"));
+        lblNuevaContrasena.setText(mh.get("etiqueta.nuevaContrasena"));
+        lblRol.setText(mh.get("etiqueta.rol"));
+
+        btnGuardar.setText(mh.get("boton.guardar"));
+
+        // Traducir combo de roles
+        cbxRol.removeAllItems();
+        cbxRol.addItem(mh.get("rol.administrador"));
+        cbxRol.addItem(mh.get("rol.usuario"));
     }
 
     public JPanel getPanelPrincipal() {

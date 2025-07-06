@@ -1,9 +1,11 @@
 package ec.edu.ups.poo.carrito.view.carrito;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.net.URL;
 
@@ -20,11 +22,8 @@ public class ListarTodosLosCarritosView extends JInternalFrame{
         setSize(400, 400);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-        modelo = new DefaultTableModel(new Object[]{"Código", "Fecha", "Usuario"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+        modelo = new DefaultTableModel(0, 3) {
+            @Override public boolean isCellEditable(int r, int c){ return false; }
         };
         tblUsuarios.setModel(modelo);
         setContentPane(panelPrincipal);
@@ -38,6 +37,25 @@ public class ListarTodosLosCarritosView extends JInternalFrame{
             System.err.println("Error: No se ha cargado el icono de detalles");
         }
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("carrito.listartodos.titulo"));
+
+        lblVerTodosCarritos.setText(mh.get("carrito.listartodos.titulo"));
+
+        btnVerDetalles.setText(mh.get("boton.verDetalles"));
+        actualizarColumnas(mh);
+    }
+
+    public void actualizarColumnas(MensajeInternacionalizacionHandler mh) {
+        TableColumnModel columnModel = tblUsuarios.getColumnModel();
+        columnModel.getColumn(0).setHeaderValue(mh.get("tabla.codigo"));
+        columnModel.getColumn(1).setHeaderValue(mh.get("tabla.fecha"));
+        columnModel.getColumn(2).setHeaderValue(mh.get("tabla.Usuario"));
+        tblUsuarios.getTableHeader().repaint();
+    }
+
+
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;

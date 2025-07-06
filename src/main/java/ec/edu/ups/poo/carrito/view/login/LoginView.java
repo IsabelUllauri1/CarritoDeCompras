@@ -53,6 +53,19 @@ public class LoginView extends JFrame {
         }
     }
 
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("login.titulo"));
+
+        lblIniciarSesion.setText(mh.get("login.lblTitulo"));
+        lblUsuario.setText(mh.get("login.lblUsuario"));
+        lblContrasena.setText(mh.get("login.lblContrasena"));
+
+        btnIniciarSesion.setText(mh.get("boton.iniciarSesion"));
+        btnRegistrarse.setText(mh.get("boton.registrarse"));
+        btnOlvide.setText(mh.get("boton.olvideContrasena"));
+    }
+
+
     public JTextField getTxtUsername() {
         return txtUsername;
     }

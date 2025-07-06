@@ -2,6 +2,7 @@ package ec.edu.ups.poo.carrito.view.producto;
 
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -26,8 +27,9 @@ public class ProductoEliminarView extends JInternalFrame {
 
     public ProductoEliminarView() {
         super("Eliminar Producto", true, true, true, true);
+        setSize(500, 500);
         modelo = new DefaultTableModel(
-                new Object[]{"Código","Nombre","Precio"}, 0
+                new Object[]{"","",""}, 0
         ) {
             @Override public boolean isCellEditable(int r, int c){
                 return false;
@@ -35,7 +37,6 @@ public class ProductoEliminarView extends JInternalFrame {
         };
         tblProductos.setModel(modelo);
         setContentPane(panelPrincipal);
-        pack();
         setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
 
         URL lupaURL = PreguntasView.class.getClassLoader().getResource("imagenes/lupa.png");
@@ -63,8 +64,26 @@ public class ProductoEliminarView extends JInternalFrame {
         } else {
             System.err.println("Error: No se ha cargado el icono de close");
         }
-
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("producto.eliminar.titulo"));
+
+        lblEliminarProducto.setText(mh.get("producto.eliminar.titulo"));
+        lblBuscar.setText(mh.get("etiqueta.buscarporcodigo"));
+
+        btnBuscar.setText(mh.get("boton.buscar"));
+        btnEliminar.setText(mh.get("boton.eliminar"));
+        btnSalir.setText(mh.get("boton.salir"));
+
+        // Cambiar encabezados de la tabla
+        modelo.setColumnIdentifiers(new Object[]{
+                mh.get("etiqueta.codigo"),
+                mh.get("etiqueta.nombre"),
+                mh.get("etiqueta.precio")
+        });
+    }
+
 
     public void cargarDatos(List<Producto> productos) {
         modelo.setRowCount(0);

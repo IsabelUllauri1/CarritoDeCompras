@@ -1,5 +1,7 @@
 package ec.edu.ups.poo.carrito.view.login;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -36,6 +38,20 @@ public class OlvideContrasenaView extends JFrame{
         }
 
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("olvide.titulo"));
+
+        lblOlvideContrasena.setText(mh.get("etiqueta.OlvideContrasena"));
+        lblUser.setText(mh.get("etiqueta.Usuario"));
+        lblPreguntaRecuperacion.setText(mh.get("etiqueta.PreguntaRecuperacion"));
+        lblRespuesta.setText(mh.get("etiqueta.Respuesta"));
+        lblSiDesea.setText(mh.get("etiqueta.SiDesea"));
+
+        btnBuscarUsuario.setText(mh.get("boton.buscarUsuario"));
+        btnGuardar.setText(mh.get("boton.guardarNuevaContrasena"));
+    }
+
 
     public JPasswordField getPwdNueva() {return pwdNueva;}
 

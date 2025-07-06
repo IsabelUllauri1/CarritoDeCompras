@@ -3,6 +3,7 @@ package ec.edu.ups.poo.carrito.controlador;
 import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.producto.*;
@@ -24,6 +25,7 @@ public class ProductoControlador {
     private FormatosUtils formatosUtils;
     private ProductoEliminarView vistaEliminar;
     private ProductoActualizarView vistaActualizar;
+    private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
 
 
     public ProductoControlador(ProductoDAO productoDAO, Principal principal, AnadirProductosView vistaAnadir, ProductoListarView vistaListar, ListarProductosPorCodigoView vistaListarPorCodigo, CarritoAnadirView vistaCarrito, ProductoEliminarView vistaEliminar, ProductoActualizarView vistaActualizar) {
@@ -48,20 +50,19 @@ public class ProductoControlador {
         vistaActualizar.getBtnBuscar().addActionListener(ev -> {
             String txt = vistaActualizar.getTxtCodigoBuscar().getText().trim();
             if (txt.isEmpty()) {
-                JOptionPane.showMessageDialog(vistaActualizar, "Ingrese un código");
-                return;
+                JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.ingreseCodigo"));                return;
             }
             try {
                 int code = Integer.parseInt(txt);
                 Producto p = productoDAO.buscarPorCodigo(code);
                 if (p == null) {
-                    JOptionPane.showMessageDialog(vistaActualizar, "Producto no encontrado");
+                    JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.noEncontrado"));
                     vistaActualizar.limpiarCampos();
                 } else {
                     vistaActualizar.cargarProducto(p);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(vistaActualizar, "Código inválido");
+                JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.datosInvalidos"));
             }
         });
 
@@ -72,9 +73,9 @@ public class ProductoControlador {
                 double precio = Double.parseDouble(vistaActualizar.getTxtPrecio().getText().trim());
 
                 productoDAO.actualizar(new Producto(nombre, codigo, precio));
-                JOptionPane.showMessageDialog(vistaActualizar, "Producto actualizado");
+                JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.actualizado"));
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(vistaActualizar, "Datos inválidos");
+                JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.datosInvalidos"));
             }
         });
 
@@ -95,8 +96,7 @@ public class ProductoControlador {
         String precioTxt = vistaAnadir.getTxtPrecio().getText().trim();
 
         if (nombre.isEmpty() || codigoTxt.isEmpty() || precioTxt.isEmpty()) {
-            JOptionPane.showMessageDialog(vistaAnadir, "Completa todos los campos");
-            return;
+            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.completarCampos"));            return;
         }
 
         try {
@@ -104,17 +104,14 @@ public class ProductoControlador {
             double precio = Double.parseDouble(precioTxt);
 
             if (productoDAO.buscarPorCodigo(codigo) != null) {
-                JOptionPane.showMessageDialog(vistaAnadir, "Ya existe un producto con ese código");
-                return;
+                JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.yaExiste"));                return;
             }
 
             productoDAO.crear(new Producto(nombre, codigo, precio));
-            JOptionPane.showMessageDialog(vistaAnadir, "Producto añadido con éxito");
-            listarProductos();
+            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.guardadoExito"));            listarProductos();
             limpiarCamposAnadir();
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(vistaAnadir, "Código o precio inválido");
-        }
+            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.codigoPrecioInvalido"));        }
     }
 
     private void limpiarCamposAnadir() {
@@ -132,14 +129,16 @@ public class ProductoControlador {
     private void buscarProducto() {
         String nombre = vistaListar.getTxtBuscar().getText().trim();
         if (nombre.isEmpty()) {
-            vistaListar.mostrarMensaje("Ingrese un nombre para buscar");
-            return;
+            vistaListar.mostrarMensaje(mensajeInternacionalizacionHandler.get("producto.noEncontrado"), mensajeInternacionalizacionHandler.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
         }
 
         List<Producto> encontrados = productoDAO.buscarPorNombre(nombre);
         vistaListar.cargarDatos(encontrados);
-        vistaListar.mostrarMensaje(encontrados.isEmpty() ? "No se encontraron productos" : "Se encontraron " + encontrados.size());
-    }
+        vistaListar.mostrarMensaje(
+                mensajeInternacionalizacionHandler.get("producto.noEncontrado"),
+                mensajeInternacionalizacionHandler.get("titulo.error"),
+                JOptionPane.ERROR_MESSAGE
+        );    }
 
     public void listarProductos() {
         List<Producto> todos = productoDAO.listarTodos();
@@ -161,7 +160,7 @@ public class ProductoControlador {
             String txt = vistaEliminar.getTxtBuscar().getText().trim();
             modelo.setRowCount(0);
             if (txt.isEmpty()) {
-                JOptionPane.showMessageDialog(vistaEliminar, "Ingrese un código");
+                JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.ingreseCodigo"));
                 return;
             }
 
@@ -171,28 +170,33 @@ public class ProductoControlador {
                 if (p != null) {
                     modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
                 } else {
-                    JOptionPane.showMessageDialog(vistaEliminar, "No encontrado");
+                    JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.noEncontrado"));
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(vistaEliminar, "Código inválido");
+                JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.codigoInvalido"));
             }
         });
 
         vistaEliminar.getBtnEliminar().addActionListener(e -> {
             if (modelo.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(vistaEliminar, "Primero busca un producto");
+                JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.buscarPrimero"));
                 return;
             }
 
             int code = (int) modelo.getValueAt(0, 0);
-            int ok = JOptionPane.showConfirmDialog(vistaEliminar, "¿Eliminar producto " + code + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+            int ok = JOptionPane.showConfirmDialog(
+                    vistaEliminar,
+                    mensajeInternacionalizacionHandler.get("producto.confirmarEliminacion") + " " + code + "?",
+                    mensajeInternacionalizacionHandler.get("titulo.confirmar"),
+                    JOptionPane.YES_NO_OPTION
+            );
             if (ok == JOptionPane.YES_OPTION) {
                 productoDAO.eliminar(code);
                 modelo.setRowCount(0);
                 for (Producto p : productoDAO.listarTodos()) {
                     modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
                 }
-                JOptionPane.showMessageDialog(vistaEliminar, "Producto eliminado");
+                JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.eliminado"));
             }
         });
 
@@ -204,14 +208,11 @@ public class ProductoControlador {
         }
     }
 
-    // -----------------------------------------------------------------------
-    // 4. EVENTOS DE LISTAR POR CÓDIGO
     private void configurarEventosListarPorCodigo() {
         vistaListarPorCodigo.getBtnBuscar().addActionListener(e -> {
             String txt = vistaListarPorCodigo.getTxtBuscar().getText().trim();
             if (txt.isEmpty()) {
-                vistaListarPorCodigo.mostrarMensaje("Ingresa un código de producto");
-                return;
+                vistaListarPorCodigo.mostrarMensaje(mensajeInternacionalizacionHandler.get("producto.ingresaCodigo"));                return;
             }
 
             try {
@@ -222,10 +223,10 @@ public class ProductoControlador {
                 if (p != null) {
                     m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
                 } else {
-                    vistaListarPorCodigo.mostrarMensaje("Producto no encontrado");
+                    vistaListarPorCodigo.mostrarMensaje(mensajeInternacionalizacionHandler.get("producto.noEncontrado"));
                 }
             } catch (NumberFormatException ex) {
-                vistaListarPorCodigo.mostrarMensaje("Código inválido");
+                vistaListarPorCodigo.mostrarMensaje(mensajeInternacionalizacionHandler.get("producto.codigoInvalido"));
             }
         });
     }
@@ -253,6 +254,9 @@ public class ProductoControlador {
 
     public ProductoListarView getVistaListar() {
         return vistaListar;
+    }
+    public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
+        this.mensajeInternacionalizacionHandler = mh;
     }
 
 

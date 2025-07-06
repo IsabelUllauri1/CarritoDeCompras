@@ -1,5 +1,6 @@
 package ec.edu.ups.poo.carrito.view.carrito;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -46,6 +47,16 @@ public class EditarCarritoView extends JInternalFrame {
             System.err.println("Error: No se ha cargado el icono de edit");
         }
     }
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("carrito.editar.titulo"));
+
+        lblEditarCarrito.setText(mh.get("carrito.editar.lblTitulo"));
+
+        btnEditarCantidad.setText(mh.get("boton.editarCantidad"));
+        btnEliminarItem.setText(mh.get("boton.eliminarItem"));
+        btnAgregar.setText(mh.get("boton.agregar"));
+    }
+
 
     public JLabel getLblEditarCarrito() {return lblEditarCarrito;}
 }

@@ -1,7 +1,13 @@
 package ec.edu.ups.poo.carrito.view;
 
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
-import ec.edu.ups.poo.carrito.view.producto.ProductoActualizarView;
+import ec.edu.ups.poo.carrito.view.carrito.*;
+import ec.edu.ups.poo.carrito.view.login.LoginView;
+import ec.edu.ups.poo.carrito.view.login.OlvideContrasenaView;
+import ec.edu.ups.poo.carrito.view.login.PreguntasView;
+import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
+import ec.edu.ups.poo.carrito.view.producto.*;
+import ec.edu.ups.poo.carrito.view.usuario.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +44,31 @@ public class Principal extends JFrame {
     private JMenuItem menuItemMisCarritos;
     private JMenuItem menuItemCrearUsuario;
     private JMenuItem menuItemListarTodosLosCarritos;
+    //PRODUCTO
     private ProductoActualizarView actualizarProducto;
+    private AnadirProductosView anadirProducto;
+    private ProductoEliminarView eliminarProducto;
+    private ProductoListarView listarProducto;
+    private ListarProductosPorCodigoView listarProductoPorCodigo;
+    //USUARIO
+    private CrearUsuarioView crearUsuario;
+    private EditarUsuarioView editarUsuario;
+    private ListarUsuariosView listarUsuarios;
+    private MiPaginaView miPagina;
+    //LOGIN
+    private LoginView loginView;
+    private RegistrarseView registrarseView;
+    private PreguntasView preguntasView;
+    private OlvideContrasenaView olvideContrasenaView;
+    //PREGUNTAS
+    private PreguntasUView preguntasUView;
+    //CARRITO
+    private CarritoAnadirView carritoAnadir;
+    private CarritoListarView carritoListar;
+    private ListarMisCarritos listarMisCarritos;
+    private VerDetalleView verDetalle;
+    private ListarTodosLosCarritosView listarTodosLosCarritos;
+
 
 
     //el modelo es el que hace los metodos. en controlador solo dice que en el view se usen ciertos metodos
@@ -55,7 +85,7 @@ public class Principal extends JFrame {
         menuCuenta = new JMenu(mensajeInternacionalizacionHandler.get("menu.cuenta"));//----
 
         menuItemListarProductos = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ListarProductos"));
-        menuItemCrear    = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.CrearProducto"));
+        menuItemCrear  = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.CrearProducto"));
         menuItemEliminar = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.EliminarProducto"));
         menuItemActualizar = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ActualizarProducto"));
         menuItemListarCodigo = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.ListarCodigo"));
@@ -67,7 +97,7 @@ public class Principal extends JFrame {
         menuItemCrearUsuario = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.CrearUsuario"));
         menuItemListarTodosLosCarritos= new JMenuItem(mensajeInternacionalizacionHandler.get("menu.listarTodosLosCarritos"));
 
-        menuItemMiPagina          = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.miPagina"));
+        menuItemMiPagina  = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.miPagina"));
         menuItemMisCarritos    = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.misCarritos"));
 
         menuIdiomaAleman = new JMenuItem();
@@ -140,6 +170,34 @@ public class Principal extends JFrame {
             System.err.println("No se pudo cargar el ícono de " + ruta);
         }
     }
+    //PRODUCTO
+    public void setActualizarProducto(ProductoActualizarView vista) { this.actualizarProducto = vista; }
+    public void setAnadirProducto(AnadirProductosView vista) { this.anadirProducto = vista; }
+    public void setEliminarProducto(ProductoEliminarView vista) { this.eliminarProducto = vista; }
+    public void setListarProducto(ProductoListarView vista) { this.listarProducto = vista; }
+    public void setListarProductoPorCodigo(ListarProductosPorCodigoView vista) { this.listarProductoPorCodigo = vista; }
+    //USUARIO
+    public void setCrearUsuario(CrearUsuarioView vista) { this.crearUsuario = vista; }
+    public void setEditarUsuario(EditarUsuarioView vista) { this.editarUsuario = vista; }
+    public void setListarUsuarios(ListarUsuariosView vista) { this.listarUsuarios = vista; }
+    public void setMiPagina(MiPaginaView vista) { this.miPagina = vista; }
+    //LOGIN
+    public void setLoginView(LoginView vista) { this.loginView = vista; }
+    public void setRegistrarseView(RegistrarseView vista) { this.registrarseView = vista; }
+    public void setPreguntasView(PreguntasView vista) { this.preguntasView = vista; }
+    public void setOlvideContrasenaView(OlvideContrasenaView vista) { this.olvideContrasenaView = vista; }
+    //CREGUNTAS
+    public void setPreguntasUView(PreguntasUView vista) { this.preguntasUView = vista; }
+    //CARRITO
+    public void setCarritoAnadir(CarritoAnadirView vista) { this.carritoAnadir = vista; }
+    public void setCarritoListar(CarritoListarView vista) { this.carritoListar = vista; }
+    public void setListarMisCarritos(ListarMisCarritos vista) {
+        this.listarMisCarritos = vista;
+        vista.actualizarTexto(mensajeInternacionalizacionHandler); // Se actualiza apenas se asigna
+    }
+    public void setVerDetalle(VerDetalleView vista) { this.verDetalle = vista; }
+    public void setListarTodosLosCarritos(ListarTodosLosCarritosView vista) { this.listarTodosLosCarritos = vista; }
+
     public void cambiarIdioma(String lenguaje, String pais){
         Locale locale = new Locale(lenguaje, pais);
         Locale.setDefault(locale);
@@ -177,10 +235,36 @@ public class Principal extends JFrame {
         menuItemListarCodigo.setText(mensajeInternacionalizacionHandler.get("menu.listarCodigo"));
 
         menuIdioma.setText(mensajeInternacionalizacionHandler.get("menu.Idioma"));
+        menuItemCrearUsuario.setText(mensajeInternacionalizacionHandler.get("menu.crearUsuario"));
+        menuItemListarTodosLosCarritos.setText(mensajeInternacionalizacionHandler.get("menu.listarTodosLosCarritos"));
         actualizarProducto.actualizarTexto(mensajeInternacionalizacionHandler);
 
+        if (actualizarProducto != null) actualizarProducto.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (anadirProducto != null) anadirProducto.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (eliminarProducto != null) eliminarProducto.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (listarProducto != null) listarProducto.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (listarProductoPorCodigo != null) listarProductoPorCodigo.actualizarTexto(mensajeInternacionalizacionHandler);
 
+        if (crearUsuario != null) crearUsuario.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (editarUsuario != null) editarUsuario.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (listarUsuarios != null) listarUsuarios.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (miPagina != null) miPagina.actualizarTexto(mensajeInternacionalizacionHandler);
+
+        if (preguntasView != null) preguntasView.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (preguntasUView != null) preguntasUView.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (registrarseView != null) registrarseView.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (olvideContrasenaView != null) olvideContrasenaView.actualizarTexto(mensajeInternacionalizacionHandler);
+
+        if (carritoAnadir != null) carritoAnadir.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (carritoListar != null) carritoListar.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (listarMisCarritos != null) listarMisCarritos.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (verDetalle != null) verDetalle.actualizarTexto(mensajeInternacionalizacionHandler);
+        if (listarTodosLosCarritos != null) {
+            listarTodosLosCarritos.actualizarTexto(mensajeInternacionalizacionHandler);
+            listarTodosLosCarritos.actualizarColumnas(mensajeInternacionalizacionHandler);
+        }
     }
+
 
     public JMenuItem getMenuItemListarProductos() {
         return menuItemListarProductos;
@@ -252,9 +336,7 @@ public class Principal extends JFrame {
         return menuItemMisCarritos;
     }
 
-    public MensajeInternacionalizacionHandler getMensajeInternacionalizacionHandler() {
-        return mensajeInternacionalizacionHandler;
-    }
+    public MensajeInternacionalizacionHandler getMensajeInternacionalizacionHandler() {return mensajeInternacionalizacionHandler;}
 
     public JMenu getMenuIdioma() {
         return menuIdioma;

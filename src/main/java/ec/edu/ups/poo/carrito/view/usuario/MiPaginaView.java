@@ -1,10 +1,12 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
+import java.text.DateFormat;
 
 public class MiPaginaView extends JInternalFrame{
     private JPanel panelPrincipal;
@@ -12,7 +14,6 @@ public class MiPaginaView extends JInternalFrame{
     private JPasswordField pwdContrasena;
     private JButton btnActualizarDatos;
     private JButton btnCerrarSesion;
-    private JButton btnListarCarritos;
     private JLabel lblNombreCompleto;
     private JLabel lblTelefono;
     private JLabel lblCorreo;
@@ -29,7 +30,6 @@ public class MiPaginaView extends JInternalFrame{
     public MiPaginaView() {
         super("Mi Pagina", false, true,true,true);
         setContentPane(panelPrincipal);
-        pack();
         setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
         setSize(600,600);
         SpinnerDateModel model = new SpinnerDateModel();
@@ -55,14 +55,6 @@ public class MiPaginaView extends JInternalFrame{
             System.err.println("Error: No se ha cargado el icono de logout");
         }
 
-        URL listarCURL = PreguntasView.class.getClassLoader().getResource("imagenes/cartlist.png");
-        if (listarCURL != null) {
-            ImageIcon iconoOriginal = new ImageIcon(listarCURL);
-            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-            btnListarCarritos.setIcon(new ImageIcon(imagenEscalada));
-        } else {
-            System.err.println("Error: No se ha cargado el icono de lupa");
-        }
         URL preguntasURL = PreguntasView.class.getClassLoader().getResource("imagenes/listaUsuarios.png");
         if (preguntasURL != null) {
             ImageIcon iconoOriginal = new ImageIcon(preguntasURL);
@@ -72,6 +64,24 @@ public class MiPaginaView extends JInternalFrame{
             System.err.println("Error: No se ha cargado el icono de preguntas");
         }
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("usuario.miPagina.titulo"));
+
+        lblMiPagina.setText(mh.get("usuario.miPagina.titulo"));
+        lblUsuaraio.setText(mh.get("etiqueta.Usuario"));
+        lblContrasena.setText(mh.get("etiqueta.contrasena"));
+        lblNombreCompleto.setText(mh.get("etiqueta.NombreComp"));
+        lblTelefono.setText(mh.get("etiqueta.Telefono"));
+        lblCorreo.setText(mh.get("etiqueta.Correo"));
+        lblFechaNacimiento.setText(mh.get("etiqueta.fechadenacimiento"));
+
+        btnActualizarDatos.setText(mh.get("boton.actualizar"));
+        btnCerrarSesion.setText(mh.get("boton.cerrarSesion"));
+        btnResponderPreguntas.setText(mh.get("boton.responderPreguntas"));
+
+    }
+
 
     public JSpinner getSpinnerFecha() {
         return spinnerFecha;
@@ -147,10 +157,6 @@ public class MiPaginaView extends JInternalFrame{
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;
-    }
-
-    public JButton getBtnListarCarritos() {
-        return btnListarCarritos;
     }
 
     public JButton getBtnCerrarSesion() {

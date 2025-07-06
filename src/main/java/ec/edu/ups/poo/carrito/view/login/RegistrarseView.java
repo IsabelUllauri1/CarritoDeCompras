@@ -1,5 +1,7 @@
 package ec.edu.ups.poo.carrito.view.login;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -21,6 +23,7 @@ public class RegistrarseView extends JFrame{
     private JTextField txtTelefono;
     private JSpinner spinnerFecha;
     private JLabel lblddmmyyyy;
+    private JLabel lblRegistarse;
     private JTextField txtFechaN;
 
     public RegistrarseView() {
@@ -53,6 +56,22 @@ public class RegistrarseView extends JFrame{
             System.err.println("Error: No se ha cargado el icono de siguiente");
         }
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("usuario.registarse.titulo"));
+
+        lblRegistarse.setText(mh.get("usuario.registarse.titulo"));
+        lblCont.setText(mh.get("etiqueta.registrarse"));
+        lblUsuario.setText(mh.get("etiqueta.Usuario"));
+        lblNombreComp.setText(mh.get("etiqueta.NombreComp"));
+        lblFecha.setText(mh.get("etiqueta.fechadenacimiento"));
+        lblTelefono.setText(mh.get("etiqueta.Telefono"));
+        lblCorreo.setText(mh.get("etiqueta.Correo"));
+
+        btnSiguiente.setText(mh.get("boton.siguiente"));
+        btnRegresar.setText(mh.get("boton.regresar"));
+    }
+
 
     public JButton getBtnRegresar() {
         return btnRegresar;

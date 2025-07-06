@@ -1,6 +1,8 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
 import ec.edu.ups.poo.carrito.modelo.Rol;
+import ec.edu.ups.poo.carrito.util.ComboRol;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -16,17 +18,17 @@ public class ListarUsuariosView extends JInternalFrame{
     private JTextField txtBuscar;
     private JButton btnBuscar;
     private JLabel lblBuscar;
-    private JComboBox cbxRol;
+    private JComboBox<Rol> cbxRol;
     private JLabel lblListarUsuARIOS;
+    private ComboRol comboRol;
+
 
     public ListarUsuariosView() {
         super("Listar Usuarios", true, true, true, true);
 
-
-
         cbxRol.setModel(new DefaultComboBoxModel<>(Rol.values()));
         tblUsuarios.setModel(new DefaultTableModel(
-                new Object[]{"Usuario","Rol"}, 0
+                new Object[]{"",""}, 0
         ){
             @Override public boolean isCellEditable(int row, int col){
                 return false;
@@ -82,9 +84,29 @@ public class ListarUsuariosView extends JInternalFrame{
         } else {
             System.err.println("Error: No se ha cargado el icono de basu");
         }
-
-
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("usuario.listar.titulo"));
+
+        lblListarUsuARIOS.setText(mh.get("usuario.listar.titulo"));
+        lblBuscar.setText(mh.get("etiqueta.buscar"));
+
+        btnBuscar.setText(mh.get("boton.buscar"));
+        btnListar.setText(mh.get("boton.listar"));
+        btnElininar.setText(mh.get("boton.eliminar"));
+
+
+        comboRol.aplicarInternacionalizacionRolCombo(cbxRol, mh);
+
+
+        DefaultTableModel modelo = (DefaultTableModel) tblUsuarios.getModel();
+        modelo.setColumnIdentifiers(new Object[] {
+                mh.get("etiqueta.Usuario"),
+                mh.get("etiqueta.rol"),
+        });
+    }
+
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;

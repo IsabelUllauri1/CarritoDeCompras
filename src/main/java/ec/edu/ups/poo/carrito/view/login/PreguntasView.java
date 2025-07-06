@@ -1,5 +1,7 @@
 package ec.edu.ups.poo.carrito.view.login;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -38,16 +40,6 @@ public class PreguntasView extends JFrame {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        txt1.setText("¿Nombre de tu primera mascota?");
-        txt2.setText("¿Ciudad donde naciste?");
-        txt3.setText("¿Nombre de tu escuela primaria?");
-        txt4.setText("¿Color favorito de niño?");
-        txt5.setText("¿Nombre de tu mejor amigo de infancia?");
-        txt6.setText("¿Nombre del primer maestro que recuerdas?");
-        txt7.setText("¿Comida favorita en tu niñez?");
-        txt8.setText("¿Nombre de tu primer jefe?");
-        txt9.setText("¿Lugar de tus vacaciones más memorables?");
-        txt10.setText("¿Nombre del primer videojuego que jugaste?");
 
         URL guardarURL = PreguntasView.class.getClassLoader().getResource("imagenes/guardar.png");
         if (guardarURL != null) {
@@ -65,9 +57,27 @@ public class PreguntasView extends JFrame {
         } else {
             System.err.println("Error: No se ha cargado el icono de atras");
         }
-
-
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("preguntas.titulo"));
+
+        lblPreguntasSeguridad.setText(mh.get("preguntas.titulo"));
+
+        btnGuardar.setText(mh.get("boton.guardar"));
+        btnRegresar.setText(mh.get("boton.regresar"));
+        txt1.setText(mh.get("pregunta.1"));
+        txt2.setText(mh.get("pregunta.2"));
+        txt3.setText(mh.get("pregunta.3"));
+        txt4.setText(mh.get("pregunta.4"));
+        txt5.setText(mh.get("pregunta.5"));
+        txt6.setText(mh.get("pregunta.6"));
+        txt7.setText(mh.get("pregunta.7"));
+        txt8.setText(mh.get("pregunta.8"));
+        txt9.setText(mh.get("pregunta.9"));
+        txt10.setText(mh.get("pregunta.10"));
+    }
+
 
     public JTextField[] getCamposPreguntas() {
         return new JTextField[] {

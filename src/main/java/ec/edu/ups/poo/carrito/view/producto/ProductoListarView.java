@@ -1,6 +1,7 @@
 package ec.edu.ups.poo.carrito.view.producto;
 
 import ec.edu.ups.poo.carrito.modelo.Producto;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -21,7 +22,7 @@ public class ProductoListarView extends JInternalFrame {
     //private JButton btnEliminar;
     //private JButton btnActualizar;
     private DefaultTableModel modelo;
-    private JLabel lblMensaje;
+
 
 
 
@@ -35,7 +36,7 @@ public class ProductoListarView extends JInternalFrame {
         setResizable(true);
         setMaximizable(true);
 
-        modelo = new DefaultTableModel(new Object[] {"Codigo", "Nombre", "Precio"}, 0){
+        modelo = new DefaultTableModel(new Object[] {"", "", ""}, 0){
             @Override public boolean isCellEditable(int row, int col){
                 return false;
             }
@@ -62,6 +63,25 @@ public class ProductoListarView extends JInternalFrame {
         }
 
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("producto.listar.titulo"));
+
+        lblBuscarPorNombre.setText(mh.get("etiqueta.buscarpornombre"));
+        lblListarProductos.setText(mh.get("producto.listar.titulo"));
+
+        btnBuscar.setText(mh.get("boton.buscar"));
+        btnSalir.setText(mh.get("boton.salir"));
+
+        // Encabezados de la tabla
+        DefaultTableModel modelo = (DefaultTableModel) tblProductos.getModel();
+        modelo.setColumnIdentifiers(new Object[] {
+                mh.get("etiqueta.codigo"),
+                mh.get("etiqueta.nombre"),
+                mh.get("etiqueta.precio")
+        });
+    }
+
     public void cargarDatos(List<Producto> listaProductos) {
         modelo.setNumRows(0);
 
@@ -84,16 +104,12 @@ public class ProductoListarView extends JInternalFrame {
         }
     }
 
+    public void mostrarMensaje(String mensaje, String titulo, int tipo) {
+        JOptionPane.showMessageDialog(this, mensaje, titulo, tipo);
+    }
 
     public JButton getBtnSalir() {
         return btnSalir;
-    }
-    public void mostrarMensaje(String mensaje) {
-        lblMensaje.setText(mensaje);
-    }
-
-    public void limpiarMensaje() {
-        lblMensaje.setText(" ");
     }
 
     public JButton getBtnBuscar() {
@@ -135,8 +151,6 @@ public class ProductoListarView extends JInternalFrame {
     public void setTxtBuscar(JTextField txtBuscar) {
         this.txtBuscar = txtBuscar;
     }
-
-    public JLabel getLblMensaje() {return lblMensaje;}
 
     public JLabel getLblListarProductos() {return lblListarProductos;}
 

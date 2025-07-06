@@ -1,11 +1,14 @@
 package ec.edu.ups.poo.carrito.view.carrito;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.net.URL;
+import java.util.Locale;
 
 public class ListarMisCarritos extends JInternalFrame {
     private JPanel panelPrincipal;
@@ -17,15 +20,12 @@ public class ListarMisCarritos extends JInternalFrame {
     private DefaultTableModel modelo;
     public ListarMisCarritos() {
         super("Listar Mis Carritos", true, true, true, true);
-        modelo = new DefaultTableModel(new Object[]{"Código","Fecha","Total"}, 0
-        ) {
-            @Override public boolean isCellEditable(int r, int c){
-                return false;
-            }
+        setSize(600, 400);
+        modelo = new DefaultTableModel(0, 3) {
+            @Override public boolean isCellEditable(int r, int c){ return false; }
         };
         tblCarritos.setModel(modelo);
         setContentPane(panelPrincipal);
-        pack();
         setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
 
         URL buscarURL = PreguntasView.class.getClassLoader().getResource("imagenes/detalles.png");
@@ -54,9 +54,29 @@ public class ListarMisCarritos extends JInternalFrame {
         } else {
             System.err.println("Error: No se ha cargado el icono de eliminar");
         }
+    }
 
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("carrito.todos.titulo"));
+
+        lbMisCarritos.setText(mh.get("carrito.todos.titulo"));
+
+        btnVerDetalles.setText(mh.get("boton.verDetalles"));
+        btnEliminar.setText(mh.get("boton.eliminar"));
+        btnRefrescar.setText(mh.get("boton.refrescar"));
+        actualizarColumnas(mh);
 
     }
+    public void actualizarColumnas(MensajeInternacionalizacionHandler mh) {
+        TableColumnModel columnModel = tblCarritos.getColumnModel();
+        columnModel.getColumn(0).setHeaderValue(mh.get("tabla.codigo"));
+        columnModel.getColumn(1).setHeaderValue(mh.get("tabla.fecha"));
+        columnModel.getColumn(2).setHeaderValue(mh.get("tabla.total"));
+        tblCarritos.getTableHeader().repaint();
+    }
+
+
 
     public JButton getBtnRefrescar() {return btnRefrescar;}
 

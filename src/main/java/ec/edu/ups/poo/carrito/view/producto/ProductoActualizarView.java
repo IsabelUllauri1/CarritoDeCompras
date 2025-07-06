@@ -48,13 +48,13 @@ public class ProductoActualizarView extends JInternalFrame {
         }
     }
     public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+
         setTitle(mh.get("producto.actualizar.titulo"));
         lblBuscar.setText(mh.get("lblBuscar"));
         lblActualizarProd.setText(mh.get("lblActualizar"));
         lblCodigo.setText(mh.get("lblCodigo"));
         lblPreci.setText(mh.get("lblPrecio"));
         lblNombre.setText(mh.get("lblNombre"));
-        lblMensaje.setText(mh.get("lblMensaje"));
         btnBuscar.setText(mh.get("btnBuscar"));
         btnActualizar.setText(mh.get("btnActualizar"));
         btnSalir.setText(mh.get("btnSalir"));

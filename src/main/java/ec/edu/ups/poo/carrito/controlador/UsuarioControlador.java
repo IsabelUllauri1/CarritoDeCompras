@@ -5,6 +5,7 @@ import ec.edu.ups.poo.carrito.dao.PreguntaDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
 import ec.edu.ups.poo.carrito.modelo.*;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.ListarTodosLosCarritosView;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
@@ -15,7 +16,9 @@ import ec.edu.ups.poo.carrito.view.carrito.VerDetalleView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,7 +76,13 @@ public class UsuarioControlador {
 
         listaUsuariosView.getBtnListar().addActionListener(e -> listarTodos());
         listaUsuariosView.getBtnBuscar().addActionListener(e -> buscarUsuarioPorNombre());
-        listaUsuariosView.getCbxRol().addActionListener(e -> listarPorRol());
+        listaUsuariosView.getCbxRol().addActionListener(e -> {
+            if (!inicializandoComboRolFiltro && listaUsuariosView.isVisible()) {
+                listarPorRol();
+            }
+        });
+
+
         listaUsuariosView.getBtnElininar().addActionListener(e -> eliminarUsuarioSeleccionado());
 
         crearUsuarioView.getBtnGuardar().addActionListener(e -> crearUsuario());
@@ -113,7 +122,7 @@ public class UsuarioControlador {
     }
 
     private void abrirPreguntasParaEditar() {
-        if (!preguntasViewU.isShowing()) {
+        if (!principal.getDesktopPanel().isAncestorOf(preguntasViewU)) {
             principal.getDesktopPanel().add(preguntasViewU);
         }
 
@@ -128,16 +137,12 @@ public class UsuarioControlador {
         }
 
         preguntasViewU.setVisible(true);
+        preguntasViewU.moveToFront();
         try {
             preguntasViewU.setSelected(true);
         } catch (Exception ignored) {}
-
         preguntasViewU.getBtnGuardar().addActionListener(ev -> guardarPreguntasActualizadas(preguntasFijas));
     }
-
-
-
-
 
     private void guardarPreguntasActualizadas(List<Pregunta> preguntasFijas) {
         List<PreguntaRespondida> respuestas = new ArrayList<>();
@@ -243,10 +248,54 @@ public class UsuarioControlador {
         crearUsuarioView.getTxtUsuarioNuevo().setText("");
         crearUsuarioView.getPwdContrasenaNueva().setText("");
         crearUsuarioView.getCbxRol().setSelectedIndex(0);
+        crearUsuarioView.mostrarMensaje("Producto guardado con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    }
+    private boolean inicializandoComboRolFiltro = false;
+    public void actualizarComboRolesEnFiltros(MensajeInternacionalizacionHandler mh) {
+        inicializandoComboRolFiltro = true; // ⚠️ Bloqueamos ejecución del listener
+
+        JComboBox<Rol> cbx = listaUsuariosView.getCbxRol();
+        DefaultComboBoxModel<Rol> modelo = new DefaultComboBoxModel<>();
+        modelo.addElement(Rol.ADMINISTRADOR);
+        modelo.addElement(Rol.USUARIO);
+        cbx.setModel(modelo);
+
+        cbx.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                String texto = switch ((Rol) value) {
+                    case ADMINISTRADOR -> mh.get("rol.administrador");
+                    case USUARIO -> mh.get("rol.usuario");
+                };
+                return super.getListCellRendererComponent(list, texto, index, isSelected, cellHasFocus);
+            }
+        });
+
+        inicializandoComboRolFiltro = false; // ✅ Volvemos a permitir evento
     }
 
 
 
+    public void actualizarComboRol(MensajeInternacionalizacionHandler mh) {
+        JComboBox<Rol> combo = crearUsuarioView.getCbxRol();
+
+        DefaultComboBoxModel<Rol> modelo = new DefaultComboBoxModel<>();
+        modelo.addElement(Rol.ADMINISTRADOR);
+        modelo.addElement(Rol.USUARIO);
+        combo.setModel(modelo);
+
+
+        combo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                String texto = switch ((Rol) value) {
+                    case ADMINISTRADOR -> mh.get("rol.administrador");
+                    case USUARIO -> mh.get("rol.usuario");
+                };
+                return super.getListCellRendererComponent(list, texto, index, isSelected, cellHasFocus);
+            }
+        });
+    }
 
     private void editarUsuario() {
         String username = editarUsuarioView.getTxtUsuario().getText().trim();
@@ -364,7 +413,6 @@ public class UsuarioControlador {
                     c.getUsuario().getUsername()
             });
         }
-
     }
 
 }

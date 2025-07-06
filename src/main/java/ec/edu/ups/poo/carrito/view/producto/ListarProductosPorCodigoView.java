@@ -1,5 +1,6 @@
 package ec.edu.ups.poo.carrito.view.producto;
 
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ public class ListarProductosPorCodigoView extends JInternalFrame{
     public ListarProductosPorCodigoView() {
         super("Listar Productos", true, true, true, true);
         DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"Código", "Nombre", "Precio"}, 0
+                new Object[]{"", "", ""}, 0
         ) {
             @Override public boolean isCellEditable(int r, int c) {
                 return false;
@@ -38,6 +39,23 @@ public class ListarProductosPorCodigoView extends JInternalFrame{
             System.err.println("Error: No se ha cargado el icono de busc");
         }
     }
+
+    public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
+        setTitle(mh.get("producto.listarCodigo.titulo"));
+
+        lblListarProdCodigo.setText(mh.get("producto.listarCodigo.titulo"));
+        lblListarPorCodigo.setText(mh.get("etiqueta.buscarporcodigo"));
+        btnBuscar.setText(mh.get("boton.buscar"));
+
+        //idiomas de tabla
+        DefaultTableModel modelo = (DefaultTableModel) tblProductos.getModel();
+        modelo.setColumnIdentifiers(new Object[]{
+                mh.get("etiqueta.codigo"),
+                mh.get("etiqueta.nombre"),
+                mh.get("etiqueta.precio")
+        });
+    }
+
 
     public JPanel getPanelPrincipal() {
         return panelPrincipal;
@@ -70,4 +88,6 @@ public class ListarProductosPorCodigoView extends JInternalFrame{
     public JLabel getLblListarProdCodigo() {return lblListarProdCodigo;}
 
     public JLabel getLblListarPorCodigo() {return lblListarPorCodigo;}
+
+
 }
