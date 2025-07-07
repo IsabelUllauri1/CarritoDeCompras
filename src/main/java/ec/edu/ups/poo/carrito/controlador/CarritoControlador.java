@@ -7,6 +7,7 @@ import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
+import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
@@ -18,6 +19,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.table.DefaultTableModel;
 
 import java.beans.PropertyVetoException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,6 +36,7 @@ public class CarritoControlador {
     private VerDetalleView verDetalleView;
     private Principal principal;
     private FormatosUtils formatosUtils;
+    private MensajeInternacionalizacionHandler mh;
 
     public CarritoControlador(ProductoDAO productoDAO, CarritoDAO carritoDAO, CarritoAnadirView anadirView, CarritoListarView listarView, Usuario usuario) {
         this.productoDAO = productoDAO;
@@ -61,11 +64,9 @@ public class CarritoControlador {
         anadirView.getBtnGuardar().addActionListener(e -> guardarCarrito());
         anadirView.getBtnCancelar().addActionListener(e -> anadirView.dispose());
 
-        // — ListarView —
         listarView.getBtnEliminar().addActionListener(e -> eliminarCarrito());
         listarView.getBtnModificar().addActionListener(e -> modificarCarrito());
         listarView.getBtnDetalless().addActionListener(e -> verDetalles());
-        //miscarritos
 
     }
 
@@ -74,13 +75,13 @@ public class CarritoControlador {
             int code = Integer.parseInt(anadirView.getTxtCodigo().getText().trim());
             Producto p = productoDAO.buscarPorCodigo(code);
             if (p == null) {
-                anadirView.mostrarMensaje("Producto no encontrado");
+                anadirView.mostrarMensaje(mh.get("mensaje.productoNoEncontrado"));
             } else {
                 anadirView.getTxtNombre().setText(p.getNombre());
                 anadirView.getTxtPrecio().setText(String.valueOf(p.getPrecio()));
             }
         } catch (NumberFormatException ex) {
-            anadirView.mostrarMensaje("Código inválido");
+            anadirView.mostrarMensaje(mh.get("mensaje.productoNoEncontrado"));
         }
     }
 
@@ -90,7 +91,7 @@ public class CarritoControlador {
             int qty  = Integer.parseInt(anadirView.getCbxCantidad().getSelectedItem().toString());
             Producto p = productoDAO.buscarPorCodigo(code);
             if (p == null) {
-                anadirView.mostrarMensaje("Producto no encontrado");
+                anadirView.mostrarMensaje(mh.get("mensaje.productoNoEncontrado"));
                 return;
             }
             boolean encontrado = false;
@@ -106,7 +107,7 @@ public class CarritoControlador {
             }
             refrescarTablaItems();
         } catch (NumberFormatException ex) {
-            anadirView.mostrarMensaje("Datos inválidos");
+            anadirView.mostrarMensaje(mh.get("mensaje.datosInvalidos"));
         }
     }
 
@@ -118,11 +119,11 @@ public class CarritoControlador {
     private void eliminarItem() {
         int row = anadirView.getTblProductos().getSelectedRow();
         if (row < 0) {
-            anadirView.mostrarMensaje("Selecciona un ítem primero");
+            anadirView.mostrarMensaje(mh.get("mensaje.seleccionaItem"));
             return;
         }
         int code = (int) modeloItems.getValueAt(row, 0);
-        int opt = JOptionPane.showConfirmDialog(anadirView, "¿Eliminar item código " + code + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        int opt = JOptionPane.showConfirmDialog(anadirView, MessageFormat.format(mh.get("mensaje.confirmarEliminarItem"), code), mh.get("titulo.confirmar.eliminacion"), JOptionPane.YES_NO_OPTION);
         if (opt == JOptionPane.YES_OPTION) {
             carrito.eliminarProducto(code);
             refrescarTablaItems();
@@ -131,11 +132,11 @@ public class CarritoControlador {
 
     private void guardarCarrito() {
         if (carrito.estaVacio()) {
-            anadirView.mostrarMensaje("El carrito está vacío.");
+            anadirView.mostrarMensaje(mh.get("mensaje.carritoVacio"));
             return;
         }
         carritoDAO.crear(carrito);
-        anadirView.mostrarMensaje("Carrito registrado. Código: " + carrito.getCodigo());
+        anadirView.mostrarMensaje(MessageFormat.format(mh.get("mensaje.carritoRegistrado"), carrito.getCodigo()));
 
         this.carrito = new Carrito();
         this.carrito.setUsuario(usuario);
@@ -171,13 +172,13 @@ public class CarritoControlador {
     private void modificarCarrito() {
         int row = listarView.getTblCarritos().getSelectedRow();
         if (row < 0) {
-            listarView.mostrarMensaje("Selecciona un carrito primero");
+            listarView.mostrarMensaje(mh.get("mensaje.seleccionaCarrito"));
             return;
         }
         int code = (int) modeloList.getValueAt(row, 0);
         Carrito c = carritoDAO.buscarPorCodigo(code);
         if (c == null) return;
-        anadirView.setTitle("Modificar Carrito #" + code);
+        anadirView.setTitle(MessageFormat.format(mh.get("titulo.modificarCarrito"), code));
         if(!anadirView.isShowing()){
             listarView.getDesktopPane().add(anadirView);
         }
@@ -188,11 +189,11 @@ public class CarritoControlador {
     private void eliminarCarrito() {
         int row = listarView.getTblCarritos().getSelectedRow();
         if (row < 0) {
-            listarView.mostrarMensaje("Selecciona un carrito primero");
+            listarView.mostrarMensaje(mh.get("mensaje.seleccionaCarrito"));
             return;
         }
         int code = (int) modeloList.getValueAt(row, 0);
-        int opt = JOptionPane.showConfirmDialog(listarView, "¿Eliminar carrito #" + code + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        int opt = JOptionPane.showConfirmDialog(listarView, MessageFormat.format(mh.get("mensaje.confirmarEliminarCarrito"), code), mh.get("titulo.confirmar.eliminacion"), JOptionPane.YES_NO_OPTION);
         if (opt == JOptionPane.YES_OPTION) {
             carritoDAO.eliminar(code);
             refrescarLista();
@@ -202,7 +203,7 @@ public class CarritoControlador {
     private void verDetalles() {
         int row = listarView.getTblCarritos().getSelectedRow();
         if (row < 0) {
-            JOptionPane.showMessageDialog(listarView, "Selecciona un carrito primero", "Atención", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(listarView, mh.get("mensaje.seleccionaCarrito"), mh.get("titulo.atencion"), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -210,14 +211,14 @@ public class CarritoControlador {
 
         Carrito c = carritoDAO.buscarPorCodigo(codigo);
         if (c == null) {
-            JOptionPane.showMessageDialog(listarView, "No se encontró el carrito", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(listarView, mh.get("mensaje.carritoNoEncontrado"), mh.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         DefaultTableModel dm = (DefaultTableModel) verDetalleView.getTblProductos().getModel();
         dm.setRowCount(0);
         for (ItemCarrito it : c.obtenerItems()) {
-            dm.addRow(new Object[]{it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(),formatosUtils.formatearMoneda(it.getCantidad(), Locale.getDefault())
+            dm.addRow(new Object[]{it.getProducto().getCodigo(), it.getProducto().getNombre(), it.getCantidad(),formatosUtils.formatearMoneda(it.getSubtotal(), Locale.getDefault())
             });
         }
 
@@ -234,6 +235,10 @@ public class CarritoControlador {
         } catch (PropertyVetoException ex) {
         }
     }
+    public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
+        this.mh = mh;
+    }
 
-    //
+
+
 }

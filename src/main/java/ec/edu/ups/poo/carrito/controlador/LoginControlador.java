@@ -45,6 +45,30 @@ public class LoginControlador {
     }
 
     private void loginListeners() {
+        loginView.getItemEspanol().addActionListener(e -> {
+            cambiarIdioma("es", "EC");
+            loginView.actualizarTexto(mensajeInternacionalizacionHandler);
+            registrarseView.actualizarTexto(mensajeInternacionalizacionHandler);
+            preguntasView.actualizarTexto(mensajeInternacionalizacionHandler);
+            olvideContrasenaView.actualizarTexto(mensajeInternacionalizacionHandler);
+        });
+
+        loginView.getItemIngles().addActionListener(e -> {
+            cambiarIdioma("en", "US");
+            loginView.actualizarTexto(mensajeInternacionalizacionHandler);
+            registrarseView.actualizarTexto(mensajeInternacionalizacionHandler);
+            preguntasView.actualizarTexto(mensajeInternacionalizacionHandler);
+            olvideContrasenaView.actualizarTexto(mensajeInternacionalizacionHandler);
+        });
+        loginView.getItemAleman().addActionListener(e -> {
+            cambiarIdioma("de", "DE");
+            loginView.actualizarTexto(mensajeInternacionalizacionHandler);
+            registrarseView.actualizarTexto(mensajeInternacionalizacionHandler);
+            preguntasView.actualizarTexto(mensajeInternacionalizacionHandler);
+            olvideContrasenaView.actualizarTexto(mensajeInternacionalizacionHandler);
+        });
+
+
         loginView.getBtnIniciarSesion().addActionListener(e -> logear(e));
         loginView.getBtnRegistrarse().addActionListener(e -> {
             registrarseView.setVisible(true);
@@ -215,6 +239,12 @@ public class LoginControlador {
     }
     public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
         this.mensajeInternacionalizacionHandler = mh;
+    }
+
+    public void cambiarIdioma(String lenguaje, String pais){
+        Locale locale = new Locale(lenguaje, pais);
+        Locale.setDefault(locale);
+        mensajeInternacionalizacionHandler.setLanguage(lenguaje, pais);
     }
 
 

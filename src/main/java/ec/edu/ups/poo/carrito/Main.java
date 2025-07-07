@@ -34,8 +34,8 @@ public class Main {
             MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler = new MensajeInternacionalizacionHandler(defaultLocale.getLanguage(), defaultLocale.getCountry());
 
             LoginView loginView = new LoginView();
-
             loginView.actualizarTexto(mensajeInternacionalizacionHandler);
+
 
             RegistrarseView registrarseView = new RegistrarseView();
             registrarseView.actualizarTexto(mensajeInternacionalizacionHandler);
@@ -80,10 +80,14 @@ public class Main {
                     EditarUsuarioView editarUsuarioView = new EditarUsuarioView();
 
                     Principal principal = new Principal();
+                    principal.setMensajeInternacionalizacionHandler(mensajeInternacionalizacionHandler);
 
                     ProductoControlador prodCtrl = new ProductoControlador(productoDAO, principal, anadirProdV, listarProdV,listarProdPorCodigo, anadirCarritoV,eliminarProdV,actualizarProdV);
+                    prodCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
+                    carritoCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
                     UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView, preguntasUV,preguntaDAO);
+                    usuarioControlador.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
 
 
                     if (usuarioAut.getRol() == Rol.USUARIO) {
@@ -228,17 +232,26 @@ public class Main {
                     // — Internacionalizacion —
                     principal.getMenuIdiomaIngles().addActionListener(ev -> {
                         principal.cambiarIdioma("en","US");
+                        usuarioControlador.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
+                        prodCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
+                        carritoCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
                         usuarioControlador.actualizarComboRol(principal.getMensajeInternacionalizacionHandler());
                         usuarioControlador.actualizarComboRolesEnFiltros(principal.getMensajeInternacionalizacionHandler());
 
                     });
                     principal.getMenuIdiomaEspanol().addActionListener(ev -> {
                         principal.cambiarIdioma("es","EC");
+                        usuarioControlador.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
+                        prodCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
+                        carritoCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
                         usuarioControlador.actualizarComboRol(principal.getMensajeInternacionalizacionHandler());
                         usuarioControlador.actualizarComboRolesEnFiltros(principal.getMensajeInternacionalizacionHandler());
                     });
                     principal.getMenuIdiomaAleman().addActionListener(ev ->{
                         principal.cambiarIdioma("de","DE");
+                        usuarioControlador.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
+                        prodCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
+                        carritoCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
                         usuarioControlador.actualizarComboRol(principal.getMensajeInternacionalizacionHandler());
                         usuarioControlador.actualizarComboRolesEnFiltros(principal.getMensajeInternacionalizacionHandler());
 
@@ -281,7 +294,7 @@ public class Main {
                     principal.setListarTodosLosCarritos(listarTodosLosCarritosView);
 
 
-                    principal.cambiarIdioma(defaultLocale.getLanguage(), defaultLocale.getCountry());
+                    principal.cambiarIdioma(mensajeInternacionalizacionHandler.getLocale().getLanguage(), mensajeInternacionalizacionHandler.getLocale().getCountry());
 
                     usuarioControlador.actualizarComboRol(principal.getMensajeInternacionalizacionHandler());
                     usuarioControlador.actualizarComboRolesEnFiltros(principal.getMensajeInternacionalizacionHandler());

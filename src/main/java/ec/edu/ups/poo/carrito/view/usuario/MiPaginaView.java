@@ -6,7 +6,7 @@ import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-import java.text.DateFormat;
+
 
 public class MiPaginaView extends JInternalFrame{
     private JPanel panelPrincipal;
@@ -31,7 +31,7 @@ public class MiPaginaView extends JInternalFrame{
         super("Mi Pagina", false, true,true,true);
         setContentPane(panelPrincipal);
         setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
-        setSize(600,600);
+        setSize(600,400);
         SpinnerDateModel model = new SpinnerDateModel();
         spinnerFecha.setModel(model);
         spinnerFecha.setEditor(new JSpinner.DateEditor(spinnerFecha, "dd/MM/yyyy"));

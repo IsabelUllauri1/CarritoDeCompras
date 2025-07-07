@@ -17,7 +17,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class Principal extends JFrame {
-    private final MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
+    private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
     private final JMenu menuIdioma;
     private final JMenuItem menuIdiomaEspanol;
     private final JMenuItem menuIdiomaAleman;
@@ -219,9 +219,7 @@ public class Principal extends JFrame {
         menuItemMiPagina.setText(mensajeInternacionalizacionHandler.get("menu.miPagina"));
         menuItemMisCarritos.setText(mensajeInternacionalizacionHandler.get("menu.misCarritos"));
 
-//        menuIdiomaIngles.setText(mensajeInternacionalizacionHandler.get("menu.en"));
-//        menuIdiomaEspanol.setText(mensajeInternacionalizacionHandler.get("menu.es"));
-//        menuIdiomaAleman.setText(mensajeInternacionalizacionHandler.get("menu.de"));
+//
 
         menuItemCrearUsuario.setText(mensajeInternacionalizacionHandler.get("menu.crearUsuario"));
         menuItemListarTodosUsuarios.setText(mensajeInternacionalizacionHandler.get("menu.listarTodosLosUsarios"));
@@ -269,6 +267,7 @@ public class Principal extends JFrame {
     public JMenuItem getMenuItemListarProductos() {
         return menuItemListarProductos;
     }
+
 
     public void setMenuBar(JMenuBar menuBar) {
         this.menuBar = menuBar;
@@ -338,6 +337,10 @@ public class Principal extends JFrame {
 
     public MensajeInternacionalizacionHandler getMensajeInternacionalizacionHandler() {return mensajeInternacionalizacionHandler;}
 
+    public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
+        this.mensajeInternacionalizacionHandler = mh;
+    }
+
     public JMenu getMenuIdioma() {
         return menuIdioma;
     }
@@ -363,6 +366,7 @@ public class Principal extends JFrame {
     }
 
     public JMenuItem getMenuItemListarCodigo() {return menuItemListarCodigo;}
+
 
     public void deshabilitarMenuAdministrador() {
         menuItemCrear.setEnabled(false);

@@ -20,6 +20,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class UsuarioControlador {
     private FormatosUtils formatosUtils;
     private RegistrarseView registrarseView;
     private PreguntasUView preguntasViewU;
+    private MensajeInternacionalizacionHandler mh;
 
 
     public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO, UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView, PreguntasUView preguntasViewU,PreguntaDAO preguntaDAO) {
@@ -131,7 +133,9 @@ public class UsuarioControlador {
 
         List<Pregunta> preguntasFijas = preguntaDAO.listarPreguntas();
         for (int i = 0; i < 10; i++) {
-            camposPreguntas[i].setText(preguntasFijas.get(i).getTexto());
+            String clavePregunta = "pregunta." + (i + 1);
+            String textoTraducido = mh.get(clavePregunta); // Traducir por clave
+            camposPreguntas[i].setText(textoTraducido);
             camposPreguntas[i].setEditable(false);
             camposRespuestas[i].setText("");
         }
@@ -157,13 +161,13 @@ public class UsuarioControlador {
         }
 
         if (respuestas.size() < 3) {
-            preguntasViewU.mostrarMensaje("Debes responder al menos 3 preguntas");
+            preguntasViewU.mostrarMensaje(mh.get("mensaje.minimoTresRespuestas"));
             return;
         }
 
         usuario.setPreguntasRespondidas(respuestas);
         usuarioDAO.actualizar(usuario);
-        preguntasViewU.mostrarMensaje("Preguntas actualizadas correctamente");
+        preguntasViewU.mostrarMensaje(mh.get("mensaje.preguntasActualizadas"));
         preguntasViewU.dispose();
     }
 
@@ -176,7 +180,7 @@ public class UsuarioControlador {
         Date fechaNacimiento = (Date) miPaginaView.getSpinnerFecha().getValue();
 
         if (nu.isEmpty() || np.isEmpty() || nombre.isEmpty() || correo.isEmpty() || telefono.isEmpty()) {
-            miPaginaView.mostrarMensaje("Completa todos los campos");
+            miPaginaView.mostrarMensaje(mh.get("mensaje.camposObligatorios"));
             return;
         }
 
@@ -189,7 +193,7 @@ public class UsuarioControlador {
 
         usuarioDAO.actualizar(usuario);
 
-        miPaginaView.mostrarMensaje("Datos actualizados");
+        miPaginaView.mostrarMensaje(mh.get("mensaje.datosActualizados"));
     }
 
 
@@ -232,13 +236,13 @@ public class UsuarioControlador {
 
 
         if (username.isEmpty() || pass.isEmpty()) {
-            crearUsuarioView.mostrarMensaje("Completa los campos", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            crearUsuarioView.mostrarMensaje( mh.get("mensaje.camposObligatorios"), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
 
         if (usuarioDAO.buscarPorUsername(username) != null) {
-            crearUsuarioView.mostrarMensaje("Ya existe ese usuario", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            crearUsuarioView.mostrarMensaje(mh.get("mensaje.usuarioYaExiste"), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -248,11 +252,11 @@ public class UsuarioControlador {
         crearUsuarioView.getTxtUsuarioNuevo().setText("");
         crearUsuarioView.getPwdContrasenaNueva().setText("");
         crearUsuarioView.getCbxRol().setSelectedIndex(0);
-        crearUsuarioView.mostrarMensaje("Producto guardado con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        crearUsuarioView.mostrarMensaje(mh.get("mensaje.usuarioCreado"), mh.get("titulo.exito"), JOptionPane.INFORMATION_MESSAGE);
     }
     private boolean inicializandoComboRolFiltro = false;
     public void actualizarComboRolesEnFiltros(MensajeInternacionalizacionHandler mh) {
-        inicializandoComboRolFiltro = true; // ⚠️ Bloqueamos ejecución del listener
+        inicializandoComboRolFiltro = true;
 
         JComboBox<Rol> cbx = listaUsuariosView.getCbxRol();
         DefaultComboBoxModel<Rol> modelo = new DefaultComboBoxModel<>();
@@ -271,7 +275,7 @@ public class UsuarioControlador {
             }
         });
 
-        inicializandoComboRolFiltro = false; // ✅ Volvemos a permitir evento
+        inicializandoComboRolFiltro = false;
     }
 
 
@@ -301,7 +305,7 @@ public class UsuarioControlador {
         String username = editarUsuarioView.getTxtUsuario().getText().trim();
         Usuario u = usuarioDAO.buscarPorUsername(username);
         if (u == null) {
-            editarUsuarioView.mostrarMensaje("Usuario no encontrado", "Atencion", JOptionPane.INFORMATION_MESSAGE);
+            editarUsuarioView.mostrarMensaje(mh.get("mensaje.usuarioNoEncontrado"), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         String nuevaPass = new String(editarUsuarioView.getPwdNContrasena().getPassword()).trim();
@@ -311,22 +315,22 @@ public class UsuarioControlador {
         }
         u.setRol(nuevoRol);
         usuarioDAO.actualizar(u);
-        editarUsuarioView.mostrarMensaje("Usuario actualizado", "Atencion", JOptionPane.INFORMATION_MESSAGE);
+        editarUsuarioView.mostrarMensaje(mh.get("mensaje.usuarioActualizado"), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
         editarUsuarioView.dispose();
     }
     private void eliminarCarrito(){
         listarView.getBtnEliminar().addActionListener(e -> {
             int row = listarView.getTblCarritos().getSelectedRow();
             if (row < 0) {
-                JOptionPane.showMessageDialog(listarView, "Selecciona un carrito primero", "Atención", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(listarView, mh.get("mensaje.seleccionaCarrito"), mh.get("titulo.atencion"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             int codigo = (int) listarView.getTblCarritos().getValueAt(row, 0);
-            int opt = JOptionPane.showConfirmDialog(listarView, "¿Eliminar carrito #" + codigo + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            int opt = JOptionPane.showConfirmDialog(listarView, mh.get("mensaje.confirmarEliminarCarrito") + codigo + "?", mh.get("titulo.confirmar.eliminacion"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (opt == JOptionPane.YES_OPTION) {
                 carritoDAO.eliminar(codigo);
                 refrescarMisCarritos();
-                JOptionPane.showMessageDialog(listarView, "Carrito eliminado", "Información", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(listarView, mh.get("mensaje.carritoEliminado"), mh.get("titulo.informacion"), JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }
@@ -334,14 +338,18 @@ public class UsuarioControlador {
     private void eliminarUsuarioSeleccionado() {
         int fila = listaUsuariosView.getTblUsuarios().getSelectedRow();
         if (fila < 0) {
-            JOptionPane.showMessageDialog(listaUsuariosView, "Por favor selecciona primero un usuario de la tabla", "Atención", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(listaUsuariosView,
+                    mh.get("mensaje.seleccionaUsuario"),
+                    mh.get("titulo.atencion"),
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         String username = (String) listaUsuariosView.getTblUsuarios()
                 .getValueAt(fila, 0);
 
-        int opcion = JOptionPane.showConfirmDialog(listaUsuariosView, "¿Estás seguro de eliminar al usuario \"" + username + "\"?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int opcion = JOptionPane.showConfirmDialog(listaUsuariosView,
+                MessageFormat.format(mh.get("mensaje.confirmarEliminacionUsuario"), username), mh.get("titulo.confirmar.eliminacion"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion != JOptionPane.YES_OPTION) {
             return;
         }
@@ -350,19 +358,19 @@ public class UsuarioControlador {
 
         DefaultTableModel modelo = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();modelo.removeRow(fila);
 
-        JOptionPane.showMessageDialog(listaUsuariosView, "Usuario \"" + username + "\" eliminado con éxito", "Eliminación realizada", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(listaUsuariosView, MessageFormat.format(mh.get("mensaje.usuarioEliminado"), username), mh.get("titulo.informacion"), JOptionPane.INFORMATION_MESSAGE);
     }
     private void verDetallesDesde(JTable tabla, JDesktopPane contenedor) {
         int row = tabla.getSelectedRow();
         if (row < 0) {
-            JOptionPane.showMessageDialog(contenedor, "Selecciona un carrito primero", "Atención", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(contenedor, mh.get("mensaje.seleccionaCarrito"), mh.get("titulo.atencion"), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int codigo = (int) tabla.getValueAt(row, 0);
         Carrito c = carritoDAO.buscarPorCodigo(codigo);
         if (c == null) {
-            JOptionPane.showMessageDialog(contenedor, "No se encontró el carrito", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(contenedor, mh.get("mensaje.carritoNoEncontrado"), mh.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -398,7 +406,7 @@ public class UsuarioControlador {
         if (u != null) {
             m.addRow(new Object[]{ u.getUsername(), u.getRol() });
         } else {
-            JOptionPane.showMessageDialog(listaUsuariosView, "Usuario \"" + txt + "\" no encontrado", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(listaUsuariosView, MessageFormat.format(mh.get("mensaje.usuarioNoEncontrado"), txt), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -407,12 +415,12 @@ public class UsuarioControlador {
         m.setRowCount(0);
 
         for (Carrito c : carritoDAO.listarTodos()) {
-            m.addRow(new Object[]{
-                    c.getCodigo(),
-                    FormatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()),
-                    c.getUsuario().getUsername()
+            m.addRow(new Object[]{c.getCodigo(), FormatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()), c.getUsuario().getUsername()
             });
         }
+    }
+    public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
+        this.mh = mh;
     }
 
 }

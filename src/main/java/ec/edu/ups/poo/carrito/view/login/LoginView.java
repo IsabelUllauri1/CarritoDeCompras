@@ -1,6 +1,7 @@
 package ec.edu.ups.poo.carrito.view.login;
 
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.poo.carrito.view.Principal;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +18,12 @@ public class LoginView extends JFrame {
     private JLabel lblIniciarSesion;
     private JLabel lblUsuario;
     private JLabel lblContrasena;
+    private JMenuBar menuBar;
+    private JMenu menuIdioma;
+    private JMenuItem itemEspanol;
+    private JMenuItem itemIngles;
+    private JMenuItem itemAleman;
+
 
     public LoginView( ) {
         setTitle("Login");
@@ -24,33 +31,24 @@ public class LoginView extends JFrame {
         setSize(600, 400);
         setLocationRelativeTo(null);
         setContentPane(panelPrincipal);
+        menuBar = new JMenuBar();
+        menuIdioma = new JMenu("Idioma");
 
-        URL loginURL = LoginView.class.getClassLoader().getResource("imagenes/login.png");
-        if (loginURL != null) {
-            ImageIcon iconoOriginal = new ImageIcon(loginURL);
-            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-            btnIniciarSesion.setIcon(new ImageIcon(imagenEscalada));
-        } else {
-            System.err.println("Error: No se ha cargado el icono de Login");
-        }
+        itemEspanol = new JMenuItem();
+        itemIngles = new JMenuItem();
+        itemAleman  = new JMenuItem();
 
-        URL registrarseURL = LoginView.class.getClassLoader().getResource("imagenes/registarse.png");
-        if (registrarseURL != null) {
-            ImageIcon iconoOriginal = new ImageIcon(registrarseURL);
-            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-            btnRegistrarse.setIcon(new ImageIcon(imagenEscalada));
-        } else {
-            System.err.println("Error: No se ha cargado el icono de Registrarse");
-        }
+        menuIdioma.add(itemEspanol);
+        menuIdioma.add(itemIngles);
+        menuIdioma.add(itemAleman);
 
-        URL olvideURL = LoginView.class.getClassLoader().getResource("imagenes/pregunta.png");
-        if (olvideURL != null) {
-            ImageIcon iconoOriginal = new ImageIcon(olvideURL);
-            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-            btnOlvide.setIcon(new ImageIcon(imagenEscalada));
-        } else {
-            System.err.println("Error: No se ha cargado el icono de pregunta");
-        }
+        menuBar.add(menuIdioma);
+        setJMenuBar(menuBar);
+        cargarIconosIdiomas();
+        ponerIcono(btnIniciarSesion, "imagenes/login.png", 20, 20, "Login");
+        ponerIcono(btnRegistrarse, "imagenes/registarse.png", 25, 25, "Registrarse");
+        ponerIcono(btnOlvide, "imagenes/pregunta.png", 20, 20, "Olvidé contraseña");
+
     }
 
     public void actualizarTexto(MensajeInternacionalizacionHandler mh) {
@@ -63,8 +61,45 @@ public class LoginView extends JFrame {
         btnIniciarSesion.setText(mh.get("boton.iniciarSesion"));
         btnRegistrarse.setText(mh.get("boton.registrarse"));
         btnOlvide.setText(mh.get("boton.olvideContrasena"));
+        menuIdioma.setText(mh.get("menu.idioma"));
+
+    }
+    private void ponerIcono(JButton boton, String ruta, int ancho, int alto, String nombreAlternativo) {
+        URL url = getClass().getClassLoader().getResource(ruta);
+        if (url != null) {
+            ImageIcon iconoOriginal = new ImageIcon(url);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
+            boton.setIcon(new ImageIcon(imagenEscalada));
+        } else {
+            System.err.println("Error: No se ha cargado el icono de " + nombreAlternativo);
+        }
     }
 
+    private void cargarIconosIdiomas() {
+        ponerIcono(itemEspanol, "imagenes/bandera.png");
+        ponerIcono(itemIngles, "imagenes/USA_Flag.png");
+        ponerIcono(itemAleman, "imagenes/alemania.png");
+
+    }
+
+    private void ponerIcono(JMenuItem item, String ruta) {
+        URL url = Principal.class.getClassLoader().getResource(ruta);
+        if (url != null) {
+            ImageIcon original = new ImageIcon(url);
+            Image imgEscalada = original.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            item.setIcon(new ImageIcon(imgEscalada));
+        } else {
+            System.err.println("No se pudo cargar el ícono de " + ruta);
+        }
+    }
+
+    public JMenu getMenuIdioma() {return menuIdioma;}
+
+    public JMenuItem getItemEspanol() {return itemEspanol;}
+
+    public JMenuItem getItemIngles() {return itemIngles;}
+
+    public JMenuItem getItemAleman() {return itemAleman;}
 
     public JTextField getTxtUsername() {
         return txtUsername;
