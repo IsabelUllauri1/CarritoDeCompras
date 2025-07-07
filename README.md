@@ -1,9 +1,9 @@
 # 📌 Información General  
 **Título:** Sistema de compras con interfaz gráfica y arquitectura orientada a objetos  
 **Asignatura:** Programación Orientada a Objetos  
-**Práctica:** 4  
+**Práctica:** 3
 **Carrera:** Computación  
-**Estudiante:** Isabel Ullauri y Victoria Andrade  
+**Estudiante:** Isabel Ullauri  
 **Fecha:** 25/05/2025  
 **Profesor:** Gabriel Alejandro León Paredes  
 
