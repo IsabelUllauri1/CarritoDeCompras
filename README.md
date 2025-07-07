@@ -4,7 +4,7 @@
 **Práctica:** 3
 **Carrera:** Computación  
 **Estudiante:** Isabel Ullauri  
-**Fecha:** 25/05/2025  
+**Fecha:** 07/07/2025  
 **Profesor:** Gabriel Alejandro León Paredes  
 
 ---
