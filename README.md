@@ -2,6 +2,7 @@
 **Título:** Sistema de compras con interfaz gráfica y arquitectura orientada a objetos  
 **Asignatura:** Programación Orientada a Objetos  
 **Práctica:** 3
+
 **Carrera:** Computación  
 **Estudiante:** Isabel Ullauri  
 **Fecha:** 07/07/2025  
