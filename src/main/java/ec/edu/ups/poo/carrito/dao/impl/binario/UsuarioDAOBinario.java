@@ -19,7 +19,7 @@ public class UsuarioDAOBinario implements UsuarioDAO {
 
 
     public UsuarioDAOBinario(String rutaBase) {
-        this.rutaArchivo = rutaBase + File.separator + "usuarios.dat";
+        this.rutaArchivo = new File(rutaBase, "usuarios.dat").getAbsolutePath();
         File archivo = new File(rutaArchivo);
         try {
             if (!archivo.exists()) {

@@ -50,7 +50,7 @@ public class ItemCarritoDAOBinario implements ItemCarritoDAO {
                 raf.writeInt(item.getCantidad());
             }
         } catch (IOException e) {
-            System.err.println("❌ Error al guardar ítems: " + e.getMessage());
+            System.err.println("Error al guardar ítems: " + e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class ItemCarritoDAOBinario implements ItemCarritoDAO {
                 }
             }
         } catch (IOException e) {
-            System.err.println("❌ Error al leer ítems: " + e.getMessage());
+            System.err.println("Error al leer ítems: " + e.getMessage());
         }
         return items;
     }

@@ -27,10 +27,8 @@ public class CarritoDAOBinario implements CarritoDAO {
         this.buscadorUsuario = buscadorUsuario;
         this.buscadorProducto = buscadorProducto;
 
-        // DAO de ítems con ruta y productoDAO
         this.itemDAO = new ItemCarritoDAOBinario(rutaBase, new ProductoDAOArchivosB(rutaBase));
 
-        //  Crear archivo si no existe
         File archivo = new File(rutaArchivo);
         try {
             if (!archivo.exists()) {
