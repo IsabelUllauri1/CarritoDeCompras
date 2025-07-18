@@ -2,6 +2,7 @@ package ec.edu.ups.poo.carrito.controlador;
 
 import ec.edu.ups.poo.carrito.dao.CarritoDAO;
 import ec.edu.ups.poo.carrito.dao.PreguntaDAO;
+import ec.edu.ups.poo.carrito.dao.PreguntaRespondidaDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
 import ec.edu.ups.poo.carrito.modelo.*;
 import ec.edu.ups.poo.carrito.util.*;
@@ -44,9 +45,11 @@ public class UsuarioControlador {
     private RegistrarseView registrarseView;
     private PreguntasUView preguntasViewU;
     private MensajeInternacionalizacionHandler mh;
+    private final PreguntaRespondidaDAO preguntaRespondidaDAO;
 
 
-    public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO, UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView, PreguntasUView preguntasViewU,PreguntaDAO preguntaDAO) {
+
+    public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO, UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView, PreguntasUView preguntasViewU,PreguntaDAO preguntaDAO, PreguntaRespondidaDAO preguntaRespondidaDAO) {
         this.usuario  = usuario;
         this.carritoDAO = carritoDAO;
         this.usuarioDAO = usuarioDAO;
@@ -60,6 +63,7 @@ public class UsuarioControlador {
         this.preguntasViewU = preguntasViewU;
         this.principal = principal;
         this.listarTodosCarritosView = listarTodosCarritosView;
+        this.preguntaRespondidaDAO = preguntaRespondidaDAO;
 
         refrescarMisCarritos();
         listeners();
@@ -163,6 +167,9 @@ public class UsuarioControlador {
 
         usuario.setPreguntasRespondidas(respuestas);
         usuarioDAO.actualizar(usuario);
+
+        preguntaRespondidaDAO.actualizarPorUsuario(usuario.getUsername(), respuestas);
+
         preguntasViewU.mostrarMensaje(mh.get("mensaje.preguntasActualizadas"));
         preguntasViewU.dispose();
     }

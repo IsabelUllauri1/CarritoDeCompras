@@ -1,6 +1,10 @@
 package ec.edu.ups.poo.carrito.modelo;
 
-public class PreguntaRespondida {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class PreguntaRespondida implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Pregunta pregunta;
     private String respuesta;
     private String username;

@@ -1,6 +1,7 @@
 package ec.edu.ups.poo.carrito.controlador;
 
 import ec.edu.ups.poo.carrito.dao.PreguntaDAO;
+import ec.edu.ups.poo.carrito.dao.PreguntaRespondidaDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
 import ec.edu.ups.poo.carrito.modelo.Pregunta;
 import ec.edu.ups.poo.carrito.modelo.PreguntaRespondida;
@@ -34,8 +35,10 @@ public class LoginControlador {
     private PreguntaRespondida preguntaRespondidaTemp;
     private final PreguntaDAO preguntaDAO;
     private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
+    private final PreguntaRespondidaDAO preguntaRespondidaDAO;
 
-    public LoginControlador(UsuarioDAO usuarioDAO, LoginView loginView, RegistrarseView registrarseView, PreguntasView preguntasView, OlvideContrasenaView olvideContrasenaView, PreguntaDAO preguntaDAO, MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler) {
+
+    public LoginControlador(UsuarioDAO usuarioDAO, LoginView loginView, RegistrarseView registrarseView, PreguntasView preguntasView, OlvideContrasenaView olvideContrasenaView, PreguntaDAO preguntaDAO, MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler, PreguntaRespondidaDAO preguntaRespondidaDAO) {
         this.usuarioDAO = usuarioDAO;
         this.loginView  = loginView;
         this.usuarioAutenticado = null;
@@ -43,6 +46,7 @@ public class LoginControlador {
         this.preguntasView = preguntasView;
         this.olvideContrasenaView = olvideContrasenaView;
         this.preguntaDAO = preguntaDAO;
+        this.preguntaRespondidaDAO = preguntaRespondidaDAO;
         this.mensajeInternacionalizacionHandler = mensajeInternacionalizacionHandler;
         loginListeners();
     }
@@ -188,6 +192,7 @@ public class LoginControlador {
             }
 
             usuarioTemp.setPreguntasRespondidas(respuestas);
+            preguntaRespondidaDAO.guardar(respuestas);
             try {
                 System.out.println("ANTES DE GUARDAR → Contraseña actual: " + usuarioTemp.getContrasenia());
                 if (usuarioTemp.getContrasenia() == null) {
@@ -220,12 +225,13 @@ public class LoginControlador {
             String username = olvideContrasenaView.getTxtUser().getText().trim();
             usuarioTemp = usuarioDAO.buscarPorUsername(username);
 
+
             if (usuarioTemp == null) {
                 JOptionPane.showMessageDialog(olvideContrasenaView, mensajeInternacionalizacionHandler.get("mensaje.usuarioNoEncontrado"));
                 return;
             }
 
-            List<PreguntaRespondida> respuestas = usuarioTemp.getPreguntasRespondidas();
+            List<PreguntaRespondida> respuestas = preguntaRespondidaDAO.buscarPorUsuario(username);
             if (respuestas == null || respuestas.isEmpty()) {
                 JOptionPane.showMessageDialog(olvideContrasenaView, mensajeInternacionalizacionHandler.get("mensaje.preguntasNoRegistradas"));
                 return;
@@ -234,6 +240,7 @@ public class LoginControlador {
             preguntaRespondida = respuestas.get(new Random().nextInt(respuestas.size()));
             olvideContrasenaView.getTxtPregunta().setText(preguntaRespondida.getPregunta().getTexto());
         });
+
         olvideContrasenaView.getBtnGuardar().addActionListener(e -> {
             String respuestaIngresada = olvideContrasenaView.getTxtRespuesta().getText().trim();
 

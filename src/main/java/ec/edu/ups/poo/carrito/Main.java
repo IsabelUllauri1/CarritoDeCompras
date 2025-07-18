@@ -44,6 +44,8 @@ public class Main {
             ProductoDAO productoDAO;
             CarritoDAO carritoDAO;
             PreguntaDAO preguntaDAO;
+            PreguntaRespondidaDAO preguntaRespondidaDAO;
+
 
             if (config.getTipoAlmacenamiento() == ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
                 usuarioDAO = new UsuarioDAOMemoria();
@@ -51,6 +53,8 @@ public class Main {
                 productoDAO = new ProductoDAOMemoria();
                 carritoDAO = new CarritoDAOMemoria();
                 preguntaDAO = new PreguntaDAOMemoria();
+                preguntaRespondidaDAO = new PreguntaRespondidaDAOMemoria();
+
             } else {
                 String ruta = config.getRutaArchivos();
 
@@ -63,6 +67,8 @@ public class Main {
                     }
                 });
                 preguntaDAO = new PreguntaDAOArchivosB(ruta );
+                preguntaRespondidaDAO = new PreguntaRespondidaDAOBinario(ruta);
+
                 if (config.getTipoAlmacenamiento() != ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
                     if (usuarioDAO.buscarPorUsername("0000000000") == null) {
                         try {
@@ -70,7 +76,7 @@ public class Main {
                             usuarioDAO.crear(admin);
                             System.out.println("✅ Admin por defecto creado.");
                         } catch (Exception ex) {
-                            System.err.println("❌ No se pudo crear admin por defecto: " + ex.getMessage());
+                            System.err.println(" No se pudo crear admin por defecto: " + ex.getMessage());
                         }
                     }
                 }
@@ -95,7 +101,7 @@ public class Main {
 
 
 
-            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView,registrarseView,preguntasView,olvideContrasenaView,preguntaDAO, mensajeInternacionalizacionHandler);
+            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView,registrarseView,preguntasView,olvideContrasenaView,preguntaDAO,mensajeInternacionalizacionHandler,preguntaRespondidaDAO);
             loginControlador.setMensajeInternacionalizacionHandler(mensajeInternacionalizacionHandler);
             loginView.setVisible(true);
 
@@ -133,7 +139,7 @@ public class Main {
                     prodCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
                     carritoCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
-                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView, preguntasUV,preguntaDAO);
+                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView, preguntasUV,preguntaDAO, preguntaRespondidaDAO);
                     usuarioControlador.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
 
 
