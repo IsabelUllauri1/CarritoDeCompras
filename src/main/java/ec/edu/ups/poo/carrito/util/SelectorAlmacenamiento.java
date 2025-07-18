@@ -6,7 +6,12 @@ import java.io.File;
 public class SelectorAlmacenamiento {
 
     public static void mostrarSeleccionAlmacenamiento(JFrame parent) {
-        String[] opciones = { "Memoria (no guarda datos)", "Archivos (guardar en disco)" };
+        String[] opciones = {
+                "Memoria (no guarda datos)",
+                "Archivos de texto",
+                "Archivos binarios"
+        };
+
         int opcion = JOptionPane.showOptionDialog(
                 parent,
                 "¿Dónde desea guardar los datos?",
@@ -24,22 +29,27 @@ public class SelectorAlmacenamiento {
             config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
         } else if (opcion == 1) {
             config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.ARCHIVOS);
-
-            JFileChooser chooser = new JFileChooser();
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setDialogTitle("Seleccione una carpeta para guardar los archivos");
-
-            int seleccion = chooser.showOpenDialog(parent);
-            if (seleccion == JFileChooser.APPROVE_OPTION) {
-                File carpetaSeleccionada = chooser.getSelectedFile();
-                config.setRutaArchivos(carpetaSeleccionada.getAbsolutePath());
-            } else {
-                JOptionPane.showMessageDialog(parent, "No seleccionó una carpeta. Se usará almacenamiento en memoria.");
-                config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
-            }
+        } else if (opcion == 2) {
+            config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.ARCHIVOS_BINARIOS);
         } else {
-            JOptionPane.showMessageDialog(parent, "No seleccionó una opción. Se usará almacenamiento en memoria.");
+
             config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
         }
+
+
+        if (config.getTipoAlmacenamiento() != ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Seleccione la carpeta para guardar los archivos");
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+            int seleccion = fileChooser.showOpenDialog(parent);
+            if (seleccion == JFileChooser.APPROVE_OPTION) {
+                config.setRutaArchivos(fileChooser.getSelectedFile().getAbsolutePath());
+            } else {
+                JOptionPane.showMessageDialog(parent, "No seleccionó carpeta. Se usará almacenamiento en memoria.");
+                config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
+            }
+        }
     }
+
 }

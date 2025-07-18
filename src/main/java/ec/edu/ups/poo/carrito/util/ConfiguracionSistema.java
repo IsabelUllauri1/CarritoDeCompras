@@ -3,7 +3,7 @@ package ec.edu.ups.poo.carrito.util;
 public class ConfiguracionSistema {
 
     public enum TipoAlmacenamiento {
-        MEMORIA, ARCHIVOS
+        MEMORIA, ARCHIVOS, ARCHIVOS_BINARIOS
     }
 
     private static ConfiguracionSistema instancia;

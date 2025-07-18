@@ -65,6 +65,7 @@ public class UsuarioControlador {
         this.listarTodosCarritosView = listarTodosCarritosView;
         this.preguntaRespondidaDAO = preguntaRespondidaDAO;
 
+
         refrescarMisCarritos();
         listeners();
 
@@ -102,15 +103,23 @@ public class UsuarioControlador {
         DefaultTableModel m = (DefaultTableModel) listarView.getTblCarritos().getModel();
         m.setRowCount(0);
 
-        List<Carrito> todos = carritoDAO.listarTodos();
-        for (Carrito c : todos) {
-            if (c.getUsuario().equals(usuario)) {
-                m.addRow(new Object[]{
-                        c.getCodigo(), formatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()), formatosUtils.formatearMoneda(c.calcularSubtotal(), Locale.getDefault()), formatosUtils.formatearMoneda(c.calcularIVA(), Locale.getDefault()), formatosUtils.formatearMoneda(c.calcularTotal(), Locale.getDefault())
-                });
-            }
+
+        List<Carrito> misCarritos = carritoDAO.listarPorUsuario(usuario);
+
+
+        for (Carrito c : misCarritos) {
+
+            m.addRow(new Object[]{
+                    c.getCodigo(),
+                    formatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()),
+                    formatosUtils.formatearMoneda(c.calcularSubtotal(), Locale.getDefault()),
+                    formatosUtils.formatearMoneda(c.calcularIVA(), Locale.getDefault()),
+                    formatosUtils.formatearMoneda(c.calcularTotal(), Locale.getDefault())
+            });
         }
+
     }
+
 
     public void cargarDatosEnMiPagina() {
         miPaginaView.getTxtUsuario().setText(usuario.getUsername());

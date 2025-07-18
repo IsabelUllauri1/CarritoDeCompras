@@ -2,10 +2,7 @@ package ec.edu.ups.poo.carrito.controlador;
 
 import ec.edu.ups.poo.carrito.dao.CarritoDAO;
 import ec.edu.ups.poo.carrito.dao.ProductoDAO;
-import ec.edu.ups.poo.carrito.modelo.Carrito;
-import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
-import ec.edu.ups.poo.carrito.modelo.Producto;
-import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.modelo.*;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.util.exception.ValidacionException;
@@ -193,19 +190,27 @@ public class CarritoControlador {
     private void refrescarLista() {
         try {
             modeloList.setRowCount(0);
-            List<Carrito> todos = carritoDAO.listarTodos();
+            List<Carrito> todos;
+            if (usuario.getRol()== ROL.ADMINISTRADOR) {
+                todos = carritoDAO.listarTodos();
+            } else {
+                todos = carritoDAO.listarPorUsuario(usuario);
+            }
+
             for (Carrito c : todos) {
-                modeloList.addRow(new Object[]{c.getCodigo(),
+                modeloList.addRow(new Object[]{
+                        c.getCodigo(),
                         formatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()),
                         formatosUtils.formatearMoneda(c.calcularSubtotal(), Locale.getDefault()),
                         formatosUtils.formatearMoneda(c.calcularIVA(), Locale.getDefault()),
                         formatosUtils.formatearMoneda(c.calcularTotal(), Locale.getDefault())
                 });
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             listarView.mostrarMensaje(mh.get("mensaje.errorCargarCarritos"));
         }
     }
+
 
     private void modificarCarrito() {
         try {

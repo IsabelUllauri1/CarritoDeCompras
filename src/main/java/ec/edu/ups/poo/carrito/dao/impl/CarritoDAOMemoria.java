@@ -2,6 +2,7 @@ package ec.edu.ups.poo.carrito.dao.impl;
 
 import ec.edu.ups.poo.carrito.dao.CarritoDAO;
 import ec.edu.ups.poo.carrito.modelo.Carrito;
+import ec.edu.ups.poo.carrito.modelo.Usuario;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,6 +53,22 @@ public class CarritoDAOMemoria implements CarritoDAO {
             }
         }
     }
+
+    @Override
+    public List<Carrito> listarPorUsuario(Usuario usuario) {
+        return List.of();
+    }
+
+    @Override
+    public void eliminar(String codigo) {
+        try {
+            int cod = Integer.parseInt(codigo);
+            eliminar(cod); // si ya tienes un eliminar(int)
+        } catch (NumberFormatException e) {
+            System.err.println("Código no válido: " + codigo);
+        }
+    }
+
 
     @Override
     public List<Carrito> listarTodos() {

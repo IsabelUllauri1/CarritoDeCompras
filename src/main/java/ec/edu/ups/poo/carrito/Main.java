@@ -3,6 +3,8 @@ package ec.edu.ups.poo.carrito;
 import ec.edu.ups.poo.carrito.controlador.*;
 import ec.edu.ups.poo.carrito.dao.*;
 import ec.edu.ups.poo.carrito.dao.impl.*;
+import ec.edu.ups.poo.carrito.dao.impl.binario.*;
+import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 import ec.edu.ups.poo.carrito.util.ConfiguracionSistema;
@@ -39,48 +41,102 @@ public class Main {
 
 
 
-            //pregunta que dao
-            UsuarioDAO usuarioDAO;
-            ProductoDAO productoDAO;
-            CarritoDAO carritoDAO;
-            PreguntaDAO preguntaDAO;
-            PreguntaRespondidaDAO preguntaRespondidaDAO;
+            final UsuarioDAO usuarioDAO;
+            final ProductoDAO productoDAO;
+            final CarritoDAO carritoDAO;
+            final PreguntaDAO preguntaDAO;
+            final PreguntaRespondidaDAO preguntaRespondidaDAO;
 
 
-            if (config.getTipoAlmacenamiento() == ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
-                usuarioDAO = new UsuarioDAOMemoria();
 
-                productoDAO = new ProductoDAOMemoria();
-                carritoDAO = new CarritoDAOMemoria();
-                preguntaDAO = new PreguntaDAOMemoria();
-                preguntaRespondidaDAO = new PreguntaRespondidaDAOMemoria();
+            // Ruta si aplica
+            String ruta = config.getRutaArchivos();
 
-            } else {
-                String ruta = config.getRutaArchivos();
+            switch (config.getTipoAlmacenamiento()) {
+                case MEMORIA:
+                    usuarioDAO = new UsuarioDAOMemoria();
+                    productoDAO = new ProductoDAOMemoria();
+                    carritoDAO = new CarritoDAOMemoria();
+                    preguntaDAO = new PreguntaDAOMemoria();
+                    preguntaRespondidaDAO = new PreguntaRespondidaDAOMemoria();
+                    break;
 
-                usuarioDAO = new UsuarioDAOArchivosTXT(ruta, mensajeInternacionalizacionHandler);
-                productoDAO = new ProductoDAOArchivosB(ruta);
-                carritoDAO = new CarritoDAOArchivosTXT(ruta, new Function<String, Usuario>() {
-                    @Override
-                    public Usuario apply(String cedula) {
-                        return usuarioDAO.buscarPorUsername(cedula);
-                    }
-                });
-                preguntaDAO = new PreguntaDAOArchivosB(ruta );
-                preguntaRespondidaDAO = new PreguntaRespondidaDAOBinario(ruta);
+                case ARCHIVOS:
+                    usuarioDAO = new UsuarioDAOArchivosTXT(ruta, mensajeInternacionalizacionHandler);
+                    final UsuarioDAO usuarioDAOFinalTexto = usuarioDAO; // para el Function
 
-                if (config.getTipoAlmacenamiento() != ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
-                    if (usuarioDAO.buscarPorUsername("0000000000") == null) {
+                    productoDAO = new ProductoDAOArchivosB(ruta);
+                    carritoDAO = new CarritoDAOArchivosTXT(ruta, new Function<String, Usuario>() {
+                        @Override
+                        public Usuario apply(String cedula) {
+                            return usuarioDAOFinalTexto.buscarPorUsername(cedula);
+                        }
+                    });
+
+                    preguntaDAO = new PreguntaDAOArchivosB(ruta);
+                    preguntaRespondidaDAO = new PreguntaRespondidaDAOBinario(ruta);
+                    break;
+
+                case ARCHIVOS_BINARIOS:
+                    usuarioDAO = new UsuarioDAOBinario(ruta);
+                    final UsuarioDAO usuarioDAOFinalBin = usuarioDAO;
+
+                    productoDAO = new ProductoDAOArchivosB(ruta);
+                    final ProductoDAO productoDAOFinal = productoDAO; // NUEVO
+
+                    carritoDAO = new CarritoDAOBinario(
+                            ruta,
+                            new Function<String, Usuario>() {
+                                @Override
+                                public Usuario apply(String cedula) {
+                                    return usuarioDAOFinalBin.buscarPorUsername(cedula);
+                                }
+                            },
+                            new Function<Integer, Producto>() { // NUEVO
+                                @Override
+                                public Producto apply(Integer codigo) {
+                                    return productoDAOFinal.buscarPorCodigo(codigo);
+                                }
+                            }
+                    );
+
+                    preguntaDAO = new PreguntaDAOArchivosB(ruta);
+                    preguntaRespondidaDAO = new PreguntaRespondidaDAOBinario(ruta);
+                    System.out.println("Buscando admin quemado...");
+                    Usuario adminBuscado = usuarioDAO.buscarPorUsername("0106745508");
+                    if (adminBuscado == null) {
+                        System.out.println("Admin no existe, lo creo.");
                         try {
                             Usuario admin = new Usuario("0106745508", "12345@Aa", ROL.ADMINISTRADOR, "admin@correo.com", "Administrador", "0999999999", new Date());
                             usuarioDAO.crear(admin);
-                            System.out.println("✅ Admin por defecto creado.");
-                        } catch (Exception ex) {
-                            System.err.println(" No se pudo crear admin por defecto: " + ex.getMessage());
+                            System.out.println("Admin creado");
+                        } catch (Exception e) {
+                            System.err.println("Error al crear admin: " + e.getMessage());
                         }
+                    } else {
+                        System.out.println("Admin ya existe: " + adminBuscado.getUsername() + " / " + adminBuscado.getContrasenia());
+                    }
+
+
+                    break;
+
+                default:
+                    throw new IllegalStateException("Tipo de almacenamiento desconocido: " + config.getTipoAlmacenamiento());
+
+            }
+
+            if (config.getTipoAlmacenamiento() != ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
+                if (usuarioDAO.buscarPorUsername("0000000000") == null) {
+                    try {
+                        Usuario admin = new Usuario("0106745508", "12345@Aa", ROL.ADMINISTRADOR, "admin@correo.com", "Administrador", "0999999999", new Date());
+                        usuarioDAO.crear(admin);
+                        System.out.println("Admin por defecto creado.");
+                    } catch (Exception ex) {
+                        System.err.println(" No se pudo crear admin por defecto: " + ex.getMessage());
                     }
                 }
             }
+
 
 
 

@@ -53,6 +53,22 @@ public class CarritoDAOArchivosTXT implements CarritoDAO {
     }
 
     @Override
+    public List<Carrito> listarPorUsuario(Usuario usuario) {
+        return List.of();
+    }
+
+    @Override
+    public void eliminar(String codigo) {
+        try {
+            int cod = Integer.parseInt(codigo);
+            eliminar(cod);
+        } catch (NumberFormatException e) {
+            System.err.println("Código no válido: " + codigo);
+        }
+    }
+
+
+    @Override
     public List<Carrito> listarTodos() {
         return new ArrayList<>(carritos.values());
     }

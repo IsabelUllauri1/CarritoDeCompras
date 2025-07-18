@@ -1,4 +1,4 @@
-package ec.edu.ups.poo.carrito.dao.impl;
+package ec.edu.ups.poo.carrito.dao.impl.binario;
 
 import ec.edu.ups.poo.carrito.dao.PreguntaRespondidaDAO;
 import ec.edu.ups.poo.carrito.modelo.PreguntaRespondida;

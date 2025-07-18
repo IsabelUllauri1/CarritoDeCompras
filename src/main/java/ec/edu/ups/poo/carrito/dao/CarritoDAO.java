@@ -2,6 +2,7 @@ package ec.edu.ups.poo.carrito.dao;
 
 import java.util.List;
 import ec.edu.ups.poo.carrito.modelo.Carrito;
+import ec.edu.ups.poo.carrito.modelo.Usuario;
 
 public interface CarritoDAO {
 
@@ -12,6 +13,10 @@ public interface CarritoDAO {
     void actualizar(Carrito carrito);
 
     void eliminar(int codigo);
+
+    List<Carrito> listarPorUsuario(Usuario usuario);
+
+    void eliminar(String codigo);
 
     List<Carrito> listarTodos();
 
