@@ -3,7 +3,6 @@ package ec.edu.ups.poo.carrito.dao.impl;
 import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 
-import javax.swing.table.DefaultTableModel;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -84,17 +83,7 @@ public class ProductoDAOArchivosB implements ProductoDAO {
 
     @Override
     public List<Producto> listarTodos() {
-        List<Producto> lista = productoDAO.listarTodos();
-        DefaultTableModel modelo = (DefaultTableModel) vistaListar.getTabla().getModel();
-        modelo.setRowCount(0); // Limpiar la tabla
-
-        for (Producto p : lista) {
-            modelo.addRow(new Object[]{
-                    p.getCodigo(),
-                    p.getNombre(),
-                    String.format("$%.2f", p.getPrecio())
-            });
-        }
+        return new ArrayList<>(productos);
     }
 
 
