@@ -1,9 +1,10 @@
 package ec.edu.ups.poo.carrito.modelo;
 
-import ec.edu.ups.poo.carrito.util.CampoVacioException;
-import ec.edu.ups.poo.carrito.util.ValidacionException;
+import ec.edu.ups.poo.carrito.util.exception.ValidacionException;
 
-public class Producto {
+import java.io.Serializable;
+
+public class Producto implements Serializable {
     private String nombre;
     private double precio;
     private int codigo;

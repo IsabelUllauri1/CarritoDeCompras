@@ -4,14 +4,13 @@ import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
-import ec.edu.ups.poo.carrito.util.ValidacionException;
+import ec.edu.ups.poo.carrito.util.exception.ValidacionException;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.producto.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.beans.PropertyVetoException;
 import java.util.List;
 import java.util.Locale;
 

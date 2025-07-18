@@ -5,6 +5,8 @@ import ec.edu.ups.poo.carrito.dao.*;
 import ec.edu.ups.poo.carrito.dao.impl.*;
 import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.util.ConfiguracionSistema;
+import ec.edu.ups.poo.carrito.util.SelectorAlmacenamiento;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.*;
 import ec.edu.ups.poo.carrito.view.login.LoginView;
@@ -18,23 +20,66 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
+import java.util.Date;
 import java.util.Locale;
+import java.util.function.Function;
 
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-
-            UsuarioDAO  usuarioDAO  = new UsuarioDAOMemoria();
-            ProductoDAO productoDAO = new ProductoDAOMemoria();
-            CarritoDAO  carritoDAO  = new CarritoDAOMemoria();
-            PreguntaDAO  preguntaDAO = new PreguntaDAOMemoria();
             Locale defaultLocale = Locale.getDefault();
-            MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler = new MensajeInternacionalizacionHandler(defaultLocale.getLanguage(), defaultLocale.getCountry());
+            MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler =
+                    new MensajeInternacionalizacionHandler(defaultLocale.getLanguage(), defaultLocale.getCountry());
+
+            SelectorAlmacenamiento.mostrarSeleccionAlmacenamiento(null);
+            ConfiguracionSistema config = ConfiguracionSistema.getInstancia();
+            System.out.println("Ruta seleccionada: " + config.getRutaArchivos());
 
 
-            UsuarioDAOArchivos usuarioDAOArchivoaDeTexto = new UsuarioDAOArchivos();
+
+            //pregunta que dao
+            UsuarioDAO usuarioDAO;
+            ProductoDAO productoDAO;
+            CarritoDAO carritoDAO;
+            PreguntaDAO preguntaDAO;
+
+            if (config.getTipoAlmacenamiento() == ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
+                usuarioDAO = new UsuarioDAOMemoria();
+
+                productoDAO = new ProductoDAOMemoria();
+                carritoDAO = new CarritoDAOMemoria();
+                preguntaDAO = new PreguntaDAOMemoria();
+            } else {
+                String ruta = config.getRutaArchivos();
+
+                usuarioDAO = new UsuarioDAOArchivosTXT(ruta, mensajeInternacionalizacionHandler);
+                productoDAO = new ProductoDAOArchivosB(ruta);
+                carritoDAO = new CarritoDAOArchivosTXT(ruta, new Function<String, Usuario>() {
+                    @Override
+                    public Usuario apply(String cedula) {
+                        return usuarioDAO.buscarPorUsername(cedula);
+                    }
+                });
+                preguntaDAO = new PreguntaDAOArchivosB(ruta );
+                if (config.getTipoAlmacenamiento() != ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
+                    if (usuarioDAO.buscarPorUsername("0000000000") == null) {
+                        try {
+                            Usuario admin = new Usuario("0106745508", "12345@Aa", ROL.ADMINISTRADOR, "admin@correo.com", "Administrador", "0999999999", new Date());
+                            usuarioDAO.crear(admin);
+                            System.out.println("✅ Admin por defecto creado.");
+                        } catch (Exception ex) {
+                            System.err.println("❌ No se pudo crear admin por defecto: " + ex.getMessage());
+                        }
+                    }
+                }
+            }
+
+
+
+
+
             LoginView loginView = new LoginView();
             loginView.actualizarTexto(mensajeInternacionalizacionHandler);
 
@@ -50,7 +95,7 @@ public class Main {
 
 
 
-            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView,registrarseView,preguntasView,olvideContrasenaView,preguntaDAO);
+            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView,registrarseView,preguntasView,olvideContrasenaView,preguntaDAO, mensajeInternacionalizacionHandler);
             loginControlador.setMensajeInternacionalizacionHandler(mensajeInternacionalizacionHandler);
             loginView.setVisible(true);
 
@@ -304,12 +349,55 @@ public class Main {
 
 
                     principal.setVisible(true);
+
+
                 }
             });
+
         });
 
 
 
 
     }
+
+    public static void mostrarSeleccionAlmacenamiento() {
+        String[] opciones = { "Memoria (no guarda datos)", "Archivos (guardar en disco)" };
+        int opcion = JOptionPane.showOptionDialog(
+                null,
+                "¿Dónde desea guardar los datos?",
+                "Modo de almacenamiento",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]
+        );
+
+        ConfiguracionSistema config = ConfiguracionSistema.getInstancia();
+
+        if (opcion == 0) {
+            config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
+        } else if (opcion == 1) {
+            config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.ARCHIVOS);
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Seleccione la carpeta para guardar los archivos");
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+            int seleccion = fileChooser.showOpenDialog(null);
+
+            if (seleccion == JFileChooser.APPROVE_OPTION) {
+                String ruta = fileChooser.getSelectedFile().getAbsolutePath();
+                config.setRutaArchivos(ruta);
+            } else {
+                JOptionPane.showMessageDialog(null, "No seleccionó una carpeta. Se usará almacenamiento en memoria.");
+                config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No seleccionó una opción. Se usará almacenamiento en memoria.");
+            config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
+        }
+    }
+
 }

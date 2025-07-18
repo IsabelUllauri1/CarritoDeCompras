@@ -5,6 +5,9 @@ import ec.edu.ups.poo.carrito.dao.PreguntaDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
 import ec.edu.ups.poo.carrito.modelo.*;
 import ec.edu.ups.poo.carrito.util.*;
+import ec.edu.ups.poo.carrito.util.exception.CedulaInvalidaExeption;
+import ec.edu.ups.poo.carrito.util.exception.ContrasenaInvalidaException;
+import ec.edu.ups.poo.carrito.util.exception.CorreoInvalidoException;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.ListarTodosLosCarritosView;
 import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
@@ -252,6 +255,8 @@ public class UsuarioControlador {
             return;
         }
 
+
+
         Usuario nuevo = new Usuario(username, pass, rol);
         usuarioDAO.crear(nuevo);
 
@@ -318,7 +323,7 @@ public class UsuarioControlador {
 
         try {
             if (!nuevaPass.isEmpty()) {
-                u.setContrasenia(nuevaPass); // Puede lanzar excepción
+                u.setContrasenia(nuevaPass);
             }
             u.setRol(nuevoRol);
             usuarioDAO.actualizar(u);

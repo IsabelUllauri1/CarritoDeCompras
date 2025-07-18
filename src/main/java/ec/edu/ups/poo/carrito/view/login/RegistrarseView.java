@@ -5,14 +5,11 @@ import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class RegistrarseView extends JFrame{
     private JPanel panelPrincipal;
     private JTextField textField1;
-    private JPasswordField passwordField1;
+    private JPasswordField PwfContrasena;
     private JLabel lblCont;
     private JLabel lblUsuario;
     private JButton btnSiguiente;
@@ -24,7 +21,6 @@ public class RegistrarseView extends JFrame{
     private JLabel lblCorreo;
     private JTextField txtCorreo;
     private JTextField txtTelefono;
-    private JSpinner spinnerFecha;
     private JLabel lblddmmyyyy;
     private JLabel lblRegistarse;
     private JTextField txtFechaNacimiento;
@@ -93,7 +89,7 @@ public class RegistrarseView extends JFrame{
     }
 
     public JPasswordField getPasswordField1() {
-        return passwordField1;
+        return PwfContrasena;
     }
 
     public JLabel getLblNombreComp() {

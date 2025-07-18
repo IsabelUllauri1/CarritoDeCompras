@@ -6,10 +6,11 @@ import ec.edu.ups.poo.carrito.modelo.Pregunta;
 import ec.edu.ups.poo.carrito.modelo.PreguntaRespondida;
 import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
-import ec.edu.ups.poo.carrito.util.CedulaInvalidaExeption;
-import ec.edu.ups.poo.carrito.util.ContrasenaInvalidaException;
+import ec.edu.ups.poo.carrito.util.exception.CedulaInvalidaExeption;
+import ec.edu.ups.poo.carrito.util.exception.ContrasenaInvalidaException;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
-import ec.edu.ups.poo.carrito.util.ValidacionException;
+import ec.edu.ups.poo.carrito.util.exception.CorreoInvalidoException;
+import ec.edu.ups.poo.carrito.util.exception.ValidacionException;
 import ec.edu.ups.poo.carrito.view.login.LoginView;
 import ec.edu.ups.poo.carrito.view.login.OlvideContrasenaView;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
@@ -34,7 +35,7 @@ public class LoginControlador {
     private final PreguntaDAO preguntaDAO;
     private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
 
-    public LoginControlador(UsuarioDAO usuarioDAO, LoginView loginView, RegistrarseView registrarseView, PreguntasView preguntasView, OlvideContrasenaView olvideContrasenaView, PreguntaDAO preguntaDAO) {
+    public LoginControlador(UsuarioDAO usuarioDAO, LoginView loginView, RegistrarseView registrarseView, PreguntasView preguntasView, OlvideContrasenaView olvideContrasenaView, PreguntaDAO preguntaDAO, MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler) {
         this.usuarioDAO = usuarioDAO;
         this.loginView  = loginView;
         this.usuarioAutenticado = null;
@@ -42,6 +43,7 @@ public class LoginControlador {
         this.preguntasView = preguntasView;
         this.olvideContrasenaView = olvideContrasenaView;
         this.preguntaDAO = preguntaDAO;
+        this.mensajeInternacionalizacionHandler = mensajeInternacionalizacionHandler;
         loginListeners();
     }
 
@@ -78,13 +80,13 @@ public class LoginControlador {
         registrarseView.getBtnSiguiente().addActionListener(e -> {
             String username = registrarseView.getTextField1().getText().trim();
             String password = new String(registrarseView.getPasswordField1().getPassword()).trim();
+            System.out.println("Contraseña capturada: '" + password + "'");
             String nombreCompleto = registrarseView.getTxtNombre().getText().trim();
             String correo = registrarseView.getTxtCorreo().getText().trim();
             String telefono = registrarseView.getTxtTelefono().getText().trim();
             String fechaTexto = registrarseView.getTxtFechaNacimiento().getText().trim();
 
-            if (username.isEmpty() || password.isEmpty() || nombreCompleto.isEmpty()
-                    || correo.isEmpty() || telefono.isEmpty() || fechaTexto.isEmpty()) {
+            if (username.isEmpty() || password.isEmpty() || nombreCompleto.isEmpty() || correo.isEmpty() || telefono.isEmpty() || fechaTexto.isEmpty()) {
                 registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.camposObligatorios"));
                 return;
             }
@@ -98,16 +100,14 @@ public class LoginControlador {
                 registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.telefonoInvalido"));
                 return;
             }
-            //regex
+
             if (!fechaTexto.matches("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\\d{4}$")) {
                 registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.fechaFormatoInvalido"));
                 return;
             }
 
-            // Validar que sea una fecha real (no 00/00/0000, etc.)
             SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
             formato.setLenient(false);
-
             Date fechaNacimiento;
             try {
                 fechaNacimiento = formato.parse(fechaTexto);
@@ -116,19 +116,40 @@ public class LoginControlador {
                 return;
             }
 
-
-
             try {
+                System.out.println("Intentando crear usuario:");
+                System.out.println("Cedula: " + username);
+                System.out.println("Contrasena: " + password);
+                System.out.println("Correo: " + correo);
+                System.out.println("Nombre: " + nombreCompleto);
+                System.out.println("Telefono: " + telefono);
+                System.out.println("Fecha: " + fechaTexto);
+
                 this.usuarioTemp = new Usuario(username, password, ROL.USUARIO, correo, nombreCompleto, telefono, fechaNacimiento);
+
+                System.out.println("Usuario creado con contraseña: " + usuarioTemp.getContrasenia());
                 preguntasView.setVisible(true);
                 registrarseView.setVisible(false);
-            } catch (CedulaInvalidaExeption | ContrasenaInvalidaException | ValidacionException ex) {
+
+
+            } catch (CedulaInvalidaExeption | ContrasenaInvalidaException | CorreoInvalidoException | ValidacionException ex) {
+                System.out.println("Error validando campos: " + ex.getMessage());
+                System.out.println("Error al construir usuario: " + ex.getMessage());
+                ex.printStackTrace();
+                usuarioTemp = null;
                 registrarseView.mostrarMensaje(ex.getMessage());
             } catch (Exception ex) {
+                System.out.println("Error inesperado al crear usuario con contraseña: [" + password + "]");
+
+                ex.printStackTrace();
+                usuarioTemp = null;
                 registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.errorRegistro"));
             }
 
+
         });
+
+
 
         registrarseView.getBtnRegresar().addActionListener(e -> {
             registrarseView.setVisible(false);
@@ -139,6 +160,11 @@ public class LoginControlador {
 
 
         preguntasView.getBtnGuardar().addActionListener(e -> {
+            if (usuarioTemp == null) {
+                preguntasView.mostrarMensaje("Error: El usuario no fue creado correctamente.");
+                return;
+            }
+
             List<PreguntaRespondida> respuestas = new ArrayList<>();
             JTextField[] preguntas = preguntasView.getCamposPreguntas();
             JTextField[] respuestasUsuario = preguntasView.getCamposRespuestas();
@@ -149,7 +175,7 @@ public class LoginControlador {
 
                 if (!textoRespuesta.isEmpty()) {
                     respuestas.add(new PreguntaRespondida(
-                            new Pregunta(textoPregunta,i + 1),
+                            new Pregunta(textoPregunta, i + 1),
                             textoRespuesta,
                             usuarioTemp.getUsername()
                     ));
@@ -162,38 +188,28 @@ public class LoginControlador {
             }
 
             usuarioTemp.setPreguntasRespondidas(respuestas);
-            usuarioDAO.crear(usuarioTemp);
-
-            preguntasView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.usuarioRegistrado"));
-
-            preguntasView.dispose();
-            loginView.setVisible(true);
-        });
-
-
-        preguntasView.getBtnGuardar().addActionListener(e -> {
-            JTextField[] preguntas = preguntasView.getCamposPreguntas();
-            JTextField[] respuestas = preguntasView.getCamposRespuestas();
-            List<PreguntaRespondida> respondidas = new ArrayList<>();
-
-            for (int i = 0; i < 10; i++) {
-                String textoPregunta = preguntas[i].getText().trim();
-                String respuesta = respuestas[i].getText().trim();
-
-                if (!respuesta.isEmpty()) {
-                    respondidas.add(new PreguntaRespondida(new Pregunta(textoPregunta,i + 1), respuesta, usuarioTemp.getUsername()));
+            try {
+                System.out.println("ANTES DE GUARDAR → Contraseña actual: " + usuarioTemp.getContrasenia());
+                if (usuarioTemp.getContrasenia() == null) {
+                    System.err.println("ERROR: usuarioTemp tiene contraseña null antes de guardar.");
+                    preguntasView.mostrarMensaje("Error inesperado: El usuario no tiene contraseña válida.");
+                    return;
                 }
+
+                usuarioDAO.crear(usuarioTemp);
+                preguntasView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.usuarioRegistrado"));
+                preguntasView.dispose();
+                loginView.setVisible(true);
+            } catch (ValidacionException ex) {
+                preguntasView.mostrarMensaje(ex.getMessage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                preguntasView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.errorRegistro"));
             }
-
-            if (respondidas.size() < 3) {
-                preguntasView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.minimoTresRespuestas"));
-                return;
-            }
-
-            preguntasView.dispose();
-            loginView.setVisible(true);
-
         });
+
+
+
 
         preguntasView.getBtnRegresar().addActionListener(e -> {
             preguntasView.setVisible(false);
@@ -252,6 +268,7 @@ public class LoginControlador {
         } );
 
     }
+
 
     private void logear (ActionEvent e) {
         try {

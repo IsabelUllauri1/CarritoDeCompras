@@ -1,17 +1,26 @@
-package ec.edu.ups.poo.carrito.controlador;
+package ec.edu.ups.poo.carrito.util;
 
 public class ConfiguracionSistema {
 
-    public enum TipoAlmacenamiento { MEMORIA, ARCHIVOS }
+    public enum TipoAlmacenamiento {
+        MEMORIA, ARCHIVOS
+    }
 
     private static ConfiguracionSistema instancia;
+
     private TipoAlmacenamiento tipoAlmacenamiento;
     private String rutaArchivos;
 
-    private ConfiguracionSistema() {}
+    private ConfiguracionSistema() {
+        // por defecto en memoria
+        this.tipoAlmacenamiento = TipoAlmacenamiento.MEMORIA;
+        this.rutaArchivos = "";
+    }
 
     public static ConfiguracionSistema getInstancia() {
-        if (instancia == null) instancia = new ConfiguracionSistema();
+        if (instancia == null) {
+            instancia = new ConfiguracionSistema();
+        }
         return instancia;
     }
 

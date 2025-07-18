@@ -1,10 +1,11 @@
 package ec.edu.ups.poo.carrito.modelo;
 
-import ec.edu.ups.poo.carrito.util.CedulaInvalidaExeption;
-import ec.edu.ups.poo.carrito.util.ContrasenaInvalidaException;
-import ec.edu.ups.poo.carrito.util.CorreoInvalidoException;
-import ec.edu.ups.poo.carrito.util.ValidacionException;
+import ec.edu.ups.poo.carrito.util.exception.CedulaInvalidaExeption;
+import ec.edu.ups.poo.carrito.util.exception.ContrasenaInvalidaException;
+import ec.edu.ups.poo.carrito.util.exception.CorreoInvalidoException;
+import ec.edu.ups.poo.carrito.util.exception.ValidacionException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,7 @@ public class Usuario {
 
 
     public Usuario(String cedula, String contrasenia, ROL rol, String correo, String nombreCompleto, String telefono, Date fechaNacimiento)
-            throws CedulaInvalidaExeption, ContrasenaInvalidaException, CorreoInvalidoException {
+            throws CedulaInvalidaExeption, ContrasenaInvalidaException, CorreoInvalidoException, ValidacionException {
 
         setUsername(cedula);
         setContrasenia(contrasenia);
@@ -35,16 +36,19 @@ public class Usuario {
     }
 
 
+    // Si necesitas este constructor simplificado, quita las líneas incorrectas:
     public Usuario(String cedula, String contrasenia, ROL rol) {
         setUsername(cedula);
-        setContrasenia(contrasenia);
-        setCorreo(correo);
-        setTelefono(telefono);
-
+        setContrasenia(contrasenia); // <--- esta línea debe estar sí o sí
         this.rol = rol;
         this.nombreCompleto = "";
-        this.fechaNacimiento = new Date();
+        this.correo = "";
+        this.telefono = "";
+        this.fechaNacimiento = new Date(); // por defecto
     }
+
+
+
 
     public Usuario() {}
 
@@ -89,12 +93,12 @@ public class Usuario {
     }
 
     public void setCorreo(String correo) throws CorreoInvalidoException {
-        //tener @ y un .
         if (correo == null || !correo.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
             throw new CorreoInvalidoException("Correo electrónico inválido.");
         }
         this.correo = correo;
     }
+
 
     public void setTelefono(String telefono)  {
         if (!telefono.matches("\\d{7,10}")) { //7 a 10 digitos
@@ -111,9 +115,9 @@ public class Usuario {
         this.username = String.format("%-10s", cedula).replace(' ', '#');
     }
 
-    public void setContrasenia(String contrasena) {
+    public void setContrasenia(String contrasena) throws ContrasenaInvalidaException {
         if (contrasena == null || contrasena.length() < 6) {
-            throw new ValidacionException("La contraseña debe tener al menos 6 caracteres.");
+            throw new ContrasenaInvalidaException("La contraseña debe tener al menos 6 caracteres.");
         }
         boolean mayus = false, minus = false, especial = false;
         for (char c : contrasena.toCharArray()) {
@@ -122,10 +126,11 @@ public class Usuario {
             else if (c == '@' || c == '_' || c == '-') especial = true;
         }
         if (!mayus || !minus || !especial) {
-            throw new ValidacionException("La contraseña debe tener mayúscula, minúscula y carácter especial (@, _, -).");
+            throw new ContrasenaInvalidaException("La contraseña debe tener mayúscula, minúscula y carácter especial (@, _, -).");
         }
-        this.contrasenia = contrasenia;
+        this.contrasenia = contrasena;
     }
+
 
 
     public static boolean esCedulaValida(String cedula) {
@@ -152,15 +157,14 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return "Usuario{" +
-                "username='" + username + '\'' +
-                ", contrasenia='" + contrasenia + '\'' +
-                ", rol=" + rol +
-                ", preguntasRespondidas=" + preguntasRespondidas +
-                ", correo='" + correo + '\'' +
-                ", nombreCompleto='" + nombreCompleto + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", fechaNacimiento=" + fechaNacimiento +
-                '}';
+        return username + "," +
+                contrasenia + "," +
+                rol + "," +
+                correo + "," +
+                nombreCompleto + "," +
+                telefono + "," +
+                new SimpleDateFormat("dd/MM/yyyy").format(fechaNacimiento);
     }
+
+
 }

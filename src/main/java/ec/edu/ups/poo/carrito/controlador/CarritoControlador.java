@@ -6,18 +6,15 @@ import ec.edu.ups.poo.carrito.modelo.Carrito;
 import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
-import ec.edu.ups.poo.carrito.util.CampoVacioException;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
-import ec.edu.ups.poo.carrito.util.ValidacionException;
+import ec.edu.ups.poo.carrito.util.exception.ValidacionException;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
 import ec.edu.ups.poo.carrito.view.carrito.VerDetalleView;
 
 import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import javax.swing.table.DefaultTableModel;
 
 import java.beans.PropertyVetoException;
