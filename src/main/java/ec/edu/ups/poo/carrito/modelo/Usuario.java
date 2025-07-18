@@ -1,5 +1,10 @@
 package ec.edu.ups.poo.carrito.modelo;
 
+import ec.edu.ups.poo.carrito.util.CedulaInvalidaExeption;
+import ec.edu.ups.poo.carrito.util.ContrasenaInvalidaException;
+import ec.edu.ups.poo.carrito.util.CorreoInvalidoException;
+import ec.edu.ups.poo.carrito.util.ValidacionException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,33 +12,37 @@ import java.util.List;
 public class Usuario {
     private String username;
     private String contrasenia;
-    private Rol rol;
-    private List<PreguntaRespondida> preguntasRespondidas = new ArrayList<>();
+    private ROL rol;
+    private List<PreguntaRespondida> preguntasRespondidas;
     private String correo;
     private String nombreCompleto;
     private String telefono;
     private Date fechaNacimiento;
 
 
-    public Usuario(String nombreDeUsuario, String contrasenia, Rol rol, String correo,String nombreCompleto, String telefono, Date fechaNacimiento) {
-        this.username = nombreDeUsuario;
-        this.contrasenia = contrasenia;
-        this.rol = rol;
-        this.correo = correo;
-        this.nombreCompleto = nombreCompleto;
-        this.telefono = telefono;
-        this.fechaNacimiento = fechaNacimiento;
+    public Usuario(String cedula, String contrasenia, ROL rol, String correo, String nombreCompleto, String telefono, Date fechaNacimiento)
+            throws CedulaInvalidaExeption, ContrasenaInvalidaException, CorreoInvalidoException {
 
+        setUsername(cedula);
+        setContrasenia(contrasenia);
+        setCorreo(correo);
+        setTelefono(telefono);
+
+        this.rol = rol;
+        this.nombreCompleto = nombreCompleto;
+        this.fechaNacimiento = fechaNacimiento;
         this.preguntasRespondidas = new ArrayList<>();
     }
 
-    public Usuario(String username, String contrasenia, Rol rol) {
-        this.username = username;
-        this.contrasenia = contrasenia;
+
+    public Usuario(String cedula, String contrasenia, ROL rol) {
+        setUsername(cedula);
+        setContrasenia(contrasenia);
+        setCorreo(correo);
+        setTelefono(telefono);
+
         this.rol = rol;
         this.nombreCompleto = "";
-        this.correo = "";
-        this.telefono = "";
         this.fechaNacimiento = new Date();
     }
 
@@ -55,17 +64,8 @@ public class Usuario {
 
     public String getTelefono() {return telefono;}
 
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
     public void setNombreCompleto(String nombreCompleto) {
         this.nombreCompleto = nombreCompleto;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
     }
 
     public void setFechaNacimiento(Date fechaNacimiento) {
@@ -76,15 +76,11 @@ public class Usuario {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Rol getRol() {
+    public ROL getRol() {
         return rol;
     }
 
-    public void setRol(Rol rol) {
+    public void setRol(ROL rol) {
         this.rol = rol;
     }
 
@@ -92,9 +88,67 @@ public class Usuario {
         return contrasenia;
     }
 
-    public void setContrasenia(String contrasenia) {
+    public void setCorreo(String correo) throws CorreoInvalidoException {
+        //tener @ y un .
+        if (correo == null || !correo.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+            throw new CorreoInvalidoException("Correo electrónico inválido.");
+        }
+        this.correo = correo;
+    }
+
+    public void setTelefono(String telefono)  {
+        if (!telefono.matches("\\d{7,10}")) { //7 a 10 digitos
+            throw new IllegalArgumentException("El teléfono debe contener solo números.");
+        }
+        this.telefono = telefono;
+    }
+
+    public void setUsername(String cedula) throws CedulaInvalidaExeption {
+        if (!esCedulaValida(cedula)) {
+            throw new CedulaInvalidaExeption("Cédula inválida: " + cedula);
+        }
+        //rellenamos con #
+        this.username = String.format("%-10s", cedula).replace(' ', '#');
+    }
+
+    public void setContrasenia(String contrasena) {
+        if (contrasena == null || contrasena.length() < 6) {
+            throw new ValidacionException("La contraseña debe tener al menos 6 caracteres.");
+        }
+        boolean mayus = false, minus = false, especial = false;
+        for (char c : contrasena.toCharArray()) {
+            if (Character.isUpperCase(c)) mayus = true;
+            else if (Character.isLowerCase(c)) minus = true;
+            else if (c == '@' || c == '_' || c == '-') especial = true;
+        }
+        if (!mayus || !minus || !especial) {
+            throw new ValidacionException("La contraseña debe tener mayúscula, minúscula y carácter especial (@, _, -).");
+        }
         this.contrasenia = contrasenia;
     }
+
+
+    public static boolean esCedulaValida(String cedula) {
+        if (cedula == null || !cedula.matches("\\d{10}")) return false;
+
+        int provincia = Integer.parseInt(cedula.substring(0,2));
+        if (provincia < 1 || provincia > 24) return false;
+
+        int[] coef = {2,1,2,1,2,1,2,1,2};
+        int suma = 0;
+        for (int i = 0; i < 9; i++) {
+            int dígito = Character.digit(cedula.charAt(i),10);
+            int prod = dígito * coef[i];
+            suma += (prod > 9) ? prod - 9 : prod;
+        }
+
+        int próximoDecena = ((suma + 9) / 10) * 10;
+        int dígitoValidador = (próximoDecena - suma) % 10;
+
+        return dígitoValidador == Character.digit(cedula.charAt(9),10);
+    }
+
+
 
     @Override
     public String toString() {

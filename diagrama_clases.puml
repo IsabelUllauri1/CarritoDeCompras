@@ -1,0 +1,178 @@
+@startuml
+title Diagrama de Clases - Sistema Carrito de Compras
+
+' ==== PAQUETES PRINCIPALES ====
+package "ec.edu.ups.poo.carrito.controlador" {
+    class LoginControlador {
+        - usuarioDAO : UsuarioDAO
+        - loginView : LoginView
+        - usuarioAutenticado : Usuario
+        - registrarseView : RegistrarseView
+        - preguntasView : PreguntasView
+        - usuarioTemp : Usuario
+        - preguntaRespondida : PreguntaRespondida
+        - olvideContrasenaView : OlvideContrasenaView
+        - preguntaRespondidaTemp : PreguntaRespondida
+        - preguntaDAO : PreguntaDAO
+        - mensajeInternacionalizacionHandler : MensajeInternacionalizacionHandler
+    }
+
+    class ProductoControlador {
+        - productoDAO : ProductoDAO
+        - principal : Principal
+        - vistaAnadir : AnadirProductosView
+        - vistaListar : ProductoListarView
+        - vistaCarrito : CarritoAnadirView
+        - vistaListarPorCodigo : ListarProductosPorCodigoView
+        - vistaEliminar : ProductoEliminarView
+        - vistaActualizar : ProductoActualizarView
+        - formatosUtils : FormatosUtils
+        - mensajeInternacionalizacionHandler : MensajeInternacionalizacionHandler
+    }
+
+    class CarritoControlador {
+        - productoDAO : ProductoDAO
+        - carritoDAO : CarritoDAO
+        - anadirView : CarritoAnadirView
+        - listarView : CarritoListarView
+        - usuario : Usuario
+        - carrito : Carrito
+        - modeloItems : DefaultTableModel
+        - modeloList : DefaultTableModel
+        - verDetalleView : VerDetalleView
+        - principal : Principal
+        - formatosUtils : FormatosUtils
+        - mh : MensajeInternacionalizacionHandler
+    }
+
+    class UsuarioControlador {
+        - usuario : Usuario
+        - carritoDAO : CarritoDAO
+        - usuarioDAO : UsuarioDAO
+        - preguntaDAO : PreguntaDAO
+        - miPaginaView : MiPaginaView
+        - listarView : ListarMisCarritos
+        - verDetalleView : VerDetalleView
+        - listaUsuariosView : ListarUsuariosView
+        - crearUsuarioView : CrearUsuarioView
+        - editarUsuarioView : EditarUsuarioView
+        - principal : Principal
+        - listarTodosCarritosView : ListarTodosLosCarritosView
+        - preguntasViewU : PreguntasUView
+        - formatosUtils : FormatosUtils
+        - mensajeInternacionalizacionHandler : MensajeInternacionalizacionHandler
+    }
+}
+
+package "ec.edu.ups.poo.carrito.dao" {
+    interface UsuarioDAO
+    interface ProductoDAO
+    interface CarritoDAO
+    interface PreguntaDAO
+}
+
+package "ec.edu.ups.poo.carrito.dao.memoria" {
+    class UsuarioDAOMemoria {
+        - usuarios : Map<String, Usuario>
+    }
+    UsuarioDAOMemoria ..|> UsuarioDAO
+
+    class ProductoDAOMemoria {
+        - productos : Map<Integer, Producto>
+    }
+    ProductoDAOMemoria ..|> ProductoDAO
+
+    class CarritoDAOMemoria {
+        - carritos : Map<Integer, Carrito>
+        - secuenciaCodigo : int
+    }
+    CarritoDAOMemoria ..|> CarritoDAO
+
+    class PreguntaDAOMemoria {
+        - preguntas : List<Pregunta>
+    }
+    PreguntaDAOMemoria ..|> PreguntaDAO
+}
+
+package "ec.edu.ups.poo.carrito.modelo" {
+    class Usuario {
+        - username : String
+        - contrasenia : String
+        - rol : Rol
+        - correo : String
+        - nombreCompleto : String
+        - telefono : String
+        - fechaNacimiento : Date
+        - preguntasRespondidas : List<PreguntaRespondida>
+    }
+
+    class Producto {
+        - nombre : String
+        - codigo : int
+        - precio : double
+    }
+
+    class Carrito {
+        - codigo : int
+        - usuario : Usuario
+        - fechaCreacion : Calendar
+        - items : List<ItemCarrito>
+    }
+
+    class ItemCarrito {
+        - producto : Producto
+        - cantidad : int
+    }
+
+    class Pregunta {
+        - texto : String
+        - id : int
+    }
+
+    class PreguntaRespondida {
+        - pregunta : Pregunta
+        - respuesta : String
+        - username : String
+    }
+
+    enum Rol {
+        ADMINISTRADOR
+        USUARIO
+    }
+}
+
+package "ec.edu.ups.poo.carrito.util" {
+    class FormatosUtils
+    class MensajeInternacionalizacionHandler {
+        - idioma : String
+        - pais : String
+        - resourceBundle : ResourceBundle
+    }
+}
+
+' ==== RELACIONES CLAVE ====
+Usuario "1" -- "many" Carrito : crea >
+Carrito "1" -- "many" ItemCarrito : contiene >
+Usuario "1" -- "many" PreguntaRespondida : responde >
+Pregunta "1" -- "many" PreguntaRespondida : base >
+CarritoControlador --> ProductoDAO
+CarritoControlador --> CarritoDAO
+CarritoControlador --> Carrito
+CarritoControlador --> VerDetalleView
+CarritoControlador --> MensajeInternacionalizacionHandler
+
+UsuarioControlador --> Usuario
+UsuarioControlador --> CarritoDAO
+UsuarioControlador --> UsuarioDAO
+UsuarioControlador --> PreguntaDAO
+UsuarioControlador --> FormatosUtils
+
+ProductoControlador --> ProductoDAO
+ProductoControlador --> Principal
+ProductoControlador --> FormatosUtils
+
+LoginControlador --> UsuarioDAO
+LoginControlador --> PreguntaDAO
+LoginControlador --> Usuario
+
+@enduml

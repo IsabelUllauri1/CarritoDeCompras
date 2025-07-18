@@ -1,24 +1,24 @@
 package ec.edu.ups.poo.carrito.util;
 
-import ec.edu.ups.poo.carrito.modelo.Rol;
+import ec.edu.ups.poo.carrito.modelo.ROL;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ComboRol {
 
-    public static void aplicarInternacionalizacionRolCombo(JComboBox<Rol> combo, MensajeInternacionalizacionHandler mh) {
-        Rol seleccionado = (Rol) combo.getSelectedItem();
+    public static void aplicarInternacionalizacionRolCombo(JComboBox<ROL> combo, MensajeInternacionalizacionHandler mh) {
+        ROL seleccionado = (ROL) combo.getSelectedItem();
 
-        DefaultComboBoxModel<Rol> modelo = new DefaultComboBoxModel<>();
-        modelo.addElement(Rol.ADMINISTRADOR);
-        modelo.addElement(Rol.USUARIO);
+        DefaultComboBoxModel<ROL> modelo = new DefaultComboBoxModel<>();
+        modelo.addElement(ROL.ADMINISTRADOR);
+        modelo.addElement(ROL.USUARIO);
         combo.setModel(modelo);
 
         combo.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String texto = switch ((Rol) value) {
+                String texto = switch ((ROL) value) {
                     case ADMINISTRADOR -> mh.get("rol.administrador");
                     case USUARIO -> mh.get("rol.usuario");
                 };

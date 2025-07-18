@@ -5,6 +5,9 @@ import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RegistrarseView extends JFrame{
     private JPanel panelPrincipal;
@@ -24,7 +27,8 @@ public class RegistrarseView extends JFrame{
     private JSpinner spinnerFecha;
     private JLabel lblddmmyyyy;
     private JLabel lblRegistarse;
-    private JTextField txtFechaN;
+    private JTextField txtFechaNacimiento;
+
 
     public RegistrarseView() {
         setSize(600, 400);
@@ -32,11 +36,7 @@ public class RegistrarseView extends JFrame{
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        SpinnerDateModel model = new SpinnerDateModel();
-        spinnerFecha.setModel(model);
 
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinnerFecha, "dd/MM/yyyy");
-        spinnerFecha.setEditor(editor);
 
         URL atrasURL = PreguntasView.class.getClassLoader().getResource("imagenes/atras.png");
         if (atrasURL != null) {
@@ -61,7 +61,7 @@ public class RegistrarseView extends JFrame{
         setTitle(mh.get("usuario.registarse.titulo"));
 
         lblRegistarse.setText(mh.get("usuario.registarse.titulo"));
-        lblCont.setText(mh.get("etiqueta.registrarse"));
+        lblCont.setText(mh.get("etiqueta.contrasena"));
         lblUsuario.setText(mh.get("etiqueta.Usuario"));
         lblNombreComp.setText(mh.get("etiqueta.NombreComp"));
         lblFecha.setText(mh.get("etiqueta.fechadenacimiento"));
@@ -81,14 +81,10 @@ public class RegistrarseView extends JFrame{
         return panelPrincipal;
     }
 
-    public JSpinner getSpinnerFecha() {
-        return spinnerFecha;
-    }
 
     public JButton getBtnSiguiente() {
         return btnSiguiente;
     }
-
 
     public JLabel getLblCont() {return lblCont;}
 
@@ -128,13 +124,17 @@ public class RegistrarseView extends JFrame{
         return txtTelefono;
     }
 
-    public JTextField getTxtFechaN() {
-        return txtFechaN;
-    }
-
     public JLabel getLblddmmyyyy() {return lblddmmyyyy;}
 
     public JLabel getLblUsuario() {return lblUsuario;
+    }
+
+    public JTextField getTxtFechaNacimiento() {
+        return txtFechaNacimiento;
+    }
+
+    public void setTxtFechaNacimiento(JTextField txtFechaNacimiento) {
+        this.txtFechaNacimiento = txtFechaNacimiento;
     }
 
     public void mostrarMensaje(String mensaje) {

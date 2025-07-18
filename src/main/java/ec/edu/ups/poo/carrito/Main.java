@@ -3,7 +3,7 @@ package ec.edu.ups.poo.carrito;
 import ec.edu.ups.poo.carrito.controlador.*;
 import ec.edu.ups.poo.carrito.dao.*;
 import ec.edu.ups.poo.carrito.dao.impl.*;
-import ec.edu.ups.poo.carrito.modelo.Rol;
+import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.*;
@@ -33,6 +33,8 @@ public class Main {
             Locale defaultLocale = Locale.getDefault();
             MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler = new MensajeInternacionalizacionHandler(defaultLocale.getLanguage(), defaultLocale.getCountry());
 
+
+            UsuarioDAOArchivos usuarioDAOArchivoaDeTexto = new UsuarioDAOArchivos();
             LoginView loginView = new LoginView();
             loginView.actualizarTexto(mensajeInternacionalizacionHandler);
 
@@ -90,7 +92,7 @@ public class Main {
                     usuarioControlador.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
 
 
-                    if (usuarioAut.getRol() == Rol.USUARIO) {
+                    if (usuarioAut.getRol() == ROL.USUARIO) {
                         principal.deshabilitarMenuAdministrador();
                     }
 
@@ -147,6 +149,7 @@ public class Main {
                             if (!principal.getDesktopPanel().isAncestorOf(eliminarProdV)) {
                                 principal.getDesktopPanel().add(eliminarProdV);
                             }
+                            prodCtrl.recargarEliminarProductos();
                             eliminarProdV.setVisible(true);
                             eliminarProdV.moveToFront();
                             try {
@@ -304,5 +307,9 @@ public class Main {
                 }
             });
         });
+
+
+
+
     }
 }

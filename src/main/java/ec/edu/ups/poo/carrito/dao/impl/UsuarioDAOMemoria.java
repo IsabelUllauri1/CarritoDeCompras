@@ -1,10 +1,12 @@
 package ec.edu.ups.poo.carrito.dao.impl;
 
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
-import ec.edu.ups.poo.carrito.modelo.Rol;
+import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,8 +15,14 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
     private List<Usuario> usuarios = new ArrayList<>();
     public UsuarioDAOMemoria() {
         usuarios = new ArrayList<Usuario>();
-        crear(new Usuario("admin", "12345", Rol.ADMINISTRADOR));
-        crear(new Usuario("user", "123456", Rol.USUARIO));
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date fecha = sdf.parse("17/07/2000");
+            crear(new Usuario("0106745508", "Gini2121_", ROL.ADMINISTRADOR, "isa@gmail.com", "isabel u", "0992849214", fecha));
+            crear(new Usuario("0102327558", "Gini2121_", ROL.USUARIO, "gina@gamil.com", "Gina B","0994492239", fecha));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -90,7 +98,7 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
     }
 
     @Override
-    public List<Usuario> listarPorRol(Rol rol) {
+    public List<Usuario> listarPorRol(ROL rol) {
         List<Usuario> usuariosEncontrados = new ArrayList<>();
 
         for (Usuario usuario : usuarios) {

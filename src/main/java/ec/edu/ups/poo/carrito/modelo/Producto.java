@@ -1,27 +1,42 @@
 package ec.edu.ups.poo.carrito.modelo;
 
+import ec.edu.ups.poo.carrito.util.CampoVacioException;
+import ec.edu.ups.poo.carrito.util.ValidacionException;
+
 public class Producto {
     private String nombre;
     private double precio;
     private int codigo;
 
     public Producto(String nombre, int codigo, double precio) {
-        this.nombre = nombre;
+        setNombre(nombre);
         this.codigo = codigo;
-        this.precio = precio;
+        setPrecio(precio);
     }
 
     public void setNombre(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            throw new ValidacionException("El nombre del producto no puede estar vacío.");
+        }
         this.nombre = nombre;
     }
 
+    public void setPrecio(double precio) {
+        if (precio < 0) {
+            throw new ValidacionException("El precio no puede ser negativo.");
+        }
+        this.precio = precio;
+    }
+
+
     public void setCodigo(int codigo) {
+        if (codigo <= 0) {
+            throw new IllegalArgumentException("El código debe ser un número positivo.");
+        }
         this.codigo = codigo;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
+
 
     public String getNombre() {
         return nombre;

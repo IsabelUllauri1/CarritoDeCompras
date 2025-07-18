@@ -6,8 +6,10 @@ import ec.edu.ups.poo.carrito.modelo.Carrito;
 import ec.edu.ups.poo.carrito.modelo.ItemCarrito;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.util.CampoVacioException;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.poo.carrito.util.ValidacionException;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoListarView;
@@ -87,13 +89,23 @@ public class CarritoControlador {
 
     private void agregarItem() {
         try {
-            int code = Integer.parseInt(anadirView.getTxtCodigo().getText().trim());
-            int qty  = Integer.parseInt(anadirView.getCbxCantidad().getSelectedItem().toString());
+            String codigoStr = anadirView.getTxtCodigo().getText().trim();
+            if (codigoStr.isEmpty()) {
+                throw new ValidacionException(mh.get("mensaje.codigoVacio"));
+            }
+
+            int code = Integer.parseInt(codigoStr);
+            int qty = Integer.parseInt(anadirView.getCbxCantidad().getSelectedItem().toString());
+
+            if (qty <= 0) {
+                throw new ValidacionException(mh.get("mensaje.cantidadInvalida"));
+            }
+
             Producto p = productoDAO.buscarPorCodigo(code);
             if (p == null) {
-                anadirView.mostrarMensaje(mh.get("mensaje.productoNoEncontrado"));
-                return;
+                throw new ValidacionException(mh.get("mensaje.productoNoEncontrado"));
             }
+
             boolean encontrado = false;
             for (ItemCarrito it : carrito.obtenerItems()) {
                 if (it.getProducto().getCodigo() == code) {
@@ -102,14 +114,22 @@ public class CarritoControlador {
                     break;
                 }
             }
+
             if (!encontrado) {
-                carrito.agregarProducto(p, qty);
+                carrito.agregarProducto(p, qty); // si este setter valida, puede lanzar también
             }
+
             refrescarTablaItems();
+
         } catch (NumberFormatException ex) {
             anadirView.mostrarMensaje(mh.get("mensaje.datosInvalidos"));
+        } catch (ValidacionException ve) {
+            anadirView.mostrarMensaje(ve.getMessage());
+        } catch (Exception ex) {
+            anadirView.mostrarMensaje(mh.get("mensaje.errorAgregarItem"));
         }
     }
+
 
     private void vaciarCarrito() {
         carrito.vaciarCarrito();
@@ -117,32 +137,49 @@ public class CarritoControlador {
     }
 
     private void eliminarItem() {
-        int row = anadirView.getTblProductos().getSelectedRow();
-        if (row < 0) {
-            anadirView.mostrarMensaje(mh.get("mensaje.seleccionaItem"));
-            return;
-        }
-        int code = (int) modeloItems.getValueAt(row, 0);
-        int opt = JOptionPane.showConfirmDialog(anadirView, MessageFormat.format(mh.get("mensaje.confirmarEliminarItem"), code), mh.get("titulo.confirmar.eliminacion"), JOptionPane.YES_NO_OPTION);
-        if (opt == JOptionPane.YES_OPTION) {
-            carrito.eliminarProducto(code);
-            refrescarTablaItems();
+        try {
+            int row = anadirView.getTblProductos().getSelectedRow();
+            if (row < 0) {
+                throw new ValidacionException(mh.get("mensaje.seleccionaItem"));
+            }
+
+            int code = (int) modeloItems.getValueAt(row, 0);
+            int opt = JOptionPane.showConfirmDialog(anadirView, MessageFormat.format(mh.get("mensaje.confirmarEliminarItem"), code), mh.get("titulo.confirmar.eliminacion"), JOptionPane.YES_NO_OPTION);
+            if (opt == JOptionPane.YES_OPTION) {
+                carrito.eliminarProducto(code);
+                refrescarTablaItems();
+            }
+        } catch (ValidacionException ve) {
+            anadirView.mostrarMensaje(ve.getMessage());
+        } catch (Exception ex) {
+            anadirView.mostrarMensaje(mh.get("mensaje.errorEliminarItem"));
         }
     }
+
 
     private void guardarCarrito() {
-        if (carrito.estaVacio()) {
-            anadirView.mostrarMensaje(mh.get("mensaje.carritoVacio"));
-            return;
-        }
-        carritoDAO.crear(carrito);
-        anadirView.mostrarMensaje(MessageFormat.format(mh.get("mensaje.carritoRegistrado"), carrito.getCodigo()));
+        try {
 
-        this.carrito = new Carrito();
-        this.carrito.setUsuario(usuario);
-        refrescarTablaItems();
-        refrescarLista();
+            if (carrito.estaVacio()) {
+                throw new ValidacionException(mh.get("mensaje.carritoVacio"));
+            }
+
+            carritoDAO.crear(carrito);
+            anadirView.mostrarMensaje(MessageFormat.format(mh.get("mensaje.carritoRegistrado"), carrito.getCodigo()));
+
+            // Reinicio del carrito
+            this.carrito = new Carrito();
+            this.carrito.setUsuario(usuario);
+            refrescarTablaItems();
+            refrescarLista();
+
+        } catch (ValidacionException ve) {
+            anadirView.mostrarMensaje(ve.getMessage());
+        } catch (Exception ex) {
+            anadirView.mostrarMensaje(mh.get("mensaje.errorGuardarCarrito"));
+        }
     }
+
 
     private void refrescarTablaItems() {
         modeloItems.setRowCount(0);
@@ -157,46 +194,57 @@ public class CarritoControlador {
     }
 
     private void refrescarLista() {
-        modeloList.setRowCount(0);
-        List<Carrito> todos = carritoDAO.listarTodos();
-        for (Carrito c : todos) {
-            modeloList.addRow(new Object[]{c.getCodigo(),
-                    formatosUtils.formatearFecha(c.getFechaCreacion().getTime(),Locale.getDefault()),
-                    formatosUtils.formatearMoneda(c.calcularSubtotal(), Locale.getDefault()),
-                    formatosUtils.formatearMoneda(c.calcularIVA(), Locale.getDefault()),
-                    formatosUtils.formatearMoneda(c.calcularTotal(), Locale.getDefault())
-            });
+        try {
+            modeloList.setRowCount(0);
+            List<Carrito> todos = carritoDAO.listarTodos();
+            for (Carrito c : todos) {
+                modeloList.addRow(new Object[]{c.getCodigo(),
+                        formatosUtils.formatearFecha(c.getFechaCreacion().getTime(), Locale.getDefault()),
+                        formatosUtils.formatearMoneda(c.calcularSubtotal(), Locale.getDefault()),
+                        formatosUtils.formatearMoneda(c.calcularIVA(), Locale.getDefault()),
+                        formatosUtils.formatearMoneda(c.calcularTotal(), Locale.getDefault())
+                });
+            }
+        }catch (Exception ex) {
+            listarView.mostrarMensaje(mh.get("mensaje.errorCargarCarritos"));
         }
     }
 
     private void modificarCarrito() {
-        int row = listarView.getTblCarritos().getSelectedRow();
-        if (row < 0) {
-            listarView.mostrarMensaje(mh.get("mensaje.seleccionaCarrito"));
-            return;
+        try {
+            int row = listarView.getTblCarritos().getSelectedRow();
+            if (row < 0) {
+                throw new ValidacionException(mh.get("mensaje.seleccionaCarrito"));
+            }
+            int code = (int) modeloList.getValueAt(row, 0);
+            Carrito c = carritoDAO.buscarPorCodigo(code);
+            if (c == null) return;
+            anadirView.setTitle(MessageFormat.format(mh.get("titulo.modificarCarrito"), code));
+            if (!anadirView.isShowing()) {
+                listarView.getDesktopPane().add(anadirView);
+            }
+            anadirView.setVisible(true);
+            refrescarTablaItems();
+        }catch (ValidacionException ve) {
+            listarView.mostrarMensaje(ve.getMessage());
         }
-        int code = (int) modeloList.getValueAt(row, 0);
-        Carrito c = carritoDAO.buscarPorCodigo(code);
-        if (c == null) return;
-        anadirView.setTitle(MessageFormat.format(mh.get("titulo.modificarCarrito"), code));
-        if(!anadirView.isShowing()){
-            listarView.getDesktopPane().add(anadirView);
-        }
-        anadirView.setVisible(true);
-        refrescarTablaItems();
     }
 
     private void eliminarCarrito() {
-        int row = listarView.getTblCarritos().getSelectedRow();
-        if (row < 0) {
-            listarView.mostrarMensaje(mh.get("mensaje.seleccionaCarrito"));
-            return;
-        }
-        int code = (int) modeloList.getValueAt(row, 0);
-        int opt = JOptionPane.showConfirmDialog(listarView, MessageFormat.format(mh.get("mensaje.confirmarEliminarCarrito"), code), mh.get("titulo.confirmar.eliminacion"), JOptionPane.YES_NO_OPTION);
-        if (opt == JOptionPane.YES_OPTION) {
-            carritoDAO.eliminar(code);
-            refrescarLista();
+        try {
+            int row = listarView.getTblCarritos().getSelectedRow();
+            if (row < 0) {
+                throw new ValidacionException(mh.get("mensaje.seleccionaCarrito"));
+            }
+            int code = (int) modeloList.getValueAt(row, 0);
+            int opt = JOptionPane.showConfirmDialog(listarView, MessageFormat.format(mh.get("mensaje.confirmarEliminarCarrito"), code), mh.get("titulo.confirmar.eliminacion"), JOptionPane.YES_NO_OPTION);
+            if (opt == JOptionPane.YES_OPTION) {
+                carritoDAO.eliminar(code);
+                refrescarLista();
+            }
+        }catch (ValidacionException ve) {
+            listarView.mostrarMensaje(ve.getMessage());
+
         }
     }
 

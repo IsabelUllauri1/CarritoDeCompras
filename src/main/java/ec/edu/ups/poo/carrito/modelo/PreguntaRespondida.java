@@ -16,6 +16,7 @@ public class PreguntaRespondida {
     }
 
     public void setPregunta(Pregunta pregunta) {
+
         this.pregunta = pregunta;
     }
 
@@ -24,6 +25,9 @@ public class PreguntaRespondida {
     }
 
     public void setUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("El usuario no puede estar vacío.");
+        }
         this.username = username;
     }
 
@@ -32,6 +36,9 @@ public class PreguntaRespondida {
     }
 
     public void setRespuesta(String respuesta) {
+        if (respuesta == null || respuesta.trim().isEmpty()) {
+            throw new IllegalArgumentException("La respuesta no puede estar vacía.");
+        }
         this.respuesta = respuesta;
     }
 }

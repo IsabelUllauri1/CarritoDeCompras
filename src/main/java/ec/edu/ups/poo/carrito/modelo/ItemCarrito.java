@@ -5,8 +5,13 @@ public class ItemCarrito {
     private Producto producto;
 
     public ItemCarrito(int cantidad, Producto producto) {
+        setCantidad(cantidad);
+        if (producto == null) {
+            throw new NullPointerException("El producto no puede ser nulo.");
+        }
         this.cantidad = cantidad;
         this.producto = producto;
+
     }
 
     public int getCantidad() {
@@ -14,6 +19,9 @@ public class ItemCarrito {
     }
 
     public void setCantidad(int cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a cero.");
+        }
         this.cantidad = cantidad;
     }
 

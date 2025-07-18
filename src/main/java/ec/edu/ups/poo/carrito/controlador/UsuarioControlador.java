@@ -4,11 +4,9 @@ import ec.edu.ups.poo.carrito.dao.CarritoDAO;
 import ec.edu.ups.poo.carrito.dao.PreguntaDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
 import ec.edu.ups.poo.carrito.modelo.*;
-import ec.edu.ups.poo.carrito.util.FormatosUtils;
-import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.poo.carrito.util.*;
 import ec.edu.ups.poo.carrito.view.Principal;
 import ec.edu.ups.poo.carrito.view.carrito.ListarTodosLosCarritosView;
-import ec.edu.ups.poo.carrito.view.login.PreguntasView;
 import ec.edu.ups.poo.carrito.view.login.RegistrarseView;
 import ec.edu.ups.poo.carrito.view.usuario.*;
 import ec.edu.ups.poo.carrito.view.carrito.ListarMisCarritos;
@@ -18,11 +16,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +36,7 @@ public class UsuarioControlador {
     private final CrearUsuarioView crearUsuarioView;
     private final EditarUsuarioView editarUsuarioView;
     private  Principal principal;
-    private Rol rol;
+    private ROL rol;
     private FormatosUtils formatosUtils;
     private RegistrarseView registrarseView;
     private PreguntasUView preguntasViewU;
@@ -83,12 +78,10 @@ public class UsuarioControlador {
                 listarPorRol();
             }
         });
-
-
         listaUsuariosView.getBtnElininar().addActionListener(e -> eliminarUsuarioSeleccionado());
 
         crearUsuarioView.getBtnGuardar().addActionListener(e -> crearUsuario());
-        crearUsuarioView.getCbxRol().setModel(new DefaultComboBoxModel<>(Rol.values()));
+        crearUsuarioView.getCbxRol().setModel(new DefaultComboBoxModel<>(ROL.values()));
         crearUsuarioView.getBtnSalir().addActionListener(e -> crearUsuarioView.dispose());
 
         listarView.getBtnRefrescar().addActionListener(e -> refrescarMisCarritos());
@@ -134,7 +127,7 @@ public class UsuarioControlador {
         List<Pregunta> preguntasFijas = preguntaDAO.listarPreguntas();
         for (int i = 0; i < 10; i++) {
             String clavePregunta = "pregunta." + (i + 1);
-            String textoTraducido = mh.get(clavePregunta); // Traducir por clave
+            String textoTraducido = mh.get(clavePregunta);
             camposPreguntas[i].setText(textoTraducido);
             camposPreguntas[i].setEditable(false);
             camposRespuestas[i].setText("");
@@ -184,19 +177,32 @@ public class UsuarioControlador {
             return;
         }
 
-        usuario.setUsername(nu);
-        usuario.setContrasenia(np);
+        try {
+            usuario.setContrasenia(np);
+        } catch (ContrasenaInvalidaException e2) {
+            miPaginaView.mostrarMensaje(e2.getMessage(), mh.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            usuario.setCorreo(correo);
+        } catch (CorreoInvalidoException e3) {
+            miPaginaView.mostrarMensaje(e3.getMessage(), mh.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            usuario.setTelefono(telefono);
+        } catch (IllegalArgumentException e4) {
+            miPaginaView.mostrarMensaje(e4.getMessage(), mh.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         usuario.setNombreCompleto(nombre);
-        usuario.setCorreo(correo);
-        usuario.setTelefono(telefono);
         usuario.setFechaNacimiento(fechaNacimiento);
-
         usuarioDAO.actualizar(usuario);
-
         miPaginaView.mostrarMensaje(mh.get("mensaje.datosActualizados"));
     }
-
-
 
     private void listarTodos() {
         DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
@@ -209,7 +215,7 @@ public class UsuarioControlador {
 
 //
     private void listarPorRol() {
-        Rol rol = (Rol) listaUsuariosView.getCbxRol().getSelectedItem();
+        ROL rol = (ROL) listaUsuariosView.getCbxRol().getSelectedItem();
         DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
         m.setRowCount(0);
         for (Usuario u : usuarioDAO.listarPorRol(rol)) {
@@ -232,7 +238,7 @@ public class UsuarioControlador {
     private void crearUsuario() {
         String username = crearUsuarioView.getTxtUsuarioNuevo().getText().trim();
         String pass  = new String(crearUsuarioView.getPwdContrasenaNueva().getPassword()).trim();
-        Rol rol  = (Rol) crearUsuarioView.getCbxRol().getSelectedItem();
+        ROL rol  = (ROL) crearUsuarioView.getCbxRol().getSelectedItem();
 
 
         if (username.isEmpty() || pass.isEmpty()) {
@@ -255,19 +261,20 @@ public class UsuarioControlador {
         crearUsuarioView.mostrarMensaje(mh.get("mensaje.usuarioCreado"), mh.get("titulo.exito"), JOptionPane.INFORMATION_MESSAGE);
     }
     private boolean inicializandoComboRolFiltro = false;
+
     public void actualizarComboRolesEnFiltros(MensajeInternacionalizacionHandler mh) {
         inicializandoComboRolFiltro = true;
 
-        JComboBox<Rol> cbx = listaUsuariosView.getCbxRol();
-        DefaultComboBoxModel<Rol> modelo = new DefaultComboBoxModel<>();
-        modelo.addElement(Rol.ADMINISTRADOR);
-        modelo.addElement(Rol.USUARIO);
+        JComboBox<ROL> cbx = listaUsuariosView.getCbxRol();
+        DefaultComboBoxModel<ROL> modelo = new DefaultComboBoxModel<>();
+        modelo.addElement(ROL.ADMINISTRADOR);
+        modelo.addElement(ROL.USUARIO);
         cbx.setModel(modelo);
 
         cbx.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String texto = switch ((Rol) value) {
+                String texto = switch ((ROL) value) {
                     case ADMINISTRADOR -> mh.get("rol.administrador");
                     case USUARIO -> mh.get("rol.usuario");
                 };
@@ -278,21 +285,19 @@ public class UsuarioControlador {
         inicializandoComboRolFiltro = false;
     }
 
-
-
     public void actualizarComboRol(MensajeInternacionalizacionHandler mh) {
-        JComboBox<Rol> combo = crearUsuarioView.getCbxRol();
+        JComboBox<ROL> combo = crearUsuarioView.getCbxRol();
 
-        DefaultComboBoxModel<Rol> modelo = new DefaultComboBoxModel<>();
-        modelo.addElement(Rol.ADMINISTRADOR);
-        modelo.addElement(Rol.USUARIO);
+        DefaultComboBoxModel<ROL> modelo = new DefaultComboBoxModel<>();
+        modelo.addElement(ROL.ADMINISTRADOR);
+        modelo.addElement(ROL.USUARIO);
         combo.setModel(modelo);
 
 
         combo.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String texto = switch ((Rol) value) {
+                String texto = switch ((ROL) value) {
                     case ADMINISTRADOR -> mh.get("rol.administrador");
                     case USUARIO -> mh.get("rol.usuario");
                 };
@@ -309,15 +314,21 @@ public class UsuarioControlador {
             return;
         }
         String nuevaPass = new String(editarUsuarioView.getPwdNContrasena().getPassword()).trim();
-        Rol nuevoRol  = (Rol) editarUsuarioView.getCbxRol().getSelectedItem();
-        if (!nuevaPass.isEmpty()) {
-            u.setContrasenia(nuevaPass);
+        ROL nuevoRol  = (ROL) editarUsuarioView.getCbxRol().getSelectedItem();
+
+        try {
+            if (!nuevaPass.isEmpty()) {
+                u.setContrasenia(nuevaPass); // Puede lanzar excepción
+            }
+            u.setRol(nuevoRol);
+            usuarioDAO.actualizar(u);
+            editarUsuarioView.mostrarMensaje(mh.get("mensaje.usuarioActualizado"), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
+            editarUsuarioView.dispose();
+        } catch (ContrasenaInvalidaException e) {
+            editarUsuarioView.mostrarMensaje(e.getMessage(), mh.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
         }
-        u.setRol(nuevoRol);
-        usuarioDAO.actualizar(u);
-        editarUsuarioView.mostrarMensaje(mh.get("mensaje.usuarioActualizado"), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
-        editarUsuarioView.dispose();
     }
+
     private void eliminarCarrito(){
         listarView.getBtnEliminar().addActionListener(e -> {
             int row = listarView.getTblCarritos().getSelectedRow();
@@ -360,6 +371,7 @@ public class UsuarioControlador {
 
         JOptionPane.showMessageDialog(listaUsuariosView, MessageFormat.format(mh.get("mensaje.usuarioEliminado"), username), mh.get("titulo.informacion"), JOptionPane.INFORMATION_MESSAGE);
     }
+
     private void verDetallesDesde(JTable tabla, JDesktopPane contenedor) {
         int row = tabla.getSelectedRow();
         if (row < 0) {
@@ -409,6 +421,30 @@ public class UsuarioControlador {
             JOptionPane.showMessageDialog(listaUsuariosView, MessageFormat.format(mh.get("mensaje.usuarioNoEncontrado"), txt), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
+
+    public Usuario autenticar(String cedula, String contrasenia, String correo, String telefono) {
+        Usuario u = usuarioDAO.buscarPorUsername(cedula);
+
+        if (!Usuario.esCedulaValida(cedula)) {
+            throw new CedulaInvalidaExeption("Cédula inválida: " + cedula);
+        }
+
+        if (!u.getContrasenia().equals(contrasenia)) {
+            throw new ContrasenaInvalidaException(mh.get("login.error.contrasenaIncorrecta"));
+        }
+
+        if (!u.getCorreo().equalsIgnoreCase(correo)) {
+            throw new CorreoInvalidoException(mh.get("login.error.correoIncorrecto"));
+        }
+
+        if (!u.getTelefono().equals(telefono)) {
+            throw new RuntimeException(mh.get("login.error.telefonoIncorrecto"));
+        }
+
+        return u;
+    }
+
+
 
     public void mostrarTodosLosCarritos() {
         DefaultTableModel m = listarTodosCarritosView.getModelo();

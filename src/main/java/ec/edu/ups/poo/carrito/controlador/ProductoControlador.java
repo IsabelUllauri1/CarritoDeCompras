@@ -4,6 +4,7 @@ import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.util.FormatosUtils;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.poo.carrito.util.ValidacionException;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.CarritoAnadirView;
 import ec.edu.ups.poo.carrito.view.producto.*;
@@ -62,7 +63,11 @@ public class ProductoControlador {
                     vistaActualizar.cargarProducto(p);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.datosInvalidos"));
+                JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.codigoPrecioInvalido"));
+            } catch (ValidacionException ex) {
+                JOptionPane.showMessageDialog(vistaActualizar, ex.getMessage());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.errorActualizar"));
             }
         });
 
@@ -96,7 +101,8 @@ public class ProductoControlador {
         String precioTxt = vistaAnadir.getTxtPrecio().getText().trim();
 
         if (nombre.isEmpty() || codigoTxt.isEmpty() || precioTxt.isEmpty()) {
-            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.completarCampos"));            return;
+            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.completarCampos"));
+            return;
         }
 
         try {
@@ -104,17 +110,23 @@ public class ProductoControlador {
             double precio = Double.parseDouble(precioTxt);
 
             if (productoDAO.buscarPorCodigo(codigo) != null) {
-                JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.yaExiste"));                return;
+                JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.yaExiste"));
+                return;
             }
 
             productoDAO.crear(new Producto(nombre, codigo, precio));
-            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.guardadoExito"));            listarProductos();
+            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.guardadoExito"));
+            listarProductos();
             limpiarCamposAnadir();
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.codigoPrecioInvalido"));        }
+            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.codigoPrecioInvalido"));
+        } catch (ValidacionException ex) {
+            JOptionPane.showMessageDialog(vistaAnadir, ex.getMessage());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.errorGuardar"));
+        }
     }
-
-    private void limpiarCamposAnadir() {
+        private void limpiarCamposAnadir() {
         vistaAnadir.getTextField1().setText("");
         vistaAnadir.getTextField2().setText("");
         vistaAnadir.getTextField3().setText("");
@@ -129,23 +141,48 @@ public class ProductoControlador {
     private void buscarProducto() {
         String nombre = vistaListar.getTxtBuscar().getText().trim();
         if (nombre.isEmpty()) {
-            vistaListar.mostrarMensaje(mensajeInternacionalizacionHandler.get("producto.noEncontrado"), mensajeInternacionalizacionHandler.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
+            vistaListar.mostrarMensaje(
+                    mensajeInternacionalizacionHandler.get("producto.noEncontrado"),
+                    mensajeInternacionalizacionHandler.get("titulo.error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
         }
 
         List<Producto> encontrados = productoDAO.buscarPorNombre(nombre);
-        vistaListar.cargarDatos(encontrados);
-        vistaListar.mostrarMensaje(
-                mensajeInternacionalizacionHandler.get("producto.noEncontrado"),
-                mensajeInternacionalizacionHandler.get("titulo.error"),
-                JOptionPane.ERROR_MESSAGE
-        );    }
+        if (encontrados.isEmpty()) {
+            vistaListar.mostrarMensaje(
+                    mensajeInternacionalizacionHandler.get("producto.noEncontrado"),
+                    mensajeInternacionalizacionHandler.get("titulo.error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
 
-    public void listarProductos() {
-        List<Producto> todos = productoDAO.listarTodos();
         DefaultTableModel m = vistaListar.getModelo();
         m.setRowCount(0);
-        for (Producto p : todos) {
-            m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
+        for (Producto p : encontrados) {
+            m.addRow(new Object[]{
+                    p.getCodigo(),
+                    p.getNombre(),
+                    formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())
+            });
+        }
+    }
+
+
+    public void listarProductos() {
+        try {
+            List<Producto> todos = productoDAO.listarTodos();
+            DefaultTableModel m = vistaListar.getModelo();
+            m.setRowCount(0);
+            for (Producto p : todos) {
+                m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
+            }
+        }catch (Exception ex) {
+            vistaListar.mostrarMensaje(mensajeInternacionalizacionHandler.get("producto.errorListar"),
+            mensajeInternacionalizacionHandler.get("titulo.error"), JOptionPane.ERROR_MESSAGE
+            );
         }
     }
     //3
@@ -178,41 +215,56 @@ public class ProductoControlador {
         });
 
         vistaEliminar.getBtnEliminar().addActionListener(e -> {
-            if (modelo.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.buscarPrimero"));
-                return;
-            }
-
-            int code = (int) modelo.getValueAt(0, 0);
-            int ok = JOptionPane.showConfirmDialog(
-                    vistaEliminar,
-                    mensajeInternacionalizacionHandler.get("producto.confirmarEliminacion") + " " + code + "?",
-                    mensajeInternacionalizacionHandler.get("titulo.confirmar"),
-                    JOptionPane.YES_NO_OPTION
-            );
-            if (ok == JOptionPane.YES_OPTION) {
-                productoDAO.eliminar(code);
-                modelo.setRowCount(0);
-                for (Producto p : productoDAO.listarTodos()) {
-                    modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
+                if (modelo.getRowCount() == 0) {
+                    JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.buscarPrimero"));
+                    return;
                 }
-                JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.eliminado"));
-            }
+
+                int code = (int) modelo.getValueAt(0, 0);
+                int ok = JOptionPane.showConfirmDialog(
+                        vistaEliminar,
+                        mensajeInternacionalizacionHandler.get("producto.confirmarEliminacion") + " " + code + "?",
+                        mensajeInternacionalizacionHandler.get("titulo.confirmar"),
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (ok == JOptionPane.YES_OPTION) {
+                    try {
+                        productoDAO.eliminar(code);
+                        modelo.setRowCount(0);
+                        for (Producto p : productoDAO.listarTodos()) {
+                            modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
+                        }
+                        JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.eliminado"));
+                    }catch (Exception ex) {
+                        JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.errorEliminar"));
+                    }
+                }
+
+
         });
 
         vistaEliminar.getBtnSalir().addActionListener(e -> vistaEliminar.dispose());
 
-        // Cargar todos al inicio
+    }
+    public void recargarEliminarProductos() {
+        DefaultTableModel modelo = vistaEliminar.getModelo();
+        modelo.setRowCount(0);
         for (Producto p : productoDAO.listarTodos()) {
-            modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
+            modelo.addRow(new Object[]{
+                    p.getCodigo(),
+                    p.getNombre(),
+                    formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())
+            });
         }
     }
+
 
     private void configurarEventosListarPorCodigo() {
         vistaListarPorCodigo.getBtnBuscar().addActionListener(e -> {
             String txt = vistaListarPorCodigo.getTxtBuscar().getText().trim();
             if (txt.isEmpty()) {
-                vistaListarPorCodigo.mostrarMensaje(mensajeInternacionalizacionHandler.get("producto.ingresaCodigo"));                return;
+                vistaListarPorCodigo.mostrarMensaje(mensajeInternacionalizacionHandler.get("producto.ingresaCodigo"));
+                return;
             }
 
             try {
@@ -230,17 +282,21 @@ public class ProductoControlador {
             }
         });
     }
-//------
-
-
-
 
     public void listarProductosEnVistaPorCodigo() {
+        try {
 
-        DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
-        m.setRowCount(0);
-        for (Producto p : productoDAO.listarTodos()) {
-            m.addRow(new Object[]{ p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault()) });
+            DefaultTableModel m = (DefaultTableModel) vistaListarPorCodigo.getTblProductos().getModel();
+            m.setRowCount(0);
+            for (Producto p : productoDAO.listarTodos()) {
+                m.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
+            }
+        }catch (Exception ex) {
+            vistaListar.mostrarMensaje(
+                    mensajeInternacionalizacionHandler.get("producto.errorListar"),
+                    mensajeInternacionalizacionHandler.get("titulo.error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 

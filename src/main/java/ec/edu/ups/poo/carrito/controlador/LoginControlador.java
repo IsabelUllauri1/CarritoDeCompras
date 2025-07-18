@@ -4,10 +4,12 @@ import ec.edu.ups.poo.carrito.dao.PreguntaDAO;
 import ec.edu.ups.poo.carrito.dao.UsuarioDAO;
 import ec.edu.ups.poo.carrito.modelo.Pregunta;
 import ec.edu.ups.poo.carrito.modelo.PreguntaRespondida;
-import ec.edu.ups.poo.carrito.modelo.Rol;
+import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
-import ec.edu.ups.poo.carrito.util.FormatosUtils;
+import ec.edu.ups.poo.carrito.util.CedulaInvalidaExeption;
+import ec.edu.ups.poo.carrito.util.ContrasenaInvalidaException;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.poo.carrito.util.ValidacionException;
 import ec.edu.ups.poo.carrito.view.login.LoginView;
 import ec.edu.ups.poo.carrito.view.login.OlvideContrasenaView;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
@@ -18,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
 
 public class LoginControlador {
     private final UsuarioDAO usuarioDAO;
@@ -80,10 +81,10 @@ public class LoginControlador {
             String nombreCompleto = registrarseView.getTxtNombre().getText().trim();
             String correo = registrarseView.getTxtCorreo().getText().trim();
             String telefono = registrarseView.getTxtTelefono().getText().trim();
-            Date fechaNacimiento = (Date) registrarseView.getSpinnerFecha().getValue();
+            String fechaTexto = registrarseView.getTxtFechaNacimiento().getText().trim();
 
             if (username.isEmpty() || password.isEmpty() || nombreCompleto.isEmpty()
-                    || correo.isEmpty() || telefono.isEmpty()) {
+                    || correo.isEmpty() || telefono.isEmpty() || fechaTexto.isEmpty()) {
                 registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.camposObligatorios"));
                 return;
             }
@@ -93,15 +94,40 @@ public class LoginControlador {
                 return;
             }
 
-
             if (!telefono.matches("\\d{7,10}")) {
                 registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.telefonoInvalido"));
                 return;
             }
+            //regex
+            if (!fechaTexto.matches("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\\d{4}$")) {
+                registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.fechaFormatoInvalido"));
+                return;
+            }
 
-            this.usuarioTemp = new Usuario(username, password, Rol.USUARIO, correo, nombreCompleto, telefono, fechaNacimiento);
-            preguntasView.setVisible(true);
-            registrarseView.setVisible(false);
+            // Validar que sea una fecha real (no 00/00/0000, etc.)
+            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+            formato.setLenient(false);
+
+            Date fechaNacimiento;
+            try {
+                fechaNacimiento = formato.parse(fechaTexto);
+            } catch (ParseException ex) {
+                registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.fechaInvalida"));
+                return;
+            }
+
+
+
+            try {
+                this.usuarioTemp = new Usuario(username, password, ROL.USUARIO, correo, nombreCompleto, telefono, fechaNacimiento);
+                preguntasView.setVisible(true);
+                registrarseView.setVisible(false);
+            } catch (CedulaInvalidaExeption | ContrasenaInvalidaException | ValidacionException ex) {
+                registrarseView.mostrarMensaje(ex.getMessage());
+            } catch (Exception ex) {
+                registrarseView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.errorRegistro"));
+            }
+
         });
 
         registrarseView.getBtnRegresar().addActionListener(e -> {
@@ -164,10 +190,8 @@ public class LoginControlador {
                 return;
             }
 
-
             preguntasView.dispose();
             loginView.setVisible(true);
-
 
         });
 
@@ -209,14 +233,20 @@ public class LoginControlador {
                 String mensaje = mensajeInternacionalizacionHandler.get("input.nuevaContrasena");
                 String nuevaPass = JOptionPane.showInputDialog(mensaje);
                 if (nuevaPass != null && !nuevaPass.isBlank()) {
-                    usuarioTemp.setContrasenia(nuevaPass.trim());
-                    usuarioDAO.actualizar(usuarioTemp);
-                    JOptionPane.showMessageDialog(olvideContrasenaView, mensajeInternacionalizacionHandler.get("mensaje.contrasenaAct"));
-                    olvideContrasenaView.dispose();
+                    try {
+                        usuarioTemp.setContrasenia(nuevaPass.trim());
+                        usuarioDAO.actualizar(usuarioTemp);
+                        JOptionPane.showMessageDialog(olvideContrasenaView, mensajeInternacionalizacionHandler.get("mensaje.contrasenaAct"));
+                        olvideContrasenaView.dispose();
+                    } catch (ContrasenaInvalidaException | ValidacionException ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage(), mensajeInternacionalizacionHandler.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             } else {
-                JOptionPane.showMessageDialog(null, mensajeInternacionalizacionHandler.get("mensaje.respuestaIncorrecta"), mensajeInternacionalizacionHandler.get("titulo.error"), JOptionPane.ERROR_MESSAGE);            }
+                JOptionPane.showMessageDialog(null, mensajeInternacionalizacionHandler.get("mensaje.respuestaIncorrecta"), mensajeInternacionalizacionHandler.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
+            }
         });
+
         loginView.getBtnOlvide().addActionListener(e ->{
             olvideContrasenaView.setVisible(true);
         } );
@@ -224,16 +254,25 @@ public class LoginControlador {
     }
 
     private void logear (ActionEvent e) {
-        String user = loginView.getTxtUsername().getText();
-        String passw = loginView.getTxtContrasena().getText();
-        usuarioAutenticado = usuarioDAO.autenticar(user, passw);
-        loginView.getTxtUsername().setText("");
-        loginView.getTxtContrasena().setText("");
-        if (usuarioAutenticado == null) {
-            loginView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.credencialesInvalidas"));
-            return;
+        try {
+            String user = loginView.getTxtUsername().getText();
+            String passw = loginView.getTxtContrasena().getText();
+            usuarioAutenticado = usuarioDAO.autenticar(user, passw);
+            loginView.getTxtUsername().setText("");
+            loginView.getTxtContrasena().setText("");
+            if (usuarioAutenticado == null) {
+                loginView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.credencialesInvalidas"));
+                return;
+            }
+            loginView.dispose();
+        }catch (ValidacionException ex) {
+            loginView.mostrarMensaje(ex.getMessage());
+        } catch (Exception ex) {
+            loginView.mostrarMensaje(mensajeInternacionalizacionHandler.get("mensaje.errorLogin"));
+        } finally {
+            loginView.getTxtUsername().setText("");
+            loginView.getTxtContrasena().setText("");
         }
-        loginView.dispose();
 
 
     }

@@ -8,68 +8,61 @@ import java.util.List;
 public class Carrito {
 
     private final double IVA = 0.12;
-
     private static int contador = 1;
-
     private int codigo;
-
     private GregorianCalendar fechaCreacion;
-
     private List<ItemCarrito> items;
-
     private Usuario usuario;
 
-    public double getIVA() {
-        return IVA;
-    }
-
-    public List<ItemCarrito> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ItemCarrito> items) {
-        this.items = items;
-    }
-
-    public GregorianCalendar getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(GregorianCalendar fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-    public int getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
-    }
-
-    public static int getContador() {
-        return contador;
-    }
-
-    public static void setContador(int contador) {
-        Carrito.contador = contador;
-    }
-
     public Carrito() {
-
-
         this.items        = new ArrayList<>();
         this.fechaCreacion= new GregorianCalendar();
         this.codigo       = contador++;
     }
+
+
     public Usuario getUsuario() {
         return usuario;
     }
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
+    public double getIVA() {
+        return IVA;
+    }
+    public List<ItemCarrito> getItems() {
+        return items;
+    }
+    public void setItems(List<ItemCarrito> items) {
+        this.items = items;
+    }
+    public GregorianCalendar getFechaCreacion() {
+        return fechaCreacion;
+    }
+    public void setFechaCreacion(GregorianCalendar fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+    public int getCodigo() {
+        return codigo;
+    }
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
+    }
+    public static int getContador() {
+        return contador;
+    }
+    public static void setContador(int contador) {
+        Carrito.contador = contador;
+    }
+
 
     public void agregarProducto(Producto producto, int cantidad) {
+        if (producto == null) {
+            throw new NullPointerException("El producto no puede ser nulo.");
+        }
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor que cero.");
+        }
 
         for(ItemCarrito item : items) {
             if(item.getProducto().getCodigo() == producto.getCodigo()) {

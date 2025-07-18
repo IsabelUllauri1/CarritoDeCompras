@@ -1,9 +1,8 @@
 package ec.edu.ups.poo.carrito.dao;
 
-import ec.edu.ups.poo.carrito.modelo.Rol;
+import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface UsuarioDAO {
@@ -22,7 +21,7 @@ public interface UsuarioDAO {
 
     List<Usuario> listarAdministradores();
     List<Usuario> listarUsuarios();
-    List<Usuario> listarPorRol(Rol rol);
+    List<Usuario> listarPorRol(ROL rol);
 
 
 }

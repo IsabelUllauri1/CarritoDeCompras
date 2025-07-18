@@ -18,7 +18,7 @@ public class MensajeInternacionalizacionHandler {
         try {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
-            return key;    // fall back to the literal key
+            return key;
         }
     }
     public void setLanguage(String language, String pais) {
