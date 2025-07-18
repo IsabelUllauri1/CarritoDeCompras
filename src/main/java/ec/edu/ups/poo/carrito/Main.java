@@ -82,7 +82,7 @@ public class Main {
                     final UsuarioDAO usuarioDAOFinalBin = usuarioDAO;
 
                     productoDAO = new ProductoDAOArchivosB(ruta);
-                    final ProductoDAO productoDAOFinal = productoDAO; // NUEVO
+                    final ProductoDAO productoDAOFinal = productoDAO;
 
                     carritoDAO = new CarritoDAOBinario(
                             ruta,
@@ -92,7 +92,7 @@ public class Main {
                                     return usuarioDAOFinalBin.buscarPorUsername(cedula);
                                 }
                             },
-                            new Function<Integer, Producto>() { // NUEVO
+                            new Function<Integer, Producto>() {
                                 @Override
                                 public Producto apply(Integer codigo) {
                                     return productoDAOFinal.buscarPorCodigo(codigo);
@@ -102,14 +102,11 @@ public class Main {
 
                     preguntaDAO = new PreguntaDAOArchivosB(ruta);
                     preguntaRespondidaDAO = new PreguntaRespondidaDAOBinario(ruta);
-                    System.out.println("Buscando admin quemado...");
                     Usuario adminBuscado = usuarioDAO.buscarPorUsername("0106745508");
                     if (adminBuscado == null) {
-                        System.out.println("Admin no existe, lo creo.");
                         try {
                             Usuario admin = new Usuario("0106745508", "12345@Aa", ROL.ADMINISTRADOR, "admin@correo.com", "Administrador", "0999999999", new Date());
                             usuarioDAO.crear(admin);
-                            System.out.println("Admin creado");
                         } catch (Exception e) {
                             System.err.println("Error al crear admin: " + e.getMessage());
                         }
