@@ -3,6 +3,7 @@ package ec.edu.ups.poo.carrito.dao.impl;
 import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 
+import javax.swing.table.DefaultTableModel;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,9 +31,14 @@ public class ProductoDAOArchivosB implements ProductoDAO {
 
     @Override
     public void crear(Producto producto) {
+        if (buscarPorCodigo(producto.getCodigo()) != null) {
+            System.err.println("Producto con código duplicado: " + producto.getCodigo());
+            return;
+        }
         productos.add(producto);
         guardar();
     }
+
 
     @Override
     public Producto buscarPorCodigo(int codigo) {
@@ -78,17 +84,29 @@ public class ProductoDAOArchivosB implements ProductoDAO {
 
     @Override
     public List<Producto> listarTodos() {
-        return productos;
+        List<Producto> lista = productoDAO.listarTodos();
+        DefaultTableModel modelo = (DefaultTableModel) vistaListar.getTabla().getModel();
+        modelo.setRowCount(0); // Limpiar la tabla
+
+        for (Producto p : lista) {
+            modelo.addRow(new Object[]{
+                    p.getCodigo(),
+                    p.getNombre(),
+                    String.format("$%.2f", p.getPrecio())
+            });
+        }
     }
+
 
     // Guardar lista completa
     private void guardar() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(rutaArchivo))) {
-            out.writeObject(productos);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(rutaArchivo))) {
+            oos.writeObject(productos);
         } catch (IOException e) {
             System.err.println("Error al guardar productos: " + e.getMessage());
         }
     }
+
 
     // Cargar lista completa
     private List<Producto> cargar() {
@@ -99,4 +117,5 @@ public class ProductoDAOArchivosB implements ProductoDAO {
             return new ArrayList<>();
         }
     }
+
 }

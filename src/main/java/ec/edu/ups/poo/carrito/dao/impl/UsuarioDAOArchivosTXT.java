@@ -52,13 +52,24 @@ public class UsuarioDAOArchivosTXT implements UsuarioDAO {
                         // Usuario creado por ADMIN (sin más datos)
                         usuarios.add(new Usuario(username, contrasena, rol));
                     } else if (partes.length >= 7) {
-                        // Usuario completo
-                        String correo = partes[3];
-                        String nombre = partes[4];
-                        String telefono = partes[5];
-                        Date fechaNacimiento = new SimpleDateFormat("dd/MM/yyyy").parse(partes[6]);
-                        usuarios.add(new Usuario(username, contrasena, rol, correo, nombre, telefono, fechaNacimiento));
-                    } else {
+                    String correo = partes[3];
+                    String nombre = partes[4];
+                    String telefono = partes[5];
+                    String fechaStr = partes[6];
+
+                    if (correo == null || correo.isBlank() ||
+                            nombre == null || nombre.isBlank() ||
+                            telefono == null || telefono.isBlank() ||
+                            fechaStr == null || fechaStr.isBlank()) {
+
+                        System.err.println("Campos obligatorios vacíos para usuario: " + username);
+                        continue;
+                    }
+
+                    Date fechaNacimiento = new SimpleDateFormat("dd/MM/yyyy").parse(fechaStr);
+                    usuarios.add(new Usuario(username, contrasena, rol, correo, nombre, telefono, fechaNacimiento));
+                }
+                else {
                         System.out.println("Línea inválida en archivo usuarios: " + linea);
                     }
 

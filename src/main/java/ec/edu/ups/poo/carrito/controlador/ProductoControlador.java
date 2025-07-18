@@ -97,7 +97,7 @@ public class ProductoControlador {
     private void guardarProducto() {
         String nombre = vistaAnadir.getTextField1().getText().trim();
         String codigoTxt = vistaAnadir.getTextField2().getText().trim();
-        String precioTxt = vistaAnadir.getTxtPrecio().getText().trim();
+        String precioTxt = vistaAnadir.getTextField3().getText().trim();
 
         if (nombre.isEmpty() || codigoTxt.isEmpty() || precioTxt.isEmpty()) {
             JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.completarCampos"));
@@ -114,22 +114,36 @@ public class ProductoControlador {
             }
 
             productoDAO.crear(new Producto(nombre, codigo, precio));
+            System.out.println("Producto creado");
             JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.guardadoExito"));
-            listarProductos();
-            limpiarCamposAnadir();
+            System.out.println("Mensaje mostrado");
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.codigoPrecioInvalido"));
+            return;
         } catch (ValidacionException ex) {
             JOptionPane.showMessageDialog(vistaAnadir, ex.getMessage());
+            return;
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(vistaAnadir, mensajeInternacionalizacionHandler.get("producto.errorGuardar"));
+            return;
         }
+
+        // Separar la parte que puede fallar después
+        try {
+            listarProductos();
+            System.out.println("Productos listados");
+            limpiarCamposAnadir();
+            System.out.println("Campos limpiados");
+        } catch (Exception ex) {
+            System.err.println("⚠ Error al actualizar la vista: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
     }
-        private void limpiarCamposAnadir() {
+    private void limpiarCamposAnadir() {
         vistaAnadir.getTextField1().setText("");
         vistaAnadir.getTextField2().setText("");
         vistaAnadir.getTextField3().setText("");
-        vistaAnadir.getTxtPrecio().setText("");
     }
     //2
 
@@ -226,18 +240,24 @@ public class ProductoControlador {
                         mensajeInternacionalizacionHandler.get("titulo.confirmar"),
                         JOptionPane.YES_NO_OPTION
                 );
-                if (ok == JOptionPane.YES_OPTION) {
-                    try {
-                        productoDAO.eliminar(code);
-                        modelo.setRowCount(0);
-                        for (Producto p : productoDAO.listarTodos()) {
-                            modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
-                        }
-                        JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.eliminado"));
-                    }catch (Exception ex) {
-                        JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.errorEliminar"));
+            if (ok == JOptionPane.YES_OPTION) {
+                try {
+                    productoDAO.eliminar(code);
+                    modelo.setRowCount(0);
+                    for (Producto p : productoDAO.listarTodos()) {
+                        modelo.addRow(new Object[]{p.getCodigo(), p.getNombre(), formatosUtils.formatearMoneda(p.getPrecio(), Locale.getDefault())});
                     }
+
+
+                    listarProductos();
+                    listarProductosEnVistaPorCodigo();
+
+                    JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.eliminado"));
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(vistaEliminar, mensajeInternacionalizacionHandler.get("producto.errorEliminar"));
                 }
+            }
+
 
 
         });

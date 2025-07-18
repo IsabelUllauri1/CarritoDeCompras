@@ -70,6 +70,7 @@ public class ProductoDAOMemoria implements ProductoDAO {
 
     @Override
     public List<Producto> listarTodos() {
+
         return productos;
     }
 }
