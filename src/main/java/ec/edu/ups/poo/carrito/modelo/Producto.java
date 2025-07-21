@@ -1,27 +1,51 @@
 package ec.edu.ups.poo.carrito.modelo;
 
-public class Producto {
+import ec.edu.ups.poo.carrito.util.exception.ValidacionException;
+
+import java.io.Serializable;
+
+public class Producto implements Serializable {
     private String nombre;
     private double precio;
     private int codigo;
-
+    /**
+     * Crea un nuevo producto con nombre, código y precio especificados.
+     *
+     * @param nombre El nombre del producto.
+     * @param codigo El código único del producto (debe ser mayor que cero).
+     * @param precio El precio del producto (no puede ser negativo).
+     * @throws ValidacionException si el nombre es nulo/vacío o el precio es negativo.
+     * @throws IllegalArgumentException si el código es menor o igual a cero.
+     */
     public Producto(String nombre, int codigo, double precio) {
-        this.nombre = nombre;
+        setNombre(nombre);
         this.codigo = codigo;
-        this.precio = precio;
+        setPrecio(precio);
     }
 
     public void setNombre(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            throw new ValidacionException("El nombre del producto no puede estar vacío.");
+        }
         this.nombre = nombre;
     }
 
+    public void setPrecio(double precio) {
+        if (precio < 0) {
+            throw new ValidacionException("El precio no puede ser negativo.");
+        }
+        this.precio = precio;
+    }
+
+
     public void setCodigo(int codigo) {
+        if (codigo <= 0) {
+            throw new IllegalArgumentException("El código debe ser un número positivo.");
+        }
         this.codigo = codigo;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
+
 
     public String getNombre() {
         return nombre;

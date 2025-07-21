@@ -1,6 +1,6 @@
 package ec.edu.ups.poo.carrito.modelo;
 
-public enum Rol {
+public enum ROL {
     ADMINISTRADOR,
     USUARIO
 }

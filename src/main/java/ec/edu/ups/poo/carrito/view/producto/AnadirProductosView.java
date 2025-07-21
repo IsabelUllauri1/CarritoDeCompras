@@ -15,7 +15,7 @@ public class AnadirProductosView extends JInternalFrame {
     private JButton btnAnadir;
     private JButton btnLimpiar;
     private JPanel PanelPrincipal;
-    private JTextField txtPrecio;
+
     private JButton btnSalir;
     private JLabel lblPrecio;
     private JLabel lblCodigo;
@@ -81,14 +81,6 @@ public class AnadirProductosView extends JInternalFrame {
 
     public void setTextField1(JTextField textField1) {
         this.textField1 = textField1;
-    }
-
-    public JTextField getTxtPrecio() {
-        return txtPrecio;
-    }
-
-    public void setTxtPrecio(JTextField txtPrecio) {
-        this.txtPrecio = txtPrecio;
     }
 
     public JPanel getPanelPrincipal() {

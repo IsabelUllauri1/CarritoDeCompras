@@ -3,8 +3,12 @@ package ec.edu.ups.poo.carrito;
 import ec.edu.ups.poo.carrito.controlador.*;
 import ec.edu.ups.poo.carrito.dao.*;
 import ec.edu.ups.poo.carrito.dao.impl.*;
-import ec.edu.ups.poo.carrito.modelo.Rol;
+import ec.edu.ups.poo.carrito.dao.impl.binario.*;
+import ec.edu.ups.poo.carrito.modelo.Producto;
+import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
+import ec.edu.ups.poo.carrito.util.ConfiguracionSistema;
+import ec.edu.ups.poo.carrito.util.SelectorAlmacenamiento;
 import ec.edu.ups.poo.carrito.view.*;
 import ec.edu.ups.poo.carrito.view.carrito.*;
 import ec.edu.ups.poo.carrito.view.login.LoginView;
@@ -18,20 +22,124 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
+import java.util.Date;
 import java.util.Locale;
+import java.util.function.Function;
 
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-
-            UsuarioDAO  usuarioDAO  = new UsuarioDAOMemoria();
-            ProductoDAO productoDAO = new ProductoDAOMemoria();
-            CarritoDAO  carritoDAO  = new CarritoDAOMemoria();
-            PreguntaDAO  preguntaDAO = new PreguntaDAOMemoria();
             Locale defaultLocale = Locale.getDefault();
-            MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler = new MensajeInternacionalizacionHandler(defaultLocale.getLanguage(), defaultLocale.getCountry());
+            MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler =
+                    new MensajeInternacionalizacionHandler(defaultLocale.getLanguage(), defaultLocale.getCountry());
+            SelectorAlmacenamiento.setMensajeInternacionalizacionHandler(mensajeInternacionalizacionHandler);
+            SelectorAlmacenamiento.mostrarSeleccionAlmacenamiento(null);
+            ConfiguracionSistema config = ConfiguracionSistema.getInstancia();
+            System.out.println("Ruta seleccionada: " + config.getRutaArchivos());
+
+
+
+            final UsuarioDAO usuarioDAO;
+            final ProductoDAO productoDAO;
+            final CarritoDAO carritoDAO;
+            final PreguntaDAO preguntaDAO;
+            final PreguntaRespondidaDAO preguntaRespondidaDAO;
+            final ItemCarritoDAO itemCarritoDAO;
+
+
+
+            // Ruta si aplica
+            String ruta = config.getRutaArchivos();
+
+            switch (config.getTipoAlmacenamiento()) {
+                case MEMORIA:
+                    usuarioDAO = new UsuarioDAOMemoria();
+                    productoDAO = new ProductoDAOMemoria();
+                    carritoDAO = new CarritoDAOMemoria();
+                    preguntaDAO = new PreguntaDAOMemoria();
+                    preguntaRespondidaDAO = new PreguntaRespondidaDAOMemoria();
+                    break;
+
+                case ARCHIVOS:
+                    usuarioDAO = new UsuarioDAOArchivosTXT(ruta, mensajeInternacionalizacionHandler);
+                    final UsuarioDAO usuarioDAOFinalTexto = usuarioDAO; // para el Function
+                    productoDAO = new ProductoDAOArchivosB(ruta);
+                    itemCarritoDAO= new ItemCarritoDAOBinario(ruta, productoDAO);//--------
+                    carritoDAO = new CarritoDAOArchivosTXT(ruta, new Function<String, Usuario>() {
+                        @Override
+                        public Usuario apply(String cedula) {
+                            return usuarioDAOFinalTexto.buscarPorUsername(cedula);
+                        }
+                    },itemCarritoDAO );//--------
+
+                    preguntaDAO = new PreguntaDAOArchivosB(ruta);
+                    preguntaRespondidaDAO = new PreguntaRespondidaDAOBinario(ruta);
+                    break;
+
+                case ARCHIVOS_BINARIOS:
+                    usuarioDAO = new UsuarioDAOBinario(ruta);
+                    final UsuarioDAO usuarioDAOFinalBin = usuarioDAO;
+
+                    productoDAO = new ProductoDAOArchivosB(ruta);
+                    final ProductoDAO productoDAOFinal = productoDAO;
+                    itemCarritoDAO = new ItemCarritoDAOBinario(ruta, productoDAOFinal);
+
+                    carritoDAO = new CarritoDAOBinario(
+                            ruta,
+                            new Function<String, Usuario>() {
+                                @Override
+                                public Usuario apply(String cedula) {
+                                    return usuarioDAOFinalBin.buscarPorUsername(cedula);
+                                }
+                            },
+                            new Function<Integer, Producto>() {
+                                @Override
+                                public Producto apply(Integer codigo) {
+                                    return productoDAOFinal.buscarPorCodigo(codigo);
+                                }
+                            }, itemCarritoDAO
+                    );
+
+                    preguntaDAO = new PreguntaDAOArchivosB(ruta);
+                    preguntaRespondidaDAO = new PreguntaRespondidaDAOBinario(ruta);
+                    Usuario adminBuscado = usuarioDAO.buscarPorUsername("0106745508");
+                    if (adminBuscado == null) {
+                        try {
+                            Usuario admin = new Usuario("0106745508", "12345@Aa", ROL.ADMINISTRADOR, "admin@correo.com", "Administrador", "0999999999", new Date());
+                            usuarioDAO.crear(admin);
+                        } catch (Exception e) {
+                            System.err.println("Error al crear admin: " + e.getMessage());
+                        }
+                    } else {
+                        System.out.println("Admin ya existe: " + adminBuscado.getUsername() + " / " + adminBuscado.getContrasenia());
+                    }
+
+
+                    break;
+
+                default:
+                    throw new IllegalStateException("Tipo de almacenamiento desconocido: " + config.getTipoAlmacenamiento());
+
+            }
+
+            if (config.getTipoAlmacenamiento() != ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
+                if (usuarioDAO.buscarPorUsername("0000000000") == null) {
+                    try {
+                        Usuario admin = new Usuario("0106745508", "12345@Aa", ROL.ADMINISTRADOR, "admin@correo.com", "Administrador", "0999999999", new Date());
+                        usuarioDAO.crear(admin);
+                        System.out.println("Admin por defecto creado.");
+                    } catch (Exception ex) {
+                        System.err.println(" No se pudo crear admin por defecto: " + ex.getMessage());
+                    }
+                }
+            }
+
+
+
+
+
 
             LoginView loginView = new LoginView();
             loginView.actualizarTexto(mensajeInternacionalizacionHandler);
@@ -48,7 +156,7 @@ public class Main {
 
 
 
-            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView,registrarseView,preguntasView,olvideContrasenaView,preguntaDAO);
+            LoginControlador loginControlador = new LoginControlador(usuarioDAO,loginView,registrarseView,preguntasView,olvideContrasenaView,preguntaDAO,mensajeInternacionalizacionHandler,preguntaRespondidaDAO);
             loginControlador.setMensajeInternacionalizacionHandler(mensajeInternacionalizacionHandler);
             loginView.setVisible(true);
 
@@ -86,11 +194,11 @@ public class Main {
                     prodCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
                     CarritoControlador carritoCtrl = new CarritoControlador(productoDAO, carritoDAO, anadirCarritoV, listarCarritoV, usuarioAut);
                     carritoCtrl.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
-                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView, preguntasUV,preguntaDAO);
+                    UsuarioControlador usuarioControlador = new UsuarioControlador(usuarioAut,carritoDAO,usuarioDAO,miPaginaV,listarMisV,verDetalleV,listarUsuariosView,crearUsuarioView,editarUsuarioView,principal, listarTodosLosCarritosView, preguntasUV,preguntaDAO, preguntaRespondidaDAO);
                     usuarioControlador.setMensajeInternacionalizacionHandler(principal.getMensajeInternacionalizacionHandler());
 
 
-                    if (usuarioAut.getRol() == Rol.USUARIO) {
+                    if (usuarioAut.getRol() == ROL.USUARIO) {
                         principal.deshabilitarMenuAdministrador();
                     }
 
@@ -147,6 +255,7 @@ public class Main {
                             if (!principal.getDesktopPanel().isAncestorOf(eliminarProdV)) {
                                 principal.getDesktopPanel().add(eliminarProdV);
                             }
+                            prodCtrl.recargarEliminarProductos();
                             eliminarProdV.setVisible(true);
                             eliminarProdV.moveToFront();
                             try {
@@ -301,8 +410,55 @@ public class Main {
 
 
                     principal.setVisible(true);
+
+
                 }
             });
+
         });
+
+
+
+
     }
+
+    public static void mostrarSeleccionAlmacenamiento() {
+        String[] opciones = { "Memoria (no guarda datos)", "Archivos (guardar en disco)" };
+        int opcion = JOptionPane.showOptionDialog(
+                null,
+                "¿Dónde desea guardar los datos?",
+                "Modo de almacenamiento",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]
+        );
+
+        ConfiguracionSistema config = ConfiguracionSistema.getInstancia();
+
+        if (opcion == 0) {
+            config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
+        } else if (opcion == 1) {
+            config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.ARCHIVOS);
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Seleccione la carpeta para guardar los archivos");
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+            int seleccion = fileChooser.showOpenDialog(null);
+
+            if (seleccion == JFileChooser.APPROVE_OPTION) {
+                String ruta = fileChooser.getSelectedFile().getAbsolutePath();
+                config.setRutaArchivos(ruta);
+            } else {
+                JOptionPane.showMessageDialog(null, "No seleccionó una carpeta. Se usará almacenamiento en memoria.");
+                config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No seleccionó una opción. Se usará almacenamiento en memoria.");
+            config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
+        }
+    }
+
 }

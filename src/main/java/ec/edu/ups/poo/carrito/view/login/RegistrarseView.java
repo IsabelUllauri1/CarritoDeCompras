@@ -9,7 +9,7 @@ import java.net.URL;
 public class RegistrarseView extends JFrame{
     private JPanel panelPrincipal;
     private JTextField textField1;
-    private JPasswordField passwordField1;
+    private JPasswordField PwfContrasena;
     private JLabel lblCont;
     private JLabel lblUsuario;
     private JButton btnSiguiente;
@@ -21,10 +21,10 @@ public class RegistrarseView extends JFrame{
     private JLabel lblCorreo;
     private JTextField txtCorreo;
     private JTextField txtTelefono;
-    private JSpinner spinnerFecha;
     private JLabel lblddmmyyyy;
     private JLabel lblRegistarse;
-    private JTextField txtFechaN;
+    private JTextField txtFechaNacimiento;
+
 
     public RegistrarseView() {
         setSize(600, 400);
@@ -32,11 +32,7 @@ public class RegistrarseView extends JFrame{
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        SpinnerDateModel model = new SpinnerDateModel();
-        spinnerFecha.setModel(model);
 
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinnerFecha, "dd/MM/yyyy");
-        spinnerFecha.setEditor(editor);
 
         URL atrasURL = PreguntasView.class.getClassLoader().getResource("imagenes/atras.png");
         if (atrasURL != null) {
@@ -61,7 +57,7 @@ public class RegistrarseView extends JFrame{
         setTitle(mh.get("usuario.registarse.titulo"));
 
         lblRegistarse.setText(mh.get("usuario.registarse.titulo"));
-        lblCont.setText(mh.get("etiqueta.registrarse"));
+        lblCont.setText(mh.get("etiqueta.contrasena"));
         lblUsuario.setText(mh.get("etiqueta.Usuario"));
         lblNombreComp.setText(mh.get("etiqueta.NombreComp"));
         lblFecha.setText(mh.get("etiqueta.fechadenacimiento"));
@@ -81,14 +77,10 @@ public class RegistrarseView extends JFrame{
         return panelPrincipal;
     }
 
-    public JSpinner getSpinnerFecha() {
-        return spinnerFecha;
-    }
 
     public JButton getBtnSiguiente() {
         return btnSiguiente;
     }
-
 
     public JLabel getLblCont() {return lblCont;}
 
@@ -97,7 +89,7 @@ public class RegistrarseView extends JFrame{
     }
 
     public JPasswordField getPasswordField1() {
-        return passwordField1;
+        return PwfContrasena;
     }
 
     public JLabel getLblNombreComp() {
@@ -128,13 +120,17 @@ public class RegistrarseView extends JFrame{
         return txtTelefono;
     }
 
-    public JTextField getTxtFechaN() {
-        return txtFechaN;
-    }
-
     public JLabel getLblddmmyyyy() {return lblddmmyyyy;}
 
     public JLabel getLblUsuario() {return lblUsuario;
+    }
+
+    public JTextField getTxtFechaNacimiento() {
+        return txtFechaNacimiento;
+    }
+
+    public void setTxtFechaNacimiento(JTextField txtFechaNacimiento) {
+        this.txtFechaNacimiento = txtFechaNacimiento;
     }
 
     public void mostrarMensaje(String mensaje) {

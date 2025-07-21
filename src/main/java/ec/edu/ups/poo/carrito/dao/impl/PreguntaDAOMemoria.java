@@ -9,7 +9,10 @@ import java.util.List;
 public class PreguntaDAOMemoria implements PreguntaDAO {
 
     private List<Pregunta> preguntas;
-
+    /**
+     * Inicializa el DAO en memoria cargando una lista de 10 preguntas
+     * de seguridad predeterminadas.
+     */
     public PreguntaDAOMemoria() {
         preguntas = new ArrayList<>();
         preguntas.add(new Pregunta("¿Nombre de tu primer perro?",1));
@@ -23,7 +26,11 @@ public class PreguntaDAOMemoria implements PreguntaDAO {
         preguntas.add(new Pregunta("¿En qué año ingresó en la universidad?",9));
         preguntas.add(new Pregunta("¿Cuál es el apodo de su mejor amigo?",10));
     }
-
+    /**
+     * Devuelve la lista completa de preguntas de seguridad.
+     *
+     * @return Lista de preguntas almacenadas en memoria.
+     */
     @Override
     public List<Pregunta> listarPreguntas() {
         return preguntas;

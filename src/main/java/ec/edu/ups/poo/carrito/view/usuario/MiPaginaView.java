@@ -179,4 +179,7 @@ public class MiPaginaView extends JInternalFrame{
         JOptionPane.showMessageDialog(this, mensaje);
 
     }
+
+    public void mostrarMensaje(String message, String s, int errorMessage) {
+    }
 }

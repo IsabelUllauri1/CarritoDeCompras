@@ -105,7 +105,7 @@
               <text value="Usuario:"/>
             </properties>
           </component>
-          <component id="c116a" class="javax.swing.JPasswordField" binding="passwordField1" default-binding="true">
+          <component id="c116a" class="javax.swing.JPasswordField" binding="PwfContrasena">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -188,15 +188,6 @@
               <text value="Telefono:"/>
             </properties>
           </component>
-          <component id="32ae5" class="javax.swing.JLabel" binding="lblFecha">
-            <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <foreground color="-11044417"/>
-              <text value="Fecha de nacimiento"/>
-            </properties>
-          </component>
           <component id="eeae4" class="javax.swing.JTextField" binding="txtCorreo">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -216,12 +207,6 @@
             <properties>
               <background color="-1051909"/>
             </properties>
-          </component>
-          <component id="5f701" class="javax.swing.JSpinner" binding="spinnerFecha">
-            <constraints>
-              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
           </component>
           <component id="ed931" class="javax.swing.JLabel" binding="lblddmmyyyy">
             <constraints>
@@ -243,6 +228,25 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
+          <component id="32ae5" class="javax.swing.JLabel" binding="lblFecha">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <foreground color="-11044417"/>
+              <text value="Fecha de nacimiento"/>
+            </properties>
+          </component>
+          <component id="c579" class="javax.swing.JTextField" binding="txtFechaNacimiento">
+            <constraints>
+              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <background color="-1051909"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <vspacer id="d893b">

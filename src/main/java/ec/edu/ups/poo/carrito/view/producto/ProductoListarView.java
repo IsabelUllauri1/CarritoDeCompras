@@ -82,27 +82,6 @@ public class ProductoListarView extends JInternalFrame {
         });
     }
 
-    public void cargarDatos(List<Producto> listaProductos) {
-        modelo.setNumRows(0);
-
-        for (Producto producto : listaProductos) {
-            Object[] fila = {
-                    producto.getCodigo(),
-                    producto.getNombre(),
-                    producto.getPrecio()
-            };
-            modelo.addRow(fila);
-        }
-
-
-
-
-    }
-    public void mostrarProductos(List<Producto> productos) {
-        for (Producto producto : productos) {
-            System.out.println(producto);
-        }
-    }
 
     public void mostrarMensaje(String mensaje, String titulo, int tipo) {
         JOptionPane.showMessageDialog(this, mensaje, titulo, tipo);

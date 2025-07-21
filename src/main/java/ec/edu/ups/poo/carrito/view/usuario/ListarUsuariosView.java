@@ -1,6 +1,6 @@
 package ec.edu.ups.poo.carrito.view.usuario;
 
-import ec.edu.ups.poo.carrito.modelo.Rol;
+import ec.edu.ups.poo.carrito.modelo.ROL;
 import ec.edu.ups.poo.carrito.util.ComboRol;
 import ec.edu.ups.poo.carrito.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.poo.carrito.view.login.PreguntasView;
@@ -18,7 +18,7 @@ public class ListarUsuariosView extends JInternalFrame{
     private JTextField txtBuscar;
     private JButton btnBuscar;
     private JLabel lblBuscar;
-    private JComboBox<Rol> cbxRol;
+    private JComboBox<ROL> cbxRol;
     private JLabel lblListarUsuARIOS;
     private ComboRol comboRol;
 
@@ -26,7 +26,7 @@ public class ListarUsuariosView extends JInternalFrame{
     public ListarUsuariosView() {
         super("Listar Usuarios", true, true, true, true);
 
-        cbxRol.setModel(new DefaultComboBoxModel<>(Rol.values()));
+        cbxRol.setModel(new DefaultComboBoxModel<>(ROL.values()));
         tblUsuarios.setModel(new DefaultTableModel(
                 new Object[]{"",""}, 0
         ){

@@ -45,6 +45,7 @@
                 <constraints/>
                 <properties>
                   <background color="-1051909"/>
+                  <foreground color="-13947600"/>
                 </properties>
                 <border type="none"/>
                 <children>
@@ -57,6 +58,8 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
+                      <foreground color="-13947600"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -69,6 +72,7 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
                     </properties>
                   </component>
                   <component id="7919a" class="javax.swing.JTextField" binding="txt3">
@@ -80,6 +84,7 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -92,6 +97,7 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
                     </properties>
                   </component>
                   <component id="7ef18" class="javax.swing.JTextField" binding="txt6">
@@ -103,6 +109,8 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
+                      <foreground color="-15332560"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -115,6 +123,7 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -127,6 +136,7 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
                     </properties>
                   </component>
                   <component id="8f678" class="javax.swing.JTextField" binding="txt8">
@@ -138,6 +148,7 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
                     </properties>
                   </component>
                   <component id="7a6fe" class="javax.swing.JTextField" binding="txt9">
@@ -149,6 +160,7 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
                     </properties>
                   </component>
                   <component id="ec5a5" class="javax.swing.JTextField" binding="txtP10">
@@ -167,7 +179,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="50924" class="javax.swing.JTextField" binding="txtP2">
                     <constraints>
@@ -175,7 +189,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="4824e" class="javax.swing.JTextField" binding="txtP3">
                     <constraints>
@@ -183,7 +199,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="56266" class="javax.swing.JTextField" binding="txtP4">
                     <constraints>
@@ -191,7 +209,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="6c6d" class="javax.swing.JTextField" binding="txtP5">
                     <constraints>
@@ -199,7 +219,10 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <editable value="true"/>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="115fe" class="javax.swing.JTextField" binding="txtP6">
                     <constraints>
@@ -207,7 +230,10 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <editable value="true"/>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="51468" class="javax.swing.JTextField" binding="txtP7">
                     <constraints>
@@ -215,7 +241,10 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <editable value="true"/>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="e3b" class="javax.swing.JTextField" binding="txtP8">
                     <constraints>
@@ -223,7 +252,10 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <editable value="true"/>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="f4b2e" class="javax.swing.JTextField" binding="txtP9">
                     <constraints>
@@ -231,7 +263,10 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <editable value="true"/>
+                      <enabled value="true"/>
+                    </properties>
                   </component>
                   <component id="49f9d" class="javax.swing.JTextField" binding="txt10">
                     <constraints>
@@ -242,6 +277,7 @@
                     <properties>
                       <background color="-2499869"/>
                       <editable value="false"/>
+                      <enabled value="true"/>
                       <text value=""/>
                     </properties>
                   </component>
