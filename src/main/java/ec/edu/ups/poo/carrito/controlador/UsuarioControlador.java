@@ -48,6 +48,24 @@ public class UsuarioControlador {
     private final PreguntaRespondidaDAO preguntaRespondidaDAO;
 
 
+    /**
+     * Inicializa el controlador de usuarios con los DAOs y vistas necesarias.
+     *
+     * @param usuario Usuario autenticado en sesión.
+     * @param carritoDAO DAO de carritos.
+     * @param usuarioDAO DAO de usuarios.
+     * @param miPaginaView Vista del perfil del usuario.
+     * @param listarView Vista para listar carritos del usuario.
+     * @param verDetalleView Vista para ver detalles de un carrito.
+     * @param listaUsuariosView Vista para listar usuarios (admin).
+     * @param crearUsuarioView Vista para crear usuarios (admin).
+     * @param editarUsuarioView Vista para editar usuarios (admin).
+     * @param principal Ventana principal del sistema.
+     * @param listarTodosCarritosView Vista que lista carritos de todos los usuarios (admin).
+     * @param preguntasViewU Vista para responder/editar preguntas de seguridad.
+     * @param preguntaDAO DAO de preguntas.
+     * @param preguntaRespondidaDAO DAO de preguntas respondidas.
+     */
 
     public UsuarioControlador(Usuario usuario, CarritoDAO carritoDAO, UsuarioDAO usuarioDAO, MiPaginaView miPaginaView, ListarMisCarritos listarView, VerDetalleView verDetalleView, ListarUsuariosView listaUsuariosView, CrearUsuarioView crearUsuarioView, EditarUsuarioView editarUsuarioView, Principal principal, ListarTodosLosCarritosView listarTodosCarritosView, PreguntasUView preguntasViewU,PreguntaDAO preguntaDAO, PreguntaRespondidaDAO preguntaRespondidaDAO) {
         this.usuario  = usuario;
@@ -70,6 +88,10 @@ public class UsuarioControlador {
         listeners();
 
     }
+    /**
+     * Configura los eventos para todas las vistas del usuario:
+     * perfil, creación/edición/listado de usuarios, carritos y preguntas de seguridad.
+     */
 
     private void listeners() {
         miPaginaView.getBtnActualizarDatos().addActionListener(e -> actualizarDatosMet(e));
@@ -98,6 +120,9 @@ public class UsuarioControlador {
         listarTodosCarritosView.getBtnVerDetalles().addActionListener(e -> verDetallesDesde(listarTodosCarritosView.getTblUsuarios(), listarTodosCarritosView.getDesktopPane()));
 
     }
+    /**
+     * Refresca la tabla de carritos del usuario autenticado en la vista correspondiente.
+     */
 
     private void refrescarMisCarritos() {
         DefaultTableModel m = (DefaultTableModel) listarView.getTblCarritos().getModel();
@@ -120,6 +145,9 @@ public class UsuarioControlador {
 
     }
 
+    /**
+     * Carga los datos del usuario autenticado en el formulario de "Mi Página".
+     */
 
     public void cargarDatosEnMiPagina() {
         miPaginaView.getTxtUsuario().setText(usuario.getUsername());
@@ -131,6 +159,12 @@ public class UsuarioControlador {
             miPaginaView.getSpinnerFecha().setValue(usuario.getFechaNacimiento());
         }
     }
+
+
+    /**
+     * Abre la vista de edición de preguntas de seguridad para el usuario actual,
+     * mostrando las preguntas fijas traducidas e inicializando campos.
+     */
 
     private void abrirPreguntasParaEditar() {
         if (!principal.getDesktopPanel().isAncestorOf(preguntasViewU)) {
@@ -156,6 +190,11 @@ public class UsuarioControlador {
         } catch (Exception ignored) {}
         preguntasViewU.getBtnGuardar().addActionListener(ev -> guardarPreguntasActualizadas(preguntasFijas));
     }
+    /**
+     * Guarda las respuestas actualizadas a las preguntas de seguridad ingresadas por el usuario.
+     *
+     * @param preguntasFijas Lista de preguntas fijas que se deben responder.
+     */
 
     private void guardarPreguntasActualizadas(List<Pregunta> preguntasFijas) {
         List<PreguntaRespondida> respuestas = new ArrayList<>();
@@ -182,6 +221,15 @@ public class UsuarioControlador {
         preguntasViewU.mostrarMensaje(mh.get("mensaje.preguntasActualizadas"));
         preguntasViewU.dispose();
     }
+
+    /**
+     * Actualiza los datos del usuario desde la vista "Mi Página".
+     *
+     * @param e Evento que activa la actualización.
+     * @throws ContrasenaInvalidaException Si la contraseña no es válida.
+     * @throws CorreoInvalidoException Si el correo no tiene formato válido.
+     * @throws IllegalArgumentException Si el teléfono no es válido.
+     */
 
     private void actualizarDatosMet(ActionEvent e) {
         String nu = miPaginaView.getTxtUsuario().getText().trim();
@@ -222,6 +270,9 @@ public class UsuarioControlador {
         usuarioDAO.actualizar(usuario);
         miPaginaView.mostrarMensaje(mh.get("mensaje.datosActualizados"));
     }
+    /**
+     * Lista todos los usuarios en la vista de administración y la muestra.
+     */
 
     private void listarTodos() {
         DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
@@ -232,7 +283,10 @@ public class UsuarioControlador {
         mostrarInternal(listaUsuariosView);
     }
 
-//
+    /**
+     * Lista los usuarios filtrados por rol seleccionado.
+     */
+
     private void listarPorRol() {
         ROL rol = (ROL) listaUsuariosView.getCbxRol().getSelectedItem();
         DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
@@ -242,6 +296,9 @@ public class UsuarioControlador {
         }
         mostrarInternal(listaUsuariosView);
     }
+    /**
+     * Lista los usuarios filtrados por rol seleccionado.
+     */
 
     private void mostrarInternal(JInternalFrame f) {
         JDesktopPane dp = principal.getDesktopPanel();
@@ -253,6 +310,11 @@ public class UsuarioControlador {
             f.setSelected(true);
         } catch (PropertyVetoException ignored) {}
     }
+    /**
+     * Crea un nuevo usuario desde la vista de administración, validando los campos.
+     *
+     * @throws ContrasenaInvalidaException Si la contraseña ingresada no cumple requisitos.
+     */
 
     private void crearUsuario() {
         String username = crearUsuarioView.getTxtUsuarioNuevo().getText().trim();
@@ -282,6 +344,12 @@ public class UsuarioControlador {
         crearUsuarioView.mostrarMensaje(mh.get("mensaje.usuarioCreado"), mh.get("titulo.exito"), JOptionPane.INFORMATION_MESSAGE);
     }
     private boolean inicializandoComboRolFiltro = false;
+    /**
+     * Actualiza el combo de roles en la vista de creación de usuario
+     * usando las traducciones del idioma actual.
+     *
+     * @param mh Manejador de internacionalización.
+     */
 
     public void actualizarComboRolesEnFiltros(MensajeInternacionalizacionHandler mh) {
         inicializandoComboRolFiltro = true;
@@ -305,6 +373,12 @@ public class UsuarioControlador {
 
         inicializandoComboRolFiltro = false;
     }
+    /**
+     * Actualiza los textos del combo de roles en la vista de filtros,
+     * aplicando el idioma actual.
+     *
+     * @param mh Manejador de internacionalización.
+     */
 
     public void actualizarComboRol(MensajeInternacionalizacionHandler mh) {
         JComboBox<ROL> combo = crearUsuarioView.getCbxRol();
@@ -326,6 +400,11 @@ public class UsuarioControlador {
             }
         });
     }
+    /**
+     * Edita el rol y la contraseña del usuario seleccionado en la vista de edición.
+     *
+     * @throws ContrasenaInvalidaException Si la nueva contraseña no cumple los requisitos.
+     */
 
     private void editarUsuario() {
         String username = editarUsuarioView.getTxtUsuario().getText().trim();
@@ -349,6 +428,9 @@ public class UsuarioControlador {
             editarUsuarioView.mostrarMensaje(e.getMessage(), mh.get("titulo.error"), JOptionPane.ERROR_MESSAGE);
         }
     }
+    /**
+     * Elimina el carrito seleccionado en la tabla del usuario, previa confirmación.
+     */
 
     private void eliminarCarrito(){
         listarView.getBtnEliminar().addActionListener(e -> {
@@ -366,6 +448,9 @@ public class UsuarioControlador {
             }
         });
     }
+    /**
+     * Elimina el usuario seleccionado en la tabla de usuarios, con confirmación previa.
+     */
 
     private void eliminarUsuarioSeleccionado() {
         int fila = listaUsuariosView.getTblUsuarios().getSelectedRow();
@@ -392,6 +477,12 @@ public class UsuarioControlador {
 
         JOptionPane.showMessageDialog(listaUsuariosView, MessageFormat.format(mh.get("mensaje.usuarioEliminado"), username), mh.get("titulo.informacion"), JOptionPane.INFORMATION_MESSAGE);
     }
+    /**
+     * Muestra los detalles de un carrito seleccionado en una tabla dada.
+     *
+     * @param tabla Tabla que contiene los carritos.
+     * @param contenedor Contenedor donde se mostrará la vista de detalle.
+     */
 
     private void verDetallesDesde(JTable tabla, JDesktopPane contenedor) {
         int row = tabla.getSelectedRow();
@@ -428,8 +519,9 @@ public class UsuarioControlador {
             verDetalleView.setSelected(true);
         } catch (PropertyVetoException ignore) {}
     }
-
-
+    /**
+     * Busca un usuario por su nombre de usuario (username) e imprime el resultado en la tabla.
+     */
     public void buscarUsuarioPorNombre() {
         String txt = listaUsuariosView.getTxtBuscar().getText().trim();
         DefaultTableModel m = (DefaultTableModel) listaUsuariosView.getTblUsuarios().getModel();
@@ -442,30 +534,10 @@ public class UsuarioControlador {
             JOptionPane.showMessageDialog(listaUsuariosView, MessageFormat.format(mh.get("mensaje.usuarioNoEncontrado"), txt), mh.get("titulo.atencion"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
-    public Usuario autenticar(String cedula, String contrasenia, String correo, String telefono) {
-        Usuario u = usuarioDAO.buscarPorUsername(cedula);
-
-        if (!Usuario.esCedulaValida(cedula)) {
-            throw new CedulaInvalidaExeption("Cédula inválida: " + cedula);
-        }
-
-        if (!u.getContrasenia().equals(contrasenia)) {
-            throw new ContrasenaInvalidaException(mh.get("login.error.contrasenaIncorrecta"));
-        }
-
-        if (!u.getCorreo().equalsIgnoreCase(correo)) {
-            throw new CorreoInvalidoException(mh.get("login.error.correoIncorrecto"));
-        }
-
-        if (!u.getTelefono().equals(telefono)) {
-            throw new RuntimeException(mh.get("login.error.telefonoIncorrecto"));
-        }
-
-        return u;
-    }
-
-
+    /**
+     * Muestra en tabla todos los carritos creados por todos los usuarios del sistema.
+     * Usado por el administrador.
+     */
 
     public void mostrarTodosLosCarritos() {
         DefaultTableModel m = listarTodosCarritosView.getModelo();
@@ -476,6 +548,12 @@ public class UsuarioControlador {
             });
         }
     }
+    /**
+     * Establece el manejador de internacionalización para traducción de mensajes.
+     *
+     * @param mh Manejador de mensajes internacionalizados.
+     */
+
     public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
         this.mh = mh;
     }

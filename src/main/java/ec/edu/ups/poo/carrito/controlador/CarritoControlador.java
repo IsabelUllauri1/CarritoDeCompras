@@ -33,6 +33,15 @@ public class CarritoControlador {
     private Principal principal;
     private FormatosUtils formatosUtils;
     private MensajeInternacionalizacionHandler mh;
+    /**
+     * Crea una nueva instancia del controlador del carrito de compras.
+     *
+     * @param productoDAO DAO para acceder a los productos.
+     * @param carritoDAO DAO para acceder a los carritos.
+     * @param anadirView Vista para añadir productos al carrito.
+     * @param listarView Vista para listar los carritos del usuario.
+     * @param usuario Usuario actualmente autenticado.
+     */
 
     public CarritoControlador(ProductoDAO productoDAO, CarritoDAO carritoDAO, CarritoAnadirView anadirView, CarritoListarView listarView, Usuario usuario) {
         this.productoDAO = productoDAO;
@@ -51,6 +60,11 @@ public class CarritoControlador {
         refrescarLista();
     }
 
+    /**
+     * Configura los eventos (listeners) de las vistas asociadas al carrito.
+     */
+
+
     private void configurarEventos() {
         // — AnadirView —
         anadirView.getBtnBuscar().addActionListener(e -> buscarProducto());
@@ -66,6 +80,13 @@ public class CarritoControlador {
 
     }
 
+    /**
+     * Busca un producto por su código ingresado en la vista y muestra su información.
+     *
+     * @throws NumberFormatException Si el código no es un número válido.
+     */
+
+
     private void buscarProducto() {
         try {
             int code = Integer.parseInt(anadirView.getTxtCodigo().getText().trim());
@@ -80,6 +101,15 @@ public class CarritoControlador {
             anadirView.mostrarMensaje(mh.get("mensaje.productoNoEncontrado"));
         }
     }
+
+    /**
+     * Agrega un producto al carrito con la cantidad seleccionada.
+     * Si el producto ya existe, actualiza su cantidad.
+     *
+     * @throws ValidacionException Si hay errores de validación en el código o cantidad.
+     * @throws NumberFormatException Si el código o cantidad no son números válidos.
+     */
+
 
     private void agregarItem() {
         try {
@@ -124,12 +154,20 @@ public class CarritoControlador {
         }
     }
 
-
+    /**
+     * Elimina todos los productos del carrito actual.
+     */
     private void vaciarCarrito() {
         carrito.vaciarCarrito();
         refrescarTablaItems();
     }
 
+
+    /**
+     * Elimina un producto del carrito, basado en la fila seleccionada en la tabla.
+     *
+     * @throws ValidacionException Si no se ha seleccionado ningún ítem.
+     */
     private void eliminarItem() {
         try {
             int row = anadirView.getTblProductos().getSelectedRow();
@@ -150,7 +188,11 @@ public class CarritoControlador {
         }
     }
 
-
+    /**
+     * Guarda el carrito actual si contiene productos. Luego reinicia el carrito.
+     *
+     * @throws ValidacionException Si el carrito está vacío.
+     */
     private void guardarCarrito() {
         try {
 
@@ -174,7 +216,10 @@ public class CarritoControlador {
         }
     }
 
-
+    /**
+     * Refresca la tabla de productos del carrito en la vista, mostrando
+     * cada ítem con su subtotal, y recalculando el total, IVA y subtotal general.
+     */
     private void refrescarTablaItems() {
         modeloItems.setRowCount(0);
         for (ItemCarrito it : carrito.obtenerItems()) {
@@ -187,6 +232,11 @@ public class CarritoControlador {
         anadirView.getTxtTotal().setText(formatosUtils.formatearMoneda(carrito.calcularTotal(), Locale.getDefault()));
     }
 
+
+    /**
+     * Refresca la tabla de carritos mostrados, según el rol del usuario.
+     * Muestra todos los carritos si es administrador, o solo los del usuario si no.
+     */
     private void refrescarLista() {
         try {
             modeloList.setRowCount(0);
@@ -211,7 +261,11 @@ public class CarritoControlador {
         }
     }
 
-
+    /**
+     * Permite modificar un carrito existente, abriendo la vista de edición.
+     *
+     * @throws ValidacionException Si no se ha seleccionado ningún carrito.
+     */
     private void modificarCarrito() {
         try {
             int row = listarView.getTblCarritos().getSelectedRow();
@@ -232,6 +286,11 @@ public class CarritoControlador {
         }
     }
 
+    /**
+     * Elimina un carrito de la lista, previa confirmación del usuario.
+     *
+     * @throws ValidacionException Si no se ha seleccionado ningún carrito.
+     */
     private void eliminarCarrito() {
         try {
             int row = listarView.getTblCarritos().getSelectedRow();
@@ -250,6 +309,10 @@ public class CarritoControlador {
         }
     }
 
+    /**
+     * Muestra los detalles del carrito seleccionado en la tabla,
+     * incluyendo sus ítems y totales calculados.
+     */
     private void verDetalles() {
         int row = listarView.getTblCarritos().getSelectedRow();
         if (row < 0) {
@@ -285,6 +348,11 @@ public class CarritoControlador {
         } catch (PropertyVetoException ex) {
         }
     }
+    /**
+     * Asigna el manejador de mensajes internacionalizados para el controlador.
+     *
+     * @param mh Manejador de internacionalización.
+     */
     public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
         this.mh = mh;
     }

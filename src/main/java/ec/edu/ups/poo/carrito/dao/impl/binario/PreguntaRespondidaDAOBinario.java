@@ -10,6 +10,12 @@ import java.util.List;
 public class PreguntaRespondidaDAOBinario implements PreguntaRespondidaDAO {
 
     private final String rutaArchivo;
+    /**
+     * Crea una nueva instancia de PreguntaRespondidaDAOBinario.
+     * Si el archivo de almacenamiento no existe, lo inicializa como una lista vacía.
+     *
+     * @param rutaBase Ruta base donde se ubicará el archivo preguntas_respondidas.dat.
+     */
 
     public PreguntaRespondidaDAOBinario(String rutaBase) {
         this.rutaArchivo = new File(rutaBase, "preguntas_respondidas.dat").getAbsolutePath();
@@ -22,6 +28,13 @@ public class PreguntaRespondidaDAOBinario implements PreguntaRespondidaDAO {
             }
         }
     }
+    /**
+     * Guarda una lista de nuevas respuestas de seguridad,
+     * agregándolas a las ya existentes.
+     *
+     * @param nuevas Lista de nuevas respuestas a guardar.
+     * @throws IOException Si ocurre un error al escribir en el archivo binario.
+     */
 
     @Override
     public void guardar(List<PreguntaRespondida> nuevas) {
@@ -33,6 +46,13 @@ public class PreguntaRespondidaDAOBinario implements PreguntaRespondidaDAO {
             System.err.println("Error al guardar preguntas respondidas: " + e.getMessage());
         }
     }
+    /**
+     * Lista todas las respuestas de seguridad almacenadas.
+     *
+     * @return Lista completa de PreguntaRespondida.
+     * @throws IOException Si ocurre un error al leer el archivo.
+     * @throws ClassNotFoundException Si la clase no puede ser deserializada.
+     */
 
     private List<PreguntaRespondida> listar() {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(rutaArchivo))) {
@@ -41,6 +61,12 @@ public class PreguntaRespondidaDAOBinario implements PreguntaRespondidaDAO {
             return new ArrayList<>();
         }
     }
+    /**
+     * Devuelve todas las respuestas asociadas a un usuario específico.
+     *
+     * @param username Nombre de usuario.
+     * @return Lista de respuestas correspondientes al usuario.
+     */
 
     @Override
     public List<PreguntaRespondida> buscarPorUsuario(String username) {
@@ -52,6 +78,14 @@ public class PreguntaRespondidaDAOBinario implements PreguntaRespondidaDAO {
         }
         return resultado;
     }
+    /**
+     * Reemplaza todas las respuestas de seguridad existentes de un usuario
+     * con una nueva lista de respuestas.
+     *
+     * @param username Usuario al que se le actualizarán las respuestas.
+     * @param nuevas Lista de nuevas respuestas que se guardarán.
+     * @throws IOException Si ocurre un error al escribir el archivo.
+     */
 
     @Override
     public void actualizarPorUsuario(String username, List<PreguntaRespondida> nuevas) {

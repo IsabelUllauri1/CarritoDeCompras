@@ -10,6 +10,13 @@ import java.util.List;
 public class PreguntaDAOArchivosB implements PreguntaDAO {
 
     private final String rutaArchivo;
+    /**
+     * Crea una nueva instancia de PreguntaDAOArchivosB.
+     * Verifica si el archivo binario de preguntas existe, y si no,
+     * lo inicializa con un conjunto de preguntas fijas predeterminadas.
+     *
+     * @param rutaBase Ruta base donde se almacenará el archivo preguntas.dat.
+     */
 
     public PreguntaDAOArchivosB(String rutaBase) {
         this.rutaArchivo = new File(rutaBase, "preguntas.dat").getAbsolutePath();
@@ -18,6 +25,13 @@ public class PreguntaDAOArchivosB implements PreguntaDAO {
             inicializarPreguntas();
         }
     }
+    /**
+     * Lista todas las preguntas de seguridad almacenadas en el archivo binario.
+     *
+     * @return Lista de objetos Pregunta.
+     * @throws IOException Si ocurre un error al leer el archivo.
+     * @throws ClassNotFoundException Si no se puede deserializar la lista de preguntas.
+     */
 
     @Override
     public List<Pregunta> listarPreguntas() {
@@ -28,6 +42,11 @@ public class PreguntaDAOArchivosB implements PreguntaDAO {
             return new ArrayList<>();
         }
     }
+    /**
+     * Inicializa el archivo binario con 10 preguntas predeterminadas si no existe previamente.
+     *
+     * @throws IOException Si ocurre un error al escribir en el archivo binario.
+     */
 
     private void inicializarPreguntas() {
         List<Pregunta> preguntas = new ArrayList<>();

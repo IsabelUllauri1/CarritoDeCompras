@@ -37,6 +37,18 @@ public class LoginControlador {
     private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
     private final PreguntaRespondidaDAO preguntaRespondidaDAO;
 
+    /**
+     * Crea una nueva instancia del LoginControlador.
+     *
+     * @param usuarioDAO DAO para gestión de usuarios.
+     * @param loginView Vista principal de inicio de sesión.
+     * @param registrarseView Vista de registro de usuario.
+     * @param preguntasView Vista para preguntas de seguridad.
+     * @param olvideContrasenaView Vista para recuperación de contraseña.
+     * @param preguntaDAO DAO para las preguntas disponibles.
+     * @param mensajeInternacionalizacionHandler Manejador de internacionalización.
+     * @param preguntaRespondidaDAO DAO de preguntas respondidas por el usuario.
+     */
 
     public LoginControlador(UsuarioDAO usuarioDAO, LoginView loginView, RegistrarseView registrarseView, PreguntasView preguntasView, OlvideContrasenaView olvideContrasenaView, PreguntaDAO preguntaDAO, MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler, PreguntaRespondidaDAO preguntaRespondidaDAO) {
         this.usuarioDAO = usuarioDAO;
@@ -50,6 +62,15 @@ public class LoginControlador {
         this.mensajeInternacionalizacionHandler = mensajeInternacionalizacionHandler;
         loginListeners();
     }
+    /**
+     * Configura todos los listeners (eventos) del login y vistas relacionadas:
+     * cambio de idioma, registro, recuperación de contraseña y manejo de preguntas.
+     *
+     * @throws CedulaInvalidaExeption si la cédula ingresada es inválida.
+     * @throws ContrasenaInvalidaException si la contraseña no cumple los requisitos.
+     * @throws CorreoInvalidoException si el correo no tiene un formato válido.
+     * @throws ValidacionException si alguna validación adicional falla.
+     */
 
     private void loginListeners() {
         loginView.getItemEspanol().addActionListener(e -> {
@@ -276,6 +297,13 @@ public class LoginControlador {
 
     }
 
+    /**
+     * Autentica al usuario con las credenciales ingresadas.
+     * Si son correctas, se guarda el usuario autenticado y se cierra la vista.
+     *
+     * @param e Evento del botón de inicio de sesión.
+     * @throws ValidacionException Si las credenciales no cumplen las validaciones.
+     */
 
     private void logear (ActionEvent e) {
         try {
@@ -300,9 +328,22 @@ public class LoginControlador {
 
 
     }
+
+    /**
+     * Establece el manejador de mensajes internacionalizados.
+     *
+     * @param mh Manejador de internacionalización.
+     */
+
     public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
         this.mensajeInternacionalizacionHandler = mh;
     }
+    /**
+     * Cambia el idioma del sistema en tiempo de ejecución.
+     *
+     * @param lenguaje Código de idioma, por ejemplo "es", "en", "de".
+     * @param pais Código del país, por ejemplo "EC", "US", "DE".
+     */
 
     public void cambiarIdioma(String lenguaje, String pais){
         Locale locale = new Locale(lenguaje, pais);
@@ -310,6 +351,11 @@ public class LoginControlador {
         mensajeInternacionalizacionHandler.setLanguage(lenguaje, pais);
     }
 
+    /**
+     * Retorna el usuario que ha iniciado sesión correctamente.
+     *
+     * @return El usuario autenticado, o null si no hay sesión iniciada.
+     */
 
     public Usuario getUsuarioAutenticado() {
         return usuarioAutenticado;

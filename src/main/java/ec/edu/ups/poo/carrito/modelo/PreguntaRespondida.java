@@ -8,7 +8,14 @@ public class PreguntaRespondida implements Serializable {
     private Pregunta pregunta;
     private String respuesta;
     private String username;
-
+    /**
+     * Crea una nueva instancia de PreguntaRespondida con la pregunta, respuesta y nombre de usuario.
+     *
+     * @param pregunta La pregunta de seguridad.
+     * @param respuesta La respuesta proporcionada por el usuario.
+     * @param username El nombre de usuario asociado a la respuesta.
+     * @throws IllegalArgumentException si la respuesta o el nombre de usuario son nulos o vacíos.
+     */
     public PreguntaRespondida(Pregunta pregunta, String respuesta, String username) {
         this.pregunta = pregunta;
         this.username = username;

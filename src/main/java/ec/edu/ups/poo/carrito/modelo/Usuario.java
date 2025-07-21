@@ -20,7 +20,21 @@ public class Usuario {
     private String telefono;
     private Date fechaNacimiento;
 
-
+    /**
+     * Crea un nuevo usuario con todos los datos obligatorios.
+     *
+     * @param cedula Cédula ecuatoriana del usuario (se valida).
+     * @param contrasenia Contraseña del usuario (se valida).
+     * @param rol Rol del usuario (ADMINISTRADOR o USUARIO).
+     * @param correo Correo electrónico del usuario (se valida).
+     * @param nombreCompleto Nombre completo del usuario.
+     * @param telefono Teléfono del usuario (se valida).
+     * @param fechaNacimiento Fecha de nacimiento del usuario.
+     * @throws CedulaInvalidaExeption si la cédula no es válida.
+     * @throws ContrasenaInvalidaException si la contraseña no cumple las condiciones.
+     * @throws CorreoInvalidoException si el correo tiene formato incorrecto.
+     * @throws ValidacionException para otras validaciones generales.
+     */
     public Usuario(String cedula, String contrasenia, ROL rol, String correo, String nombreCompleto, String telefono, Date fechaNacimiento)
             throws CedulaInvalidaExeption, ContrasenaInvalidaException, CorreoInvalidoException, ValidacionException {
 
@@ -35,8 +49,13 @@ public class Usuario {
         this.preguntasRespondidas = new ArrayList<>();
     }
 
-
-    // Si necesitas este constructor simplificado, quita las líneas incorrectas:
+    /**
+     * Constructor simplificado. Utilizado al crear usuarios con solo cédula, contraseña y rol.
+     *
+     * @param cedula Cédula de identidad.
+     * @param contrasenia Contraseña.
+     * @param rol Rol asignado al usuario.
+     */
     public Usuario(String cedula, String contrasenia, ROL rol) {
         setUsername(cedula);
         setContrasenia(contrasenia); // <--- esta línea debe estar sí o sí
@@ -132,7 +151,12 @@ public class Usuario {
     }
 
 
-
+    /**
+     * Verifica si una cédula ecuatoriana es válida según algoritmo oficial.
+     *
+     * @param cedula Cédula a verificar.
+     * @return {@code true} si es válida, {@code false} si no.
+     */
     public static boolean esCedulaValida(String cedula) {
         if (cedula == null || !cedula.matches("\\d{10}")) return false;
 

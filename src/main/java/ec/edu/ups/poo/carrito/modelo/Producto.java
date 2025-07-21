@@ -8,7 +8,15 @@ public class Producto implements Serializable {
     private String nombre;
     private double precio;
     private int codigo;
-
+    /**
+     * Crea un nuevo producto con nombre, código y precio especificados.
+     *
+     * @param nombre El nombre del producto.
+     * @param codigo El código único del producto (debe ser mayor que cero).
+     * @param precio El precio del producto (no puede ser negativo).
+     * @throws ValidacionException si el nombre es nulo/vacío o el precio es negativo.
+     * @throws IllegalArgumentException si el código es menor o igual a cero.
+     */
     public Producto(String nombre, int codigo, double precio) {
         setNombre(nombre);
         this.codigo = codigo;

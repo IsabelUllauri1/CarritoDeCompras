@@ -21,6 +21,13 @@ public class CarritoDAOBinario implements CarritoDAO {
     private final Function<String, Usuario> buscadorUsuario;
     private final Function<Integer, Producto> buscadorProducto;
 
+    /**
+     * Crea una instancia de CarritoDAOBinario.
+     *
+     * @param rutaBase Ruta base donde se guardará el archivo binario.
+     * @param buscadorUsuario Función para recuperar un Usuario a partir de su cédula.
+     * @param buscadorProducto Función para recuperar un Producto a partir de su código.
+     */
 
     public CarritoDAOBinario(String rutaBase, Function<String, Usuario> buscadorUsuario, Function<Integer, Producto> buscadorProducto) {
         this.rutaArchivo = new File(rutaBase, "carritos.dat").getAbsolutePath();
@@ -43,6 +50,14 @@ public class CarritoDAOBinario implements CarritoDAO {
 
 
 
+    /**
+     * Escribe una cadena con longitud fija rellenando con espacios si es necesario.
+     *
+     * @param raf Archivo binario.
+     * @param valor Cadena a escribir.
+     * @param longitud Longitud fija de caracteres (no bytes).
+     * @throws IOException Si ocurre un error de escritura.
+     */
 
     private void escribirCadenaFija(RandomAccessFile raf, String valor, int longitud) throws IOException {
         StringBuilder sb = new StringBuilder(valor);
@@ -50,12 +65,26 @@ public class CarritoDAOBinario implements CarritoDAO {
         sb.setLength(longitud);
         raf.writeChars(sb.toString());
     }
+    /**
+     * Lee una cadena de longitud fija desde el archivo binario.
+     *
+     * @param raf Archivo binario.
+     * @param longitud Cantidad de caracteres a leer.
+     * @return Cadena leída sin espacios extra.
+     * @throws IOException Si ocurre un error de lectura.
+     */
 
     private String leerCadenaFija(RandomAccessFile raf, int longitud) throws IOException {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < longitud; i++) sb.append(raf.readChar());
         return sb.toString().trim();
     }
+    /**
+     * Guarda un nuevo carrito al final del archivo binario.
+     *
+     * @param carrito Carrito a guardar.
+     * @throws IOException Si ocurre un error al escribir en el archivo.
+     */
 
     @Override
     public void crear(Carrito carrito) {
@@ -70,6 +99,13 @@ public class CarritoDAOBinario implements CarritoDAO {
             System.err.println("Error al guardar carrito: " + e.getMessage());
         }
     }
+    /**
+     * Busca un carrito por su código en el archivo binario.
+     *
+     * @param codigo Código del carrito.
+     * @return Carrito encontrado o null si no existe o está eliminado.
+     * @throws IOException Si ocurre un error de lectura del archivo.
+     */
 
     @Override
     public Carrito buscarPorCodigo(int codigo) {
@@ -111,6 +147,12 @@ public class CarritoDAOBinario implements CarritoDAO {
         return null;
     }
 
+    /**
+     * Actualiza la información de un carrito existente (sobrescribe el registro).
+     *
+     * @param carrito Carrito con los datos actualizados.
+     * @throws IOException Si ocurre un error al acceder al archivo.
+     */
 
     @Override
     public void actualizar(Carrito carrito) {
@@ -137,6 +179,12 @@ public class CarritoDAOBinario implements CarritoDAO {
         }
     }
 
+    /**
+     * Elimina un carrito marcándolo como "##########" en el archivo (eliminación lógica).
+     *
+     * @param codigo Código del carrito a eliminar.
+     * @throws IOException Si ocurre un error de escritura.
+     */
 
     @Override
     public void eliminar(int codigo) {
@@ -161,6 +209,13 @@ public class CarritoDAOBinario implements CarritoDAO {
         }
     }
 
+    /**
+     * Lista todos los carritos asociados a un usuario específico.
+     *
+     * @param usuario Usuario del cual se listan los carritos.
+     * @return Lista de carritos pertenecientes al usuario.
+     * @throws IOException Si ocurre un error de lectura del archivo.
+     */
 
     @Override
     public List<Carrito> listarPorUsuario(Usuario usuario) {
@@ -194,6 +249,12 @@ public class CarritoDAOBinario implements CarritoDAO {
         return lista;
     }
 
+    /**
+     * Elimina un carrito usando su código como String, marcándolo como eliminado.
+     *
+     * @param codigo Código del carrito en formato String.
+     * @throws IOException Si ocurre un error de acceso al archivo.
+     */
 
     @Override
     public void eliminar(String codigo) {
@@ -216,6 +277,12 @@ public class CarritoDAOBinario implements CarritoDAO {
     }
 
 
+    /**
+     * Lista todos los carritos disponibles en el archivo (excepto los eliminados).
+     *
+     * @return Lista de todos los carritos válidos.
+     * @throws IOException Si ocurre un error de lectura.
+     */
 
     @Override
     public List<Carrito> listarTodos() {

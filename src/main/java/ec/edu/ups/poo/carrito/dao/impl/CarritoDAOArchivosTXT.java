@@ -16,7 +16,13 @@ public class CarritoDAOArchivosTXT implements CarritoDAO {
     private final Map<Integer, Carrito> carritos = new HashMap<>();
     private final Function<String, Usuario> obtenerUsuarioPorCedula;
     private int siguienteCodigo = 1;
-
+    /**
+     * Crea una instancia del DAO de carritos con archivo de texto.
+     * Carga los carritos existentes desde el archivo al iniciar.
+     *
+     * @param rutaBase Ruta base del directorio donde se encuentra el archivo.
+     * @param obtenerUsuarioPorCedula Función que obtiene un Usuario a partir de su cédula.
+     */
     public CarritoDAOArchivosTXT(String rutaBase, Function<String, Usuario> obtenerUsuarioPorCedula) {
         this.rutaArchivo = new File(rutaBase, "carritos.txt").getAbsolutePath();
         System.out.println("Ruta completa del archivo carritos.txt: " + rutaArchivo);
@@ -24,7 +30,11 @@ public class CarritoDAOArchivosTXT implements CarritoDAO {
         cargar();
     }
 
-
+    /**
+     * Crea un nuevo carrito, le asigna un código incremental, lo guarda en memoria y persiste en el archivo.
+     *
+     * @param carrito Carrito a guardar.
+     */
     @Override
     public void crear(Carrito carrito) {
         carrito.setCodigo(siguienteCodigo++);
@@ -34,29 +44,51 @@ public class CarritoDAOArchivosTXT implements CarritoDAO {
         System.out.println("→ Usuario: " + carrito.getUsuario().getUsername() + ", Fecha: " + carrito.getFechaCreacion().getTime());
 
     }
-
+    /**
+     * Busca un carrito por su código.
+     *
+     * @param codigo Código del carrito.
+     * @return Carrito correspondiente, o null si no existe.
+     */
     @Override
     public Carrito buscarPorCodigo(int codigo) {
         return carritos.get(codigo);
     }
-
+    /**
+     * Actualiza un carrito existente y guarda los cambios en el archivo.
+     *
+     * @param carrito Carrito con la información actualizada.
+     */
     @Override
     public void actualizar(Carrito carrito) {
         carritos.put(carrito.getCodigo(), carrito);
         guardar();
     }
-
+    /**
+     * Elimina un carrito de la colección usando su código y actualiza el archivo.
+     *
+     * @param codigo Código del carrito a eliminar.
+     */
     @Override
     public void eliminar(int codigo) {
         carritos.remove(codigo);
         guardar();
     }
-
+    /**
+     * Lista los carritos de un usuario específico.
+     *
+     * @param usuario Usuario cuyos carritos se desean listar.
+     * @return Lista vacía (no implementado).
+     */
     @Override
     public List<Carrito> listarPorUsuario(Usuario usuario) {
         return List.of();
     }
-
+    /**
+     * Elimina un carrito usando su código en forma de cadena.
+     *
+     * @param codigo Código como String.
+     */
     @Override
     public void eliminar(String codigo) {
         try {
@@ -67,12 +99,19 @@ public class CarritoDAOArchivosTXT implements CarritoDAO {
         }
     }
 
-
+    /**
+     * Devuelve todos los carritos almacenados en memoria.
+     *
+     * @return Lista de carritos.
+     */
     @Override
     public List<Carrito> listarTodos() {
         return new ArrayList<>(carritos.values());
     }
-
+    /**
+     * Escribe todos los carritos almacenados en memoria al archivo de texto.
+     * Cada carrito se guarda en formato CSV: código, fecha, cédula.
+     */
     private void guardar() {
         System.out.println(" [DEBUG] Ejecutando guardar() en CarritoDAOArchivosTXT → ruta: " + rutaArchivo);
 
@@ -88,7 +127,10 @@ public class CarritoDAOArchivosTXT implements CarritoDAO {
             System.err.println("Error al guardar carritos: " + e.getMessage());
         }
     }
-
+    /**
+     * Carga los carritos desde el archivo de texto al mapa en memoria.
+     * Reconstruye los objetos Carrito y actualiza el siguiente código disponible.
+     */
     private void cargar() {
         File archivo = new File(rutaArchivo);
         if (!archivo.exists()) return;

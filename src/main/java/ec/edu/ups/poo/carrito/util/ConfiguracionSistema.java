@@ -1,18 +1,23 @@
 package ec.edu.ups.poo.carrito.util;
 
 public class ConfiguracionSistema {
-
+    /**
+     * Enum que representa los tipos de almacenamiento disponibles para el sistema:
+     * <ul>
+     *   <li>{@code MEMORIA}: Almacenamiento volátil en memoria RAM.</li>
+     *   <li>{@code ARCHIVOS}: Almacenamiento persistente en archivos de texto plano.</li>
+     *   <li>{@code ARCHIVOS_BINARIOS}: Almacenamiento persistente en archivos binarios.</li>
+     * </ul>
+     */
     public enum TipoAlmacenamiento {
         MEMORIA, ARCHIVOS, ARCHIVOS_BINARIOS
     }
 
     private static ConfiguracionSistema instancia;
-
     private TipoAlmacenamiento tipoAlmacenamiento;
     private String rutaArchivos;
 
     private ConfiguracionSistema() {
-        // por defecto en memoria
         this.tipoAlmacenamiento = TipoAlmacenamiento.MEMORIA;
         this.rutaArchivos = "";
     }

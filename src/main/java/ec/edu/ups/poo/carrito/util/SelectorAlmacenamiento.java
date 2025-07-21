@@ -4,7 +4,14 @@ import javax.swing.*;
 import java.io.File;
 
 public class SelectorAlmacenamiento {
-
+    /**
+     * Muestra un cuadro de diálogo para que el usuario seleccione el tipo de almacenamiento.
+     *
+     * Si se elige almacenamiento en archivos (texto o binario), se solicita una carpeta destino.
+     * En caso de cancelar la selección, se usará almacenamiento en memoria por defecto.
+     *
+     * @param parent La ventana padre del diálogo (puede ser null si no se desea asociar a una ventana).
+     */
     public static void mostrarSeleccionAlmacenamiento(JFrame parent) {
         String[] opciones = {
                 "Memoria (no guarda datos)",

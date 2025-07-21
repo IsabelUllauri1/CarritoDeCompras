@@ -6,7 +6,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ComboRol {
-
+    /**
+     * Aplica la internacionalización a un {@link JComboBox} que contiene valores del enum {@link ROL}.
+     * Se actualizan las etiquetas visibles en el combo para reflejar el idioma activo, usando los valores del
+     * {@link MensajeInternacionalizacionHandler}.
+     *
+     * El valor previamente seleccionado se conserva después de aplicar la internacionalización.
+     *
+     * @param combo JComboBox al que se aplicará la traducción de los elementos.
+     * @param mh Handler encargado de obtener los mensajes internacionalizados.
+     */
     public static void aplicarInternacionalizacionRolCombo(JComboBox<ROL> combo, MensajeInternacionalizacionHandler mh) {
         ROL seleccionado = (ROL) combo.getSelectedItem();
 

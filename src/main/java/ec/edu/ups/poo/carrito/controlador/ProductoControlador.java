@@ -27,6 +27,19 @@ public class ProductoControlador {
     private ProductoActualizarView vistaActualizar;
     private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
 
+    /**
+     * Inicializa el controlador con los DAOs y vistas correspondientes,
+     * y configura los listeners de todos los formularios relacionados con productos.
+     *
+     * @param productoDAO DAO de productos para acceso a datos.
+     * @param principal Vista principal del sistema.
+     * @param vistaAnadir Vista para añadir productos.
+     * @param vistaListar Vista para listar productos por nombre.
+     * @param vistaListarPorCodigo Vista para listar productos por código.
+     * @param vistaCarrito Vista relacionada con el carrito de compras.
+     * @param vistaEliminar Vista para eliminar productos.
+     * @param vistaActualizar Vista para actualizar productos.
+     */
 
     public ProductoControlador(ProductoDAO productoDAO, Principal principal, AnadirProductosView vistaAnadir, ProductoListarView vistaListar, ListarProductosPorCodigoView vistaListarPorCodigo, CarritoAnadirView vistaCarrito, ProductoEliminarView vistaEliminar, ProductoActualizarView vistaActualizar) {
         this.productoDAO = productoDAO;
@@ -45,6 +58,12 @@ public class ProductoControlador {
         configurarEventosListarPorCodigo();
         configurarActualizar();
     }
+
+
+    /**
+     * Configura los eventos del formulario de actualización de productos:
+     * búsqueda por código, actualización de datos y cierre de la vista.
+     */
 
     public void configurarActualizar() {
         vistaActualizar.getBtnBuscar().addActionListener(ev -> {
@@ -86,6 +105,9 @@ public class ProductoControlador {
         vistaActualizar.getBtnSalir().addActionListener(ev -> vistaActualizar.dispose());
     }
 
+    /**
+     * Limpia los campos del formulario de registro de productos.
+     */
 
     private void configurarEventosAnadir() {
         vistaAnadir.getBtnAnadir().addActionListener(e -> guardarProducto());
@@ -93,6 +115,13 @@ public class ProductoControlador {
         vistaAnadir.getBtnSalir().addActionListener(e -> vistaAnadir.dispose());
     }
     //1
+    /**
+     * Guarda un nuevo producto si los datos ingresados son válidos.
+     * Realiza validaciones de campos, conversión de tipos y persistencia.
+     *
+     * @throws NumberFormatException Si el código o precio no son numéricos.
+     * @throws ValidacionException Si los datos no cumplen con los criterios del modelo.
+     */
 
     private void guardarProducto() {
         String nombre = vistaAnadir.getTextField1().getText().trim();
@@ -140,6 +169,10 @@ public class ProductoControlador {
         }
 
     }
+    /**
+     * Limpia los campos del formulario de registro de productos.
+     */
+
     private void limpiarCamposAnadir() {
         vistaAnadir.getTextField1().setText("");
         vistaAnadir.getTextField2().setText("");
@@ -147,10 +180,21 @@ public class ProductoControlador {
     }
     //2
 
+    /**
+     * Configura los eventos de la vista de listado de productos por nombre.
+     */
+
     private void configurarEventosListar() {
         vistaListar.getBtnBuscar().addActionListener(e -> buscarProducto());
         vistaListar.getBtnSalir().addActionListener(e -> vistaListar.dispose());
     }
+
+    /**
+     * Busca productos por nombre ingresado y actualiza la tabla de resultados.
+     *
+     * Muestra mensaje de error si no se encuentra coincidencia o si el campo está vacío.
+     */
+
     private void buscarProducto() {
         String nombre = vistaListar.getTxtBuscar().getText().trim();
         if (nombre.isEmpty()) {
@@ -183,6 +227,11 @@ public class ProductoControlador {
         }
     }
 
+    /**
+     * Lista todos los productos disponibles en el sistema y los muestra en la vista de listado.
+     *
+     * @throws Exception Si ocurre un error al acceder a los datos.
+     */
 
     public void listarProductos() {
         try {
@@ -198,7 +247,12 @@ public class ProductoControlador {
             );
         }
     }
-    //3
+    /**
+     * Configura los eventos para buscar y eliminar productos en la vista de eliminación.
+     *
+     * Incluye confirmación previa y actualización de listas tras la eliminación.
+     */
+
     private void configurarEventosEliminar() {
         DefaultTableModel modelo = vistaEliminar.getModelo();
         for (int i = 0; i < modelo.getRowCount(); i++) {
@@ -265,6 +319,11 @@ public class ProductoControlador {
         vistaEliminar.getBtnSalir().addActionListener(e -> vistaEliminar.dispose());
 
     }
+
+    /**
+     * Recarga la tabla de productos en la vista de eliminación con todos los productos existentes.
+     */
+
     public void recargarEliminarProductos() {
         DefaultTableModel modelo = vistaEliminar.getModelo();
         modelo.setRowCount(0);
@@ -277,6 +336,9 @@ public class ProductoControlador {
         }
     }
 
+    /**
+     * Configura el evento de búsqueda de productos por código en la vista correspondiente.
+     */
 
     private void configurarEventosListarPorCodigo() {
         vistaListarPorCodigo.getBtnBuscar().addActionListener(e -> {
@@ -302,6 +364,12 @@ public class ProductoControlador {
         });
     }
 
+    /**
+     * Lista todos los productos disponibles en la tabla de la vista por código.
+     *
+     * @throws Exception Si ocurre un error al acceder a los datos.
+     */
+
     public void listarProductosEnVistaPorCodigo() {
         try {
 
@@ -319,17 +387,6 @@ public class ProductoControlador {
         }
     }
 
-    public ProductoDAO getProductoDAO() {
-        return productoDAO;
-    }
-
-    public AnadirProductosView getVistaAnadir() {
-        return vistaAnadir;
-    }
-
-    public ProductoListarView getVistaListar() {
-        return vistaListar;
-    }
     public void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler mh) {
         this.mensajeInternacionalizacionHandler = mh;
     }

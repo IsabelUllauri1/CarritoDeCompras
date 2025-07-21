@@ -7,11 +7,17 @@ import java.io.Serializable;
 public class Pregunta implements Serializable {
     private String texto;
     private int id;
-
+    /**
+     * Crea una nueva pregunta de seguridad con texto e identificador.
+     *
+     * @param texto Texto de la pregunta.
+     * @param id Identificador numérico positivo.
+     * @throws CampoVacioException si el texto es nulo o vacío.
+     * @throws IllegalArgumentException si el ID es menor o igual a cero.
+     */
     public Pregunta(String texto, int id) {
         setTexto(texto);
         setId(id);
-
     }
 
     public String getTexto() {
