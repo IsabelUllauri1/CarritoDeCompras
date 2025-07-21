@@ -34,7 +34,7 @@ public class Main {
             Locale defaultLocale = Locale.getDefault();
             MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler =
                     new MensajeInternacionalizacionHandler(defaultLocale.getLanguage(), defaultLocale.getCountry());
-
+            SelectorAlmacenamiento.setMensajeInternacionalizacionHandler(mensajeInternacionalizacionHandler);
             SelectorAlmacenamiento.mostrarSeleccionAlmacenamiento(null);
             ConfiguracionSistema config = ConfiguracionSistema.getInstancia();
             System.out.println("Ruta seleccionada: " + config.getRutaArchivos());

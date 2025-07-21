@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.io.File;
 
 public class SelectorAlmacenamiento {
+    private static MensajeInternacionalizacionHandler handler;
+
     /**
      * Muestra un cuadro de diálogo para que el usuario seleccione el tipo de almacenamiento.
      *
@@ -14,15 +16,15 @@ public class SelectorAlmacenamiento {
      */
     public static void mostrarSeleccionAlmacenamiento(JFrame parent) {
         String[] opciones = {
-                "Memoria (no guarda datos)",
-                "Archivos de texto",
-                "Archivos binarios"
+                handler.get("selector.almacenamiento.memoria"),
+                handler.get("selector.almacenamiento.mixto"),
+                handler.get("selector.almacenamiento.binario")
         };
 
         int opcion = JOptionPane.showOptionDialog(
                 parent,
-                "¿Dónde desea guardar los datos?",
-                "Modo de almacenamiento",
+                handler.get("selector.almacenamiento.pregunta"),
+                handler.get("selector.almacenamiento.titulo"),
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -46,17 +48,21 @@ public class SelectorAlmacenamiento {
 
         if (config.getTipoAlmacenamiento() != ConfiguracionSistema.TipoAlmacenamiento.MEMORIA) {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Seleccione la carpeta para guardar los archivos");
+            fileChooser.setDialogTitle(handler.get("selector.almacenamiento.tituloSeleccionCarpeta"));
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
             int seleccion = fileChooser.showOpenDialog(parent);
             if (seleccion == JFileChooser.APPROVE_OPTION) {
                 config.setRutaArchivos(fileChooser.getSelectedFile().getAbsolutePath());
             } else {
-                JOptionPane.showMessageDialog(parent, "No seleccionó carpeta. Se usará almacenamiento en memoria.");
+                JOptionPane.showMessageDialog(parent, handler.get("selector.almacenamiento.cancelado"));
                 config.setTipoAlmacenamiento(ConfiguracionSistema.TipoAlmacenamiento.MEMORIA);
             }
         }
     }
+    public static void setMensajeInternacionalizacionHandler(MensajeInternacionalizacionHandler h) {
+        handler = h;
+    }
+
 
 }
