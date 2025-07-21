@@ -510,6 +510,7 @@ public class UsuarioControlador {
         verDetalleView.getTxtSubtotal().setText(FormatosUtils.formatearMoneda( c.calcularSubtotal(), Locale.getDefault()));
         verDetalleView.getTxtIVA().setText(FormatosUtils.formatearMoneda( c.calcularIVA(), Locale.getDefault()));
         verDetalleView.getTxtTotal().setText(FormatosUtils.formatearMoneda( c.calcularTotal(), Locale.getDefault()));
+        System.out.println("Buscando carrito con código: " + codigo);
 
         if (!verDetalleView.isShowing()) {
             contenedor.add(verDetalleView);

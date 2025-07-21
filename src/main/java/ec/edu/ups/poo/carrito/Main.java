@@ -46,6 +46,7 @@ public class Main {
             final CarritoDAO carritoDAO;
             final PreguntaDAO preguntaDAO;
             final PreguntaRespondidaDAO preguntaRespondidaDAO;
+            final ItemCarritoDAO itemCarritoDAO;
 
 
 
@@ -64,14 +65,14 @@ public class Main {
                 case ARCHIVOS:
                     usuarioDAO = new UsuarioDAOArchivosTXT(ruta, mensajeInternacionalizacionHandler);
                     final UsuarioDAO usuarioDAOFinalTexto = usuarioDAO; // para el Function
-
                     productoDAO = new ProductoDAOArchivosB(ruta);
+                    itemCarritoDAO= new ItemCarritoDAOBinario(ruta, productoDAO);//--------
                     carritoDAO = new CarritoDAOArchivosTXT(ruta, new Function<String, Usuario>() {
                         @Override
                         public Usuario apply(String cedula) {
                             return usuarioDAOFinalTexto.buscarPorUsername(cedula);
                         }
-                    });
+                    },itemCarritoDAO );//--------
 
                     preguntaDAO = new PreguntaDAOArchivosB(ruta);
                     preguntaRespondidaDAO = new PreguntaRespondidaDAOBinario(ruta);
@@ -83,6 +84,7 @@ public class Main {
 
                     productoDAO = new ProductoDAOArchivosB(ruta);
                     final ProductoDAO productoDAOFinal = productoDAO;
+                    itemCarritoDAO = new ItemCarritoDAOBinario(ruta, productoDAOFinal);
 
                     carritoDAO = new CarritoDAOBinario(
                             ruta,
@@ -97,7 +99,7 @@ public class Main {
                                 public Producto apply(Integer codigo) {
                                     return productoDAOFinal.buscarPorCodigo(codigo);
                                 }
-                            }
+                            }, itemCarritoDAO
                     );
 
                     preguntaDAO = new PreguntaDAOArchivosB(ruta);

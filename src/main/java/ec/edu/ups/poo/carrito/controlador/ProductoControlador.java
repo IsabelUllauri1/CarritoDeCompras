@@ -92,11 +92,15 @@ public class ProductoControlador {
         vistaActualizar.getBtnActualizar().addActionListener(ev -> {
             try {
                 String nombre = vistaActualizar.getTxtNombre().getText().trim();
-                int codigo = Integer.parseInt(vistaActualizar.getTxtCodigoBuscar().getText().trim());
+                int codigoAnterior = Integer.parseInt(vistaActualizar.getTxtCodigoBuscar().getText().trim());
+                int codigoNuevo = Integer.parseInt(vistaActualizar.getTxtCodigo().getText().trim()); // nuevo campo editable
                 double precio = Double.parseDouble(vistaActualizar.getTxtPrecio().getText().trim());
 
-                productoDAO.actualizar(new Producto(nombre, codigo, precio));
+                Producto nuevoProducto = new Producto(nombre, codigoNuevo, precio);
+                productoDAO.actualizar(codigoAnterior, nuevoProducto); // llamada extendida
                 JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.actualizado"));
+            } catch (UnsupportedOperationException ex) {
+                JOptionPane.showMessageDialog(vistaActualizar, "Este DAO no permite cambiar el código del producto.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(vistaActualizar, mensajeInternacionalizacionHandler.get("producto.datosInvalidos"));
             }

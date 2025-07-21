@@ -101,4 +101,10 @@ public class ProductoDAOMemoria implements ProductoDAO {
 
         return productos;
     }
+
+    @Override
+    public void actualizar(int codigoAnterior, Producto productoNuevo) {
+        throw new UnsupportedOperationException("Este DAO no permite actualizar el código del producto");
+
+    }
 }

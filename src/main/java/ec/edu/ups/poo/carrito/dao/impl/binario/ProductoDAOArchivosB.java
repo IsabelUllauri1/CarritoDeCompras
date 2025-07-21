@@ -19,7 +19,7 @@ public class ProductoDAOArchivosB implements ProductoDAO {
      * @param rutaBase Ruta base donde se ubicará el archivo productos.dat.
      */
 
-    public ProductoDAOArchivosB(String rutaBase) {
+    public ProductoDAOArchivosB(String rutaBase ) {
         this.rutaArchivo = new File(rutaBase, "productos.dat").getAbsolutePath();
         File archivo = new File(rutaArchivo);
         if (archivo.exists()) {
@@ -83,18 +83,13 @@ public class ProductoDAOArchivosB implements ProductoDAO {
     /**
      * Actualiza un producto existente, identificándolo por su código.
      *
-     * @param producto Producto actualizado.
      */
 
     @Override
-    public void actualizar(Producto producto) {
-        for (int i = 0; i < productos.size(); i++) {
-            if (productos.get(i).getCodigo() == producto.getCodigo()) {
-                productos.set(i, producto);
-                guardar();
-                return;
-            }
-        }
+    public void actualizar(int codigoAnterior, Producto productoNuevo) {
+        eliminar(codigoAnterior);
+        productos.add(productoNuevo);
+        guardar();
     }
     /**
      * Elimina un producto según su código.
@@ -154,4 +149,8 @@ public class ProductoDAOArchivosB implements ProductoDAO {
         }
     }
 
+    @Override
+    public void actualizar(Producto producto) {
+        throw new UnsupportedOperationException("Este DAO no permite actualizar el código del producto");
+    }
 }

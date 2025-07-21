@@ -1,6 +1,8 @@
 package ec.edu.ups.poo.carrito.dao.impl.binario;
 
 import ec.edu.ups.poo.carrito.dao.CarritoDAO;
+import ec.edu.ups.poo.carrito.dao.ItemCarritoDAO;
+import ec.edu.ups.poo.carrito.dao.ProductoDAO;
 import ec.edu.ups.poo.carrito.modelo.Carrito;
 import ec.edu.ups.poo.carrito.modelo.Producto;
 import ec.edu.ups.poo.carrito.modelo.Usuario;
@@ -17,9 +19,10 @@ public class CarritoDAOBinario implements CarritoDAO {
 
     private final String rutaArchivo;
     private static final int TAM_REGISTRO = 48; // codigo (10) + cedulaUsuario (10) + fecha (8)
-    private final ItemCarritoDAOBinario itemDAO;
+    private final ItemCarritoDAO itemDAO;
     private final Function<String, Usuario> buscadorUsuario;
     private final Function<Integer, Producto> buscadorProducto;
+    private ProductoDAO productoDAO;
 
     /**
      * Crea una instancia de CarritoDAOBinario.
@@ -29,21 +32,19 @@ public class CarritoDAOBinario implements CarritoDAO {
      * @param buscadorProducto Función para recuperar un Producto a partir de su código.
      */
 
-    public CarritoDAOBinario(String rutaBase, Function<String, Usuario> buscadorUsuario, Function<Integer, Producto> buscadorProducto) {
+    public CarritoDAOBinario(String rutaBase, Function<String, Usuario> buscadorUsuario, Function<Integer, Producto> buscadorProducto, ItemCarritoDAO itemDAO) {
         this.rutaArchivo = new File(rutaBase, "carritos.dat").getAbsolutePath();
         this.buscadorUsuario = buscadorUsuario;
         this.buscadorProducto = buscadorProducto;
 
-        this.itemDAO = new ItemCarritoDAOBinario(rutaBase, new ProductoDAOArchivosB(rutaBase));
-
+        this.itemDAO = itemDAO;
         File archivo = new File(rutaArchivo);
         try {
             if (!archivo.exists()) {
-                boolean creado = archivo.createNewFile();
-                System.out.println(creado ? "Archivo carritos.dat creado." : "⚠ No se creó carritos.dat");
+                archivo.createNewFile();
             }
         } catch (IOException e) {
-            System.err.println(" Error al crear archivo de carritos: " + e.getMessage());
+            System.err.println("Error creando archivo de carritos: " + e.getMessage());
         }
     }
 
@@ -299,11 +300,17 @@ public class CarritoDAOBinario implements CarritoDAO {
                 if (!codStr.trim().equals("##########") && !codStr.trim().isEmpty()) {
                     Carrito c = new Carrito();
                     c.setCodigo(Integer.parseInt(codStr.trim()));
-                    Usuario u = new Usuario(); // Carga mínima: solo cédula
+                    Usuario u = new Usuario();
                     u.setUsername(cedula.trim());
                     c.setUsuario(u);
                     c.setFechaCreacion(new java.util.GregorianCalendar());
                     c.getFechaCreacion().setTimeInMillis(fechaMillis);
+
+
+                    if (itemDAO != null) {
+                        c.setItems(itemDAO.obtenerItemsPorCarrito(codStr.trim()));
+                    }
+
                     lista.add(c);
                 }
             }

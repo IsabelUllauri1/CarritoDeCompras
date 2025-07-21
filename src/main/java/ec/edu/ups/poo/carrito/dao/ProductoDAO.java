@@ -44,5 +44,6 @@ public interface ProductoDAO {
      * @return Lista completa de productos.
      */
     List<Producto> listarTodos();
+    void actualizar(int codigoAnterior, Producto productoNuevo); // nueva opción
 
 }
