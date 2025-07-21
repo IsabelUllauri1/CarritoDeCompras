@@ -39,7 +39,7 @@ public class UsuarioDAOBinario implements UsuarioDAO {
      * Guarda un nuevo usuario al final del archivo binario.
      *
      * @param usuario Usuario a guardar.
-     * @throws IOException Si ocurre un error al escribir en el archivo.
+     *  IOException Si ocurre un error al escribir en el archivo.
      */
 
     @Override
@@ -65,7 +65,7 @@ public class UsuarioDAOBinario implements UsuarioDAO {
      *
      * @param username Nombre de usuario a buscar.
      * @return Usuario encontrado o null si no existe.
-     * @throws IOException Si ocurre un error de lectura del archivo.
+     *  IOException Si ocurre un error de lectura del archivo.
      */
 
     @Override
@@ -128,7 +128,7 @@ public class UsuarioDAOBinario implements UsuarioDAO {
      * Actualiza los datos de un usuario existente sobrescribiendo su registro.
      *
      * @param usuario Usuario con los nuevos datos.
-     * @throws IOException Si ocurre un error al modificar el archivo.
+     *  IOException Si ocurre un error al modificar el archivo.
      */
     @Override
     public void actualizar(Usuario usuario) {
@@ -167,7 +167,7 @@ public class UsuarioDAOBinario implements UsuarioDAO {
      * Elimina un usuario marcando su cédula con "0000000000" (eliminación lógica).
      *
      * @param username Usuario a eliminar.
-     * @throws IOException Si ocurre un error durante el acceso al archivo.
+     *  IOException Si ocurre un error durante el acceso al archivo.
      */
     @Override
     public void eliminar(String username) {
@@ -196,7 +196,7 @@ public class UsuarioDAOBinario implements UsuarioDAO {
      * Lista todos los usuarios válidos (no eliminados) almacenados en el archivo.
      *
      * @return Lista completa de usuarios activos.
-     * @throws IOException Si ocurre un error al leer el archivo.
+     * IOException Si ocurre un error al leer el archivo.
      */
     @Override
     public List<Usuario> listarTodos() {
@@ -240,7 +240,7 @@ public class UsuarioDAOBinario implements UsuarioDAO {
     /**
      * Lista todos los usuarios con rol ADMINISTRADOR.
      *
-     * @return Lista de administradores.
+     *  Lista de administradores.
      */
     @Override
     public List<Usuario> listarAdministradores() {

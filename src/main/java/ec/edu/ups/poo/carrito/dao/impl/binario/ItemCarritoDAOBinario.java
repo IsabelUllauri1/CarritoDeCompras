@@ -65,7 +65,7 @@ public class ItemCarritoDAOBinario implements ItemCarritoDAO {
      *
      * @param codigoCarrito Código del carrito al que pertenecen los ítems.
      * @param items Lista de ítems a guardar.
-     * @throws IOException Si ocurre un error al escribir en el archivo.
+     *  IOException Si ocurre un error al escribir en el archivo.
      */
 
     @Override
@@ -86,7 +86,7 @@ public class ItemCarritoDAOBinario implements ItemCarritoDAO {
      *
      * @param codigoCarrito Código del carrito del cual se desean recuperar los ítems.
      * @return Lista de ítems del carrito.
-     * @throws IOException Si ocurre un error al leer el archivo.
+     *  IOException Si ocurre un error al leer el archivo.
      */
 
     @Override

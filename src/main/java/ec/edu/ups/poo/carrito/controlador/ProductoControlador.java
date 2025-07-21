@@ -234,7 +234,7 @@ public class ProductoControlador {
     /**
      * Lista todos los productos disponibles en el sistema y los muestra en la vista de listado.
      *
-     * @throws Exception Si ocurre un error al acceder a los datos.
+     *  Exception Si ocurre un error al acceder a los datos.
      */
 
     public void listarProductos() {
@@ -371,7 +371,7 @@ public class ProductoControlador {
     /**
      * Lista todos los productos disponibles en la tabla de la vista por código.
      *
-     * @throws Exception Si ocurre un error al acceder a los datos.
+     *  Exception Si ocurre un error al acceder a los datos.
      */
 
     public void listarProductosEnVistaPorCodigo() {

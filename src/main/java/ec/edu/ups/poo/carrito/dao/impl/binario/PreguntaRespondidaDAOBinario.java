@@ -33,7 +33,7 @@ public class PreguntaRespondidaDAOBinario implements PreguntaRespondidaDAO {
      * agregándolas a las ya existentes.
      *
      * @param nuevas Lista de nuevas respuestas a guardar.
-     * @throws IOException Si ocurre un error al escribir en el archivo binario.
+     *  IOException Si ocurre un error al escribir en el archivo binario.
      */
 
     @Override
@@ -50,8 +50,8 @@ public class PreguntaRespondidaDAOBinario implements PreguntaRespondidaDAO {
      * Lista todas las respuestas de seguridad almacenadas.
      *
      * @return Lista completa de PreguntaRespondida.
-     * @throws IOException Si ocurre un error al leer el archivo.
-     * @throws ClassNotFoundException Si la clase no puede ser deserializada.
+     * IOException Si ocurre un error al leer el archivo.
+     * ClassNotFoundException Si la clase no puede ser deserializada.
      */
 
     private List<PreguntaRespondida> listar() {
@@ -84,7 +84,7 @@ public class PreguntaRespondidaDAOBinario implements PreguntaRespondidaDAO {
      *
      * @param username Usuario al que se le actualizarán las respuestas.
      * @param nuevas Lista de nuevas respuestas que se guardarán.
-     * @throws IOException Si ocurre un error al escribir el archivo.
+     *  IOException Si ocurre un error al escribir el archivo.
      */
 
     @Override

@@ -84,7 +84,7 @@ public class CarritoDAOBinario implements CarritoDAO {
      * Guarda un nuevo carrito al final del archivo binario.
      *
      * @param carrito Carrito a guardar.
-     * @throws IOException Si ocurre un error al escribir en el archivo.
+     *  IOException Si ocurre un error al escribir en el archivo.
      */
 
     @Override
@@ -105,7 +105,7 @@ public class CarritoDAOBinario implements CarritoDAO {
      *
      * @param codigo Código del carrito.
      * @return Carrito encontrado o null si no existe o está eliminado.
-     * @throws IOException Si ocurre un error de lectura del archivo.
+     * IOException Si ocurre un error de lectura del archivo.
      */
 
     @Override
@@ -152,7 +152,6 @@ public class CarritoDAOBinario implements CarritoDAO {
      * Actualiza la información de un carrito existente (sobrescribe el registro).
      *
      * @param carrito Carrito con los datos actualizados.
-     * @throws IOException Si ocurre un error al acceder al archivo.
      */
 
     @Override
@@ -184,7 +183,6 @@ public class CarritoDAOBinario implements CarritoDAO {
      * Elimina un carrito marcándolo como "##########" en el archivo (eliminación lógica).
      *
      * @param codigo Código del carrito a eliminar.
-     * @throws IOException Si ocurre un error de escritura.
      */
 
     @Override
@@ -215,7 +213,6 @@ public class CarritoDAOBinario implements CarritoDAO {
      *
      * @param usuario Usuario del cual se listan los carritos.
      * @return Lista de carritos pertenecientes al usuario.
-     * @throws IOException Si ocurre un error de lectura del archivo.
      */
 
     @Override
@@ -254,7 +251,6 @@ public class CarritoDAOBinario implements CarritoDAO {
      * Elimina un carrito usando su código como String, marcándolo como eliminado.
      *
      * @param codigo Código del carrito en formato String.
-     * @throws IOException Si ocurre un error de acceso al archivo.
      */
 
     @Override
@@ -282,7 +278,7 @@ public class CarritoDAOBinario implements CarritoDAO {
      * Lista todos los carritos disponibles en el archivo (excepto los eliminados).
      *
      * @return Lista de todos los carritos válidos.
-     * @throws IOException Si ocurre un error de lectura.
+     *  IOException Si ocurre un error de lectura.
      */
 
     @Override

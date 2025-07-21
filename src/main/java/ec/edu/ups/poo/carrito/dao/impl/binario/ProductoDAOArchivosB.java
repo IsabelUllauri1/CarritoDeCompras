@@ -121,7 +121,7 @@ public class ProductoDAOArchivosB implements ProductoDAO {
     /**
      * Guarda la lista completa de productos en el archivo binario.
      *
-     * @throws IOException Si ocurre un error al escribir en el archivo.
+     *  IOException Si ocurre un error al escribir en el archivo.
      */
 
     private void guardar() {
@@ -136,8 +136,8 @@ public class ProductoDAOArchivosB implements ProductoDAO {
      * Carga la lista de productos desde el archivo binario.
      *
      * @return Lista de productos cargados o vacía si ocurre un error.
-     * @throws IOException Si ocurre un error al leer el archivo.
-     * @throws ClassNotFoundException Si no se puede deserializar el archivo.
+     *  IOException Si ocurre un error al leer el archivo.
+     *  ClassNotFoundException Si no se puede deserializar el archivo.
      */
 
     private List<Producto> cargar() {

@@ -29,8 +29,8 @@ public class PreguntaDAOArchivosB implements PreguntaDAO {
      * Lista todas las preguntas de seguridad almacenadas en el archivo binario.
      *
      * @return Lista de objetos Pregunta.
-     * @throws IOException Si ocurre un error al leer el archivo.
-     * @throws ClassNotFoundException Si no se puede deserializar la lista de preguntas.
+     *  IOException Si ocurre un error al leer el archivo.
+     *  ClassNotFoundException Si no se puede deserializar la lista de preguntas.
      */
 
     @Override
@@ -45,7 +45,7 @@ public class PreguntaDAOArchivosB implements PreguntaDAO {
     /**
      * Inicializa el archivo binario con 10 preguntas predeterminadas si no existe previamente.
      *
-     * @throws IOException Si ocurre un error al escribir en el archivo binario.
+     *  IOException Si ocurre un error al escribir en el archivo binario.
      */
 
     private void inicializarPreguntas() {
